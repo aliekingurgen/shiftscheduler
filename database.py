@@ -8,39 +8,78 @@
 from sqlite3 import connect
 from sys import stderr
 from os import path
+from shift import Shift
+
+import psycopg2
+import datetime
+# from config import config
+from configparser import ConfigParser
 
 #-----------------------------------------------------------------------
 
 class Database:
     
     def __init__(self):
-        self._connection = None
+        self._conn = None
+
+    def config(self, filename='database.ini', section='postgresql'):
+        # create a parser
+        parser = ConfigParser()
+        # read config file
+        parser.read(filename)
+    
+        # get section, default to postgresql
+        db = {}
+        if parser.has_section(section):
+            params = parser.items(section)
+            for param in params:
+                db[param[0]] = param[1]
+        else:
+            raise Exception('Section {0} not found in the {1} file'.format(section, filename))
+    
+        return db
 
     def connect(self):      
-        DATABASE_NAME = 'penny.sqlite'
-        if not path.isfile(DATABASE_NAME):
-            raise Exception('Database connection failed')
-        self._connection = connect(DATABASE_NAME)
+        """ Connect to the PostgreSQL database server """
+        self._conn = None
+        try:
+            # read connection parameters
+            params = self.config()
+    
+            # connect to the PostgreSQL server
+            print('Connecting to the PostgreSQL database...')
+            self._conn = psycopg2.connect(**params)    
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+                
                     
     def disconnect(self):
-        self._connection.close()
+        self._conn.close()
+        print('Database connection closed.')
 
-    def search(self, author):
-        cursor = self._connection.cursor()
+    def shiftDetails(self, dateIn, task_id):
 
-        QUERY_STRING = \
-            'select author, title, price from books ' + \
-            'where author like ?'
-        cursor.execute(QUERY_STRING, (author+'%',)) 
+        # create a cursor
+        cur = self._conn.cursor()
+
+        shiftDate = datetime.date.fromisoformat(dateIn)
+        QUERY_STRING = 'SELECT shift_info.shift_id, shift_info.date,' + \
+            'shift_info.task_id, task_info.meal, task_info.task,' + \
+            'task_info.start_time, task_info.end_time FROM shift_info,' + \
+            'task_info WHERE shift_info.task_id = task_info.task_id AND ' + \
+            'shift_info.date = %s AND task_info.task_id = %s'
+        cur.execute(QUERY_STRING, (shiftDate, task_id))
         
-        books = []
-        row = cursor.fetchone()
+        shifts = []
+        row = cur.fetchone()
         while row is not None:  
-            book = Book(str(row[0]), str(row[1]), float(row[2]))
-            books.append(book);
-            row = cursor.fetchone()
-        cursor.close()
-        return books
+            shift = Shift(row[0], str(row[1]), row[2], row[3], row[4], row[5], row[6])
+            shifts.append(shift)
+            print(row)
+            row = cur.fetchone()
+        print(shifts)
+        cur.close()
+        return shifts
 
 #-----------------------------------------------------------------------
 
@@ -49,7 +88,7 @@ class Database:
 if __name__ == '__main__':
     database = Database()
     database.connect()
-    books = database.search('Kernighan')
-    for book in books:
-        print(book)
+    date = "2020-03-23"
+    task_id = 1
+    database.shiftDetails(date, task_id)
     database.disconnect()
