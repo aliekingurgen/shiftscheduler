@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------
 # shiftscheduler.py
-# Author: Bob Dondero
+# Author: Shift Scheduler Team
 #-----------------------------------------------------------------------
 
 from sys import argv
@@ -46,18 +46,52 @@ def employeePage():
     if errorMsg is None:
         errorMsg = ''
     
-    prevAuthor = request.cookies.get('prevAuthor')
-    if prevAuthor is None:
-        prevAuthor = '(None)'
-    
     html = render_template('employeepage.html',
         ampm=getAmPm(),
         currentTime=getCurrentTime(),
         errorMsg=errorMsg,
-        prevAuthor=prevAuthor)
+        monday="2020-03-30",
+        tuesday="2020-03-31",
+        wednesday="2020-04-01",
+        thursday="2020-04-02",
+        friday="2020-04-03",
+        saturday="2020-04-04",
+        sunday="2020-04-05"
+                           )
     response = make_response(html)
-    return response    
-    
+    return response
+
+
+# -----------------------------------------------------------------------
+
+@app.route('/shiftdetails', methods=['GET'])
+def shiftDetails():
+    errorMsg = request.args.get('errorMsg')
+    if errorMsg is None:
+        errorMsg = ''
+
+    date = request.args.get('date')
+    if date is None:
+        date = ''
+
+    task_id = request.args.get('taskid')
+    if task_id is None:
+        task_id = ''
+
+    database = Database()
+    database.connect()
+    shift = database.shiftDetails(date, task_id)
+    database.disconnect()
+
+    html = render_template('shiftdetails.html',
+                           ampm=getAmPm(),
+                           currentTime=getCurrentTime(),
+                           errorMsg=errorMsg,
+                           shift=shift
+                           )
+    response = make_response(html)
+    return response
+
 #-----------------------------------------------------------------------
 
 if __name__ == '__main__':
