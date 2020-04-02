@@ -93,6 +93,7 @@ def shiftDetails():
 
 
     shift = database.shiftDetails(date, task_id)
+    shift = shift[0]
     database.disconnect()
 
     html = render_template('shiftdetails.html',
