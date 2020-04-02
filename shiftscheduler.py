@@ -100,6 +100,14 @@ def employeePage():
     response = make_response(html)
     return response
 
+#-----------------------------------------------------------------------
+@app.route('/coordinatorpage', methods=['GET'])
+def coordinatorPage():
+    currentTime = getCurrentTime()
+    html = render_template('coordinatorpage.html', ampm=getAmPm(), currentTime=currentTime)
+    response = make_response(html)
+    return response
+
 # -----------------------------------------------------------------------
 
 @app.route('/shiftdetails', methods=['GET'])
