@@ -3,7 +3,7 @@
    <head>
       <title>Shiftscheduler.com</title>
    </head>
-   <body>
+   <body onload='getURL({{monday}}, 1)'>
       {% include 'header.html' %}
       <h1>This Week's Calendar:</h1>
       <table border="5" cellpadding="10" cellspacing="5">
@@ -17,13 +17,13 @@
             <th>Sunday</th>
          </tr>
          <tr>
-            <td>{{monday}}</td>
-            <td>{{tuesday}}</td>
-            <td>{{wednesday}}</td>
-            <td>{{thursday}}</td>
-            <td>{{friday}}</td>
-            <td>{{saturday}}</td>
-            <td>{{sunday}}</td>
+            <td>{{monday.strftime("%B %d")}}</td>
+            <td>{{tuesday.strftime("%B %d")}}</td>
+            <td>{{wednesday.strftime("%B %d")}}</td>
+            <td>{{thursday.strftime("%B %d")}}</td>
+            <td>{{friday.strftime("%B %d")}}</td>
+            <td>{{saturday.strftime("%B %d")}}</td>
+            <td>{{sunday.strftime("%B %d")}}</td>
          </tr>
          <tr>
             <td></td>
@@ -48,11 +48,13 @@
             <!--Monday Dinner-->
             <td>
                <a href = '/shiftdetails?date=2020-03-23&taskid=1'> Manager</a>
+<!--               <a href = '/shiftdetails' id="mon_din_man">Manager</a>-->
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=2'> First Dinner</a>
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=3'> Second Dinner</a>
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=4'> Dish Manager</a>
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=5'> First Dish</a>
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=6'> Second Dish</a>
+<!--                <div onclick="showDets()">Click me to toggle the popup </div>-->
             </td>
             <!--Tuesday Dinner-->
             <td>Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
@@ -75,5 +77,13 @@
       <br>
       <br>
       {% include 'footer.html' %}
+   <script>
+      function getURL(date, taskid) {
+         document.getElementById("mon_dinner_manager").href = '/shiftdetails?date=' + date + '&taskid=' + taskid
+      }
+      function showDets(){
+          alert('insert details');
+      }
+   </script>
    </body>
 </html>

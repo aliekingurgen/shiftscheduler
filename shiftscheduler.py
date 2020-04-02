@@ -22,12 +22,21 @@ def getAmPm():
     if strftime('%p') == "AM":
         return 'morning'
     return 'afternoon' 
-    
+
+#-----------------------------------------------------------------------
+
 def getCurrentTime():
     return asctime(localtime())
 
+#-----------------------------------------------------------------------
+
 def getCalendarDate():
     return asctime(localtime())
+
+#-----------------------------------------------------------------------
+
+def getURL(date, taskid):
+    return '/shiftdetails?date=' + date + '&taskid=' + taskid
 
 #-----------------------------------------------------------------------
 
@@ -55,6 +64,14 @@ def employeePage():
     currentTime = getCurrentTime()
 
     dates = []
+
+    # year = localtime().tm_year
+    # month = localtime().tm_mon
+    # day = localtime().tm_mday
+    # what if today is not monday
+    # dotw = localtime().tm_wday
+    #     # if dotw != 0:
+    #     #     day -= dotw
 
     year = 2020
     month = 3
