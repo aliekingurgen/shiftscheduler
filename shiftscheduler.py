@@ -10,6 +10,7 @@ from database import Database
 from time import localtime, asctime, strftime
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
+from datetime import date, time
 
 #-----------------------------------------------------------------------
 
@@ -23,6 +24,9 @@ def getAmPm():
     return 'afternoon' 
     
 def getCurrentTime():
+    return asctime(localtime())
+
+def getCalendarDate():
     return asctime(localtime())
 
 #-----------------------------------------------------------------------
@@ -45,22 +49,25 @@ def employeePage():
     errorMsg = request.args.get('errorMsg')
     if errorMsg is None:
         errorMsg = ''
+
+    currentTime = getCurrentTime()
+
+    # year = currentTime.
     
     html = render_template('employeepage.html',
         ampm=getAmPm(),
-        currentTime=getCurrentTime(),
+        currentTime=currentTime,
         errorMsg=errorMsg,
-        monday="2020-03-30",
-        tuesday="2020-03-31",
-        wednesday="2020-04-01",
-        thursday="2020-04-02",
-        friday="2020-04-03",
-        saturday="2020-04-04",
-        sunday="2020-04-05"
+        monday="2020-03-23",
+        tuesday="2020-03-24",
+        wednesday="2020-03-25",
+        thursday="2020-03-26",
+        friday="2020-03-27",
+        saturday="2020-03-28",
+        sunday="2020-03-29"
                            )
     response = make_response(html)
     return response
-
 
 # -----------------------------------------------------------------------
 
@@ -78,8 +85,13 @@ def shiftDetails():
     if task_id is None:
         task_id = ''
 
-    database = Database()
-    database.connect()
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+
     shift = database.shiftDetails(date, task_id)
     database.disconnect()
 
