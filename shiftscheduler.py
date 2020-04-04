@@ -45,9 +45,9 @@ def getURL(date, taskid):
 @app.route('/index', methods=['GET'])
 def index():
 
-    username = CASClient().authenticate()
+    # username = CASClient().authenticate()
     html = render_template('index.html',
-        name = username,
+        # name = username,
         ampm=getAmPm(),
         currentTime=getCurrentTime())
     response = make_response(html)
