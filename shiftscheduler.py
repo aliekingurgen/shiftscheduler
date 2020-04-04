@@ -11,6 +11,7 @@ from time import localtime, asctime, strftime
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 from datetime import date, time
+from CASClient import CASClient
 
 #-----------------------------------------------------------------------
 
@@ -43,8 +44,10 @@ def getURL(date, taskid):
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
- 
+
+    username = CASClient().authenticate()
     html = render_template('index.html',
+        name = username,
         ampm=getAmPm(),
         currentTime=getCurrentTime())
     response = make_response(html)
