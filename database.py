@@ -7,7 +7,8 @@
 
 from sqlite3 import connect
 from sys import stderr
-from os import path
+# from os import path, environ
+import os
 from shift import Shift
 
 import psycopg2
@@ -44,11 +45,14 @@ class Database:
         self._conn = None
         try:
             # read connection parameters
-            params = self.config()
+            # params = self.config()
     
             # connect to the PostgreSQL server
             print('Connecting to the PostgreSQL database...')
-            self._conn = psycopg2.connect(**params)    
+            DATABASE_URL = os.environ['DATABASE_URL']
+
+            self._conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+            # self._conn = psycopg2.connect(**params)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
                 
