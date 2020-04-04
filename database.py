@@ -74,16 +74,10 @@ class Database:
             'shift_info.date = %s AND task_info.task_id = %s'
         cur.execute(QUERY_STRING, (shiftDate, task_id))
         
-        shifts = []
         row = cur.fetchone()
-        while row is not None:  
-            shift = Shift(row[0], str(row[1]), row[2], row[3], row[4], row[5], row[6])
-            shifts.append(shift)
-            print(row)
-            row = cur.fetchone()
-        print(shifts)
+        shift = Shift(row[0], str(row[1]), row[2], row[3], row[4], row[5], row[6])
         cur.close()
-        return shifts
+        return shift
 
 #-----------------------------------------------------------------------
 
