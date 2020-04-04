@@ -17,6 +17,7 @@ from CASClient import CASClient
 
 app = Flask(__name__, template_folder='.')
 
+app.secret_key = b'\xcdt\x8dn\xe1\xbdW\x9d[}yJ\xfc\xa3~/'
 #-----------------------------------------------------------------------
 
 def getAmPm():
@@ -45,9 +46,9 @@ def getURL(date, taskid):
 @app.route('/index', methods=['GET'])
 def index():
 
-    # username = CASClient().authenticate()
+    username = CASClient().authenticate()
     html = render_template('index.html',
-        # name = username,
+        name = username,
         ampm=getAmPm(),
         currentTime=getCurrentTime())
     response = make_response(html)
