@@ -1,1 +1,1 @@
-web: ./runserver $PORT
+web: python3 shiftscheduler.py $PORT
