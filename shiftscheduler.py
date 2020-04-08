@@ -46,7 +46,7 @@ def getURL(date, taskid):
 @app.route('/index', methods=['GET'])
 def index():
 
-    netid = CASClient().authenticate()
+    netid = CASClient().authenticate().strip()
     # html = render_template('index.html',
     #     name = username,
     #     ampm=getAmPm(),
@@ -137,13 +137,19 @@ def employeePage():
         sunday=dates[6]
                     )
     response = make_response(html)
+    response.set_cookie('netid', netid)
     return response
 
 #-----------------------------------------------------------------------
 
 @app.route('/coordinatorpage', methods=['GET'])
 def coordinatorPage():
-    html = render_template('coordinatorbootstrap.html')
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    html = render_template('coordinatorbootstrap.html',
+                           netid=netid)
     response = make_response(html)
     return response
 
@@ -151,7 +157,25 @@ def coordinatorPage():
 
 @app.route('/profile', methods=['GET'])
 def profile():
-    html = render_template('profile.html')
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    html = render_template('profile.html',
+                           netid=netid)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/team', methods=['GET'])
+def team():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    html = render_template('team.html',
+                           netid=netid)
     response = make_response(html)
     return response
 
@@ -159,6 +183,11 @@ def profile():
 
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
     errorMsg = request.args.get('errorMsg')
     if errorMsg is None:
         errorMsg = ''
@@ -188,6 +217,7 @@ def shiftDetails():
     #                        shift=shift
     #                        )
     html = render_template('shiftdetailsbootstrap.html',
+                           netid=netid,
                            errorMsg=errorMsg,
                            shift=shift
                            )
