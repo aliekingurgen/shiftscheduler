@@ -99,13 +99,11 @@
             <!--Monday Dinner-->
             <td>
                <a href = '/shiftdetails?date=2020-03-23&taskid=1'> Manager</a>
-<!--               <a href = '/shiftdetails' id="mon_din_man">Manager</a>-->
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=2'> First Dinner</a>
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=3'> Second Dinner</a>
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=4'> Dish Manager</a>
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=5'> First Dish</a>
                <br><a href = '/shiftdetails?date=2020-03-23&taskid=6'> Second Dish</a>
-<!--                <div onclick="showDets()">Click me to toggle the popup </div>-->
             </td>
             <!--Tuesday Dinner-->
             <td>Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
@@ -133,6 +131,27 @@
           <span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
       </div>
     </footer>
+
+    <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js">
+      </script>
+
+    <script>
+        function getDates() {
+            let today = new Date();
+            let dotw = today.getDate();
+            mon = today - dotw;
+            let week = []
+            for (var i = 0; i < 7; i++) {
+                week[i] = mon
+            }
+        }
+
+        function getDetails() {
+
+        }
+
+    </script>
 
 </body>
 </html>

@@ -27,8 +27,8 @@ def getAmPm():
 
 #-----------------------------------------------------------------------
 
-def getCurrentTime():
-    return asctime(localtime())
+# def getCurrentTime():
+#     return asctime(localtime())
 
 #-----------------------------------------------------------------------
 
@@ -71,8 +71,6 @@ def employeePage():
     errorMsg = request.args.get('errorMsg')
     if errorMsg is None:
         errorMsg = ''
-
-    currentTime = getCurrentTime()
 
     dates = []
 
