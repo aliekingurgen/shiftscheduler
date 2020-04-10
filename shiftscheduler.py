@@ -27,8 +27,8 @@ def getAmPm():
 
 #-----------------------------------------------------------------------
 
-def getCurrentTime():
-    return asctime(localtime())
+# def getCurrentTime():
+#     return asctime(localtime())
 
 #-----------------------------------------------------------------------
 
@@ -46,12 +46,15 @@ def getURL(date, taskid):
 @app.route('/index', methods=['GET'])
 def index():
 
-    username = CASClient().authenticate()
-    html = render_template('index.html',
-        name = username,
-        ampm=getAmPm(),
-        currentTime=getCurrentTime())
+    netid = CASClient().authenticate().strip()
+    # html = render_template('index.html',
+    #     name = username,
+    #     ampm=getAmPm(),
+    #     currentTime=getCurrentTime())
+    html = render_template('indexbootstrap.html',
+        name = netid)
     response = make_response(html)
+    response.set_cookie('netid', netid)
     return response
     
 #-----------------------------------------------------------------------
@@ -61,11 +64,13 @@ def employeePage():
 
     NUM_DAYS = 7
 
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
     errorMsg = request.args.get('errorMsg')
     if errorMsg is None:
         errorMsg = ''
-
-    currentTime = getCurrentTime()
 
     dates = []
 
@@ -106,9 +111,20 @@ def employeePage():
         else:
             day += 1
     
-    html = render_template('employeepage.html',
-        ampm=getAmPm(),
-        currentTime=currentTime,
+    # html = render_template('employeepage.html',
+    #     ampm=getAmPm(),
+    #     currentTime=currentTime,
+    #     errorMsg=errorMsg,
+    #     monday=dates[0],
+    #     tuesday=dates[1],
+    #     wednesday=dates[2],
+    #     thursday=dates[3],
+    #     friday=dates[4],
+    #     saturday=dates[5],
+    #     sunday=dates[6]
+    #                        )
+    html = render_template('employeepagebootstrap.html',
+        netid=netid,
         errorMsg=errorMsg,
         monday=dates[0],
         tuesday=dates[1],
@@ -117,15 +133,47 @@ def employeePage():
         friday=dates[4],
         saturday=dates[5],
         sunday=dates[6]
-                           )
+                    )
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/coordinatorpage', methods=['GET'])
+def coordinatorPage():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    html = render_template('coordinatorbootstrap.html',
+                           netid=netid)
     response = make_response(html)
     return response
 
 #-----------------------------------------------------------------------
-@app.route('/coordinatorpage', methods=['GET'])
-def coordinatorPage():
-    currentTime = getCurrentTime()
-    html = render_template('coordinatorpage.html', ampm=getAmPm(), currentTime=currentTime)
+
+@app.route('/profile', methods=['GET'])
+def profile():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    html = render_template('profile.html',
+                           netid=netid)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/team', methods=['GET'])
+def team():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    html = render_template('team.html',
+                           netid=netid)
     response = make_response(html)
     return response
 
@@ -133,6 +181,11 @@ def coordinatorPage():
 
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
     errorMsg = request.args.get('errorMsg')
     if errorMsg is None:
         errorMsg = ''
@@ -155,9 +208,14 @@ def shiftDetails():
     shift = database.shiftDetails(date, task_id)
     database.disconnect()
 
-    html = render_template('shiftdetails.html',
-                           ampm=getAmPm(),
-                           currentTime=getCurrentTime(),
+    # html = render_template('shiftdetails.html',
+    #                        ampm=getAmPm(),
+    #                        currentTime=getCurrentTime(),
+    #                        errorMsg=errorMsg,
+    #                        shift=shift
+    #                        )
+    html = render_template('shiftdetailsbootstrap.html',
+                           netid=netid,
                            errorMsg=errorMsg,
                            shift=shift
                            )
