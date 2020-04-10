@@ -7,7 +7,7 @@
 
 class Shift:
 
-    def __init__(self, shiftID, date, taskID, meal, task, startTime, endTime):
+    def __init__(self, shiftID, date, taskID, meal, task, startTime, endTime, curPeople):
         self._shiftID = shiftID
         self._date = date
         self._taskID = taskID
@@ -15,6 +15,7 @@ class Shift:
         self._task = task
         self._startTime = startTime
         self._endTime = endTime
+        self._curPeople = curPeople
 
     def __str__(self):
         return str(self._shiftID)
@@ -39,5 +40,8 @@ class Shift:
 
     def getEnd(self):
         return str(self._endTime)
+    
+    def getCurPeople(self):
+        return str(self._curPeople)
     
     
