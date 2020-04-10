@@ -71,45 +71,6 @@ def employeePage():
     errorMsg = request.args.get('errorMsg')
     if errorMsg is None:
         errorMsg = ''
-
-    dates = []
-
-    # year = localtime().tm_year
-    # month = localtime().tm_mon
-    # day = localtime().tm_mday
-    # what if today is not monday
-    # dotw = localtime().tm_wday
-    #     # if dotw != 0:
-    #     #     day -= dotw
-
-    year = 2020
-    month = 3
-    day = 23
-
-    for i in range(NUM_DAYS):
-        dates.append(date(year, month, day))
-        if day == 30:
-            if month == 4 or month == 6 or month == 9 or month == 11:
-                month += 1
-                day = 1
-            else:
-                day += 1
-        elif day == 31:
-            if month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10:
-                month += 1
-                day = 1
-            elif month == 12:
-                year += 1
-                month = 1
-                day = 1
-        elif year % 4 == 0 and month == 2 and day == 29:
-            month += 1
-            day = 1
-        elif year % 4 != 0 and month == 2 and day == 28:
-            month += 1
-            day = 1
-        else:
-            day += 1
     
     # html = render_template('employeepage.html',
     #     ampm=getAmPm(),
@@ -126,13 +87,6 @@ def employeePage():
     html = render_template('employeepagebootstrap.html',
         netid=netid,
         errorMsg=errorMsg,
-        monday=dates[0],
-        tuesday=dates[1],
-        wednesday=dates[2],
-        thursday=dates[3],
-        friday=dates[4],
-        saturday=dates[5],
-        sunday=dates[6]
                     )
     response = make_response(html)
     response.set_cookie('netid', netid)
@@ -177,6 +131,32 @@ def team():
     response = make_response(html)
     return response
 
+#-----------------------------------------------------------------------
+
+@app.route('/test', methods=['GET'])
+def test():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    regShifts = database.regularShifts(netid)
+    print()
+    print('Regular shifts for yujl: ')
+    for i in range(len(regShifts)):
+        print(str(regShifts[i][0]) + ' ' + str(regShifts[i][1]))
+    database.disconnect()
+
+    html = render_template('test.html',
+                           netid=netid)
+    response = make_response(html)
+    return response
+
 # -----------------------------------------------------------------------
 
 @app.route('/shiftdetails', methods=['GET'])
@@ -194,7 +174,7 @@ def shiftDetails():
     # date = request.args.get('date')
     # if date is None:
     #     date = ''
-    #
+
     task_id = request.args.get('taskid')
     if task_id is None:
         task_id = ''
@@ -205,14 +185,13 @@ def shiftDetails():
     except Exception as e:
         errorMsg = e
 
-
     shift = database.shiftDetails(date, task_id)
     database.disconnect()
-    html = 'Date: ' + str(shift.getDate()) + '<br>'
-    html += 'Meal: ' + str(shift.getMeal()) + '<br>'
-    html += 'Task: ' + str(shift.getTask()) + '<br>'
-    html += 'Start: ' + str(shift.getStart()) + '<br>'
-    html += 'End: ' + str(shift.getEnd()) + '<br>'
+    html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
+    html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
+    html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
+    html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
+    html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
 
     response = make_response(html)
     return response
