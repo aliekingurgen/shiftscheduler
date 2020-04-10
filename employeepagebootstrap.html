@@ -99,17 +99,46 @@
                <br><a id="sunSecondBrunch" href = '/shiftdetails?date=2020-03-29&taskid=9'> Second Brunch</a>
             </td>
          </tr>
+
          <tr>
             <!--Monday Dinner-->
             <td id="monDinner">
                 <div class="list-group">
-                  <a href="#" id="monDinnerManager" class="list-group-item list-group-item-action list-group-item-info" data-container="body" data-toggle="popover"
-                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Manager</a>
+                    <button id = "monDinnerManager" type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">
+ monDinner
+</button>
+<!--                  <a href="#" id="monDinnerManager" class="list-group-item list-group-item-action list-group-item-info" data-container="body" data-toggle="modal"-->
+<!--                         data-placement="top"  > Manager </a>-->
+<!--                <script>-->
+<!--                     console.log("heeey");-->
+<!--                    $('#monDinnerManager').popover({-->
+<!--                        "html": true,-->
+<!--                         "content": "asdasjdna"-->
+<!--                });-->
+<!--                </script>-->
                   <a href="#" id="monFirstDinner" class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="popover"
                         data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">First Dinner</a>
                   <a href="#" id="monSecondDinner" class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="popover"
                         data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Second Dinner</a>
                 </div>
+                <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id = "bodyModal"></p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!--                <button type="button" id="monDinnerManager" class="btn btn-secondary" data-container="body" data-toggle="popover"-->
 <!--                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">-->
 <!--                  Manager-->
@@ -168,7 +197,11 @@
       </div>
     </footer>
 
+
+
     <script>
+
+
         function getDates() {
             let today = new Date();
             let dotw = today.getDay();
@@ -190,9 +223,45 @@
             $('#sunDate').html(week[6].toLocaleDateString());
         }
 
-        function getDetails() {
+              function handleResponse(response) {
+                     $('#bodyModal').html(response);
+                }
 
-        }
+                let request = null;
+
+                function getDetails()
+                {
+
+                    let url = '/shiftdetails' ;
+                    if (request != null)
+                        request.abort();
+                        request = $.ajax({
+                            type: "GET",
+                            url: url,
+                            success: handleResponse
+                    }
+                    );
+                }
+
+              // $('#monDinnerManager').popover({
+              //           "html": true,
+              //             "content": askdlad,
+                  //    function(){
+                     //        console.log("here???");
+                     //        return details_in_popup();
+                     // }
+                //     });
+                //
+                // function details_in_popup(){
+                //     $.ajax({
+                //         type: "GET",
+                //         url: '/shiftdetails',
+                //         success: function(response){
+                //             $(#monDinnerManager).html(response);
+                //      }
+                //     });
+                //     return '<div id=monDinnerManagaer>Loading...</div>';
+                //     }
 
         function enablePopovers() {
             $('#monDinnerManager').popover();
@@ -203,10 +272,20 @@
             $('#monSecondDish').popover();
         }
 
+         // $('#monDinnerManager').popover({
+         //     "html": true,
+         //     "data-content": getDetails()
+         // });
+
         function setup() {
+
             getDates();
             enablePopovers();
         }
+        function ready(){
+            $(#monDinnerManager).on('click' , getDetails());
+        }
+
 
         $('document').ready(setup);
 

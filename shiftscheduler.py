@@ -181,22 +181,24 @@ def team():
 
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
-
-    netid = request.cookies.get('netid')
-    if netid is None:
-        netid = ''
-
-    errorMsg = request.args.get('errorMsg')
-    if errorMsg is None:
-        errorMsg = ''
-
-    date = request.args.get('date')
-    if date is None:
-        date = ''
-
-    task_id = request.args.get('taskid')
-    if task_id is None:
-        task_id = ''
+    print("here")
+    date = "2020-03-23"
+    task_id = 1
+    # netid = request.cookies.get('netid')
+    # if netid is None:
+    #     netid = ''
+    #
+    # errorMsg = request.args.get('errorMsg')
+    # if errorMsg is None:
+    #     errorMsg = ''
+    #
+    # date = request.args.get('date')
+    # if date is None:
+    #     date = ''
+    #
+    # task_id = request.args.get('taskid')
+    # if task_id is None:
+    #     task_id = ''
 
     try:
         database = Database()
@@ -207,18 +209,12 @@ def shiftDetails():
 
     shift = database.shiftDetails(date, task_id)
     database.disconnect()
+    html = 'Date: ' + str(shift.getDate())
+    # html = '< li > Meal: ' + str(shift.getMeal()) +  '< / li >'
+    # html = '< li > Task: ' + str(shift.getTask()) + '< / li >'
+    # html = '< li > Start: ' + str(shift.getStart()) + '< / li >'
+    # html = '< li > End: ' + str(shift.getEnd()) +  '< / li >'
 
-    # html = render_template('shiftdetails.html',
-    #                        ampm=getAmPm(),
-    #                        currentTime=getCurrentTime(),
-    #                        errorMsg=errorMsg,
-    #                        shift=shift
-    #                        )
-    html = render_template('shiftdetailsbootstrap.html',
-                           netid=netid,
-                           errorMsg=errorMsg,
-                           shift=shift
-                           )
     response = make_response(html)
     return response
 
