@@ -40,6 +40,9 @@ class Shift:
 
     def getEnd(self):
         return str(self._endTime)
+
+    def getCurPeople(self):
+        return str(self._curPeople)
     
     def getCurPeople(self):
         return str(self._curPeople)
