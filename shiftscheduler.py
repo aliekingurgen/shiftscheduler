@@ -183,7 +183,6 @@ def team():
 def shiftDetails():
     print("here")
     date = "2020-03-23"
-    task_id = 1
     # netid = request.cookies.get('netid')
     # if netid is None:
     #     netid = ''
@@ -196,9 +195,9 @@ def shiftDetails():
     # if date is None:
     #     date = ''
     #
-    # task_id = request.args.get('taskid')
-    # if task_id is None:
-    #     task_id = ''
+    task_id = request.args.get('taskid')
+    if task_id is None:
+        task_id = ''
 
     try:
         database = Database()
@@ -209,11 +208,11 @@ def shiftDetails():
 
     shift = database.shiftDetails(date, task_id)
     database.disconnect()
-    html = 'Date: ' + str(shift.getDate())
-    # html = '< li > Meal: ' + str(shift.getMeal()) +  '< / li >'
-    # html = '< li > Task: ' + str(shift.getTask()) + '< / li >'
-    # html = '< li > Start: ' + str(shift.getStart()) + '< / li >'
-    # html = '< li > End: ' + str(shift.getEnd()) +  '< / li >'
+    html = 'Date: ' + str(shift.getDate()) + '<br>'
+    html += 'Meal: ' + str(shift.getMeal()) + '<br>'
+    html += 'Task: ' + str(shift.getTask()) + '<br>'
+    html += 'Start: ' + str(shift.getStart()) + '<br>'
+    html += 'End: ' + str(shift.getEnd()) + '<br>'
 
     response = make_response(html)
     return response
