@@ -5,13 +5,17 @@
     <title>ShiftScheduler - Employee</title>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js">
+      </script>
+
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
 
 </head>
 <style>
@@ -68,13 +72,13 @@
             <th>Sunday</th>
          </tr>
          <tr>
-            <td>{{monday.strftime("%B %d")}}</td>
-            <td>{{tuesday.strftime("%B %d")}}</td>
-            <td>{{wednesday.strftime("%B %d")}}</td>
-            <td>{{thursday.strftime("%B %d")}}</td>
-            <td>{{friday.strftime("%B %d")}}</td>
-            <td>{{saturday.strftime("%B %d")}}</td>
-            <td>{{sunday.strftime("%B %d")}}</td>
+            <td id="monDate">{{monday.strftime("%B %d")}}</td>
+            <td id="tuesDate">{{tuesday.strftime("%B %d")}}</td>
+            <td id ="wedDate">{{wednesday.strftime("%B %d")}}</td>
+            <td id ="thursDate">{{thursday.strftime("%B %d")}}</td>
+            <td id="friDate">{{friday.strftime("%B %d")}}</td>
+            <td id="satDate">{{saturday.strftime("%B %d")}}</td>
+            <td id="sunDate">{{sunday.strftime("%B %d")}}</td>
          </tr>
          <tr>
             <td></td>
@@ -83,40 +87,72 @@
             <td></td>
             <td></td>
             <!--Saturday Brunch-->
-            <td>
-               <a href = '/shiftdetails?date=2020-03-28&taskid=7'> Manager</a>
-               <br><a href = '/shiftdetails?date=2020-03-28&taskid=8'> First Brunch</a>
-               <br><a href = '/shiftdetails?date=2020-03-28&taskid=9'> Second Brunch</a>
+            <td id="satBrunch">
+               <a class="manager" id="satBrunchManager" href = '/shiftdetails?date=2020-03-28&taskid=7'> Manager</a>
+               <br><a id="satFirstBrunch" href = '/shiftdetails?date=2020-03-28&taskid=8'> First Brunch</a>
+               <br><a id="satSecondBrunch" href = '/shiftdetails?date=2020-03-28&taskid=9'> Second Brunch</a>
             </td>
             <!--Sunday Brunch-->
-            <td>
-               <a href = '/shiftdetails?date=2020-03-29&taskid=7'> Manager</a>
-               <br><a href = '/shiftdetails?date=2020-03-29&taskid=8'> First Brunch</a>
-               <br><a href = '/shiftdetails?date=2020-03-29&taskid=9'> Second Brunch</a>
+            <td id="sunBrunch">
+               <a class="manager" id="sunBrunchManager" href = '/shiftdetails?date=2020-03-29&taskid=7'> Manager</a>
+               <br><a id="sunFirstBrunch" href = '/shiftdetails?date=2020-03-29&taskid=8'> First Brunch</a>
+               <br><a id="sunSecondBrunch" href = '/shiftdetails?date=2020-03-29&taskid=9'> Second Brunch</a>
             </td>
          </tr>
          <tr>
             <!--Monday Dinner-->
-            <td>
-               <a href = '/shiftdetails?date=2020-03-23&taskid=1'> Manager</a>
-               <br><a href = '/shiftdetails?date=2020-03-23&taskid=2'> First Dinner</a>
-               <br><a href = '/shiftdetails?date=2020-03-23&taskid=3'> Second Dinner</a>
-               <br><a href = '/shiftdetails?date=2020-03-23&taskid=4'> Dish Manager</a>
-               <br><a href = '/shiftdetails?date=2020-03-23&taskid=5'> First Dish</a>
-               <br><a href = '/shiftdetails?date=2020-03-23&taskid=6'> Second Dish</a>
+            <td id="monDinner">
+                <div class="list-group">
+                  <a href="#" id="monDinnerManager" class="list-group-item list-group-item-action list-group-item-info" data-container="body" data-toggle="popover"
+                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Manager</a>
+                  <a href="#" id="monFirstDinner" class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="popover"
+                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">First Dinner</a>
+                  <a href="#" id="monSecondDinner" class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="popover"
+                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Second Dinner</a>
+                </div>
+<!--                <button type="button" id="monDinnerManager" class="btn btn-secondary" data-container="body" data-toggle="popover"-->
+<!--                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">-->
+<!--                  Manager-->
+<!--                </button><br>-->
+<!--                <button type="button" id="monFirstDinner" class="btn btn-secondary" data-container="body" data-toggle="popover"-->
+<!--                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">-->
+<!--                  First Dinner-->
+<!--                </button><br>-->
+<!--                <button type="button" id="monSecondDinner" class="btn btn-secondary" data-container="body" data-toggle="popover"-->
+<!--                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">-->
+<!--                  Second Dinner-->
+<!--                </button><br>-->
+<!--                <button type="button" id="monDishManager" class="btn btn-secondary" data-container="body" data-toggle="popover"-->
+<!--                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">-->
+<!--                  Dish Manager-->
+<!--                </button><br>-->
+<!--                <button type="button" id="monFirstDish" class="btn btn-secondary" data-container="body" data-toggle="popover"-->
+<!--                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">-->
+<!--                  First Dish-->
+<!--                </button><br>-->
+<!--                <button type="button" id="monSecondDish" class="btn btn-secondary" data-container="body" data-toggle="popover"-->
+<!--                        data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">-->
+<!--                  Second Dish-->
+<!--                </button><br>-->
+<!--               <a href = '/shiftdetails?date=2020-03-23&taskid=1'> Manager</a>-->
+<!--               <br><a href = '/shiftdetails?date=2020-03-23&taskid=2'> First Dinner</a>-->
+<!--               <br><a href = '/shiftdetails?date=2020-03-23&taskid=3'> Second Dinner</a>-->
+<!--               <br><a href = '/shiftdetails?date=2020-03-23&taskid=4'> Dish Manager</a>-->
+<!--               <br><a href = '/shiftdetails?date=2020-03-23&taskid=5'> First Dish</a>-->
+<!--               <br><a href = '/shiftdetails?date=2020-03-23&taskid=6'> Second Dish</a>-->
             </td>
             <!--Tuesday Dinner-->
-            <td>Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
+            <td id="tuesDinner">Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
             <!--Wednesday Dinner-->
-            <td>Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
+            <td id="wedDinner">Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
             <!--Thursday Dinner-->
-            <td>Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
+            <td id="thursDinner">Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
             <!--Friday Dinner-->
-            <td>Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
+            <td id="friDinner">Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
             <!--Saturday Dinner-->
-            <td>Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
+            <td id="satDinner">Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
             <!--Sunday Dinner-->
-            <td>Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
+            <td id="sunDinner">Manager<br>First Dinner<br>Second Dinner<br>Dish Manager<br>First Dish<br>Second Dish</td>
          </tr>
       </table>
 
@@ -132,24 +168,47 @@
       </div>
     </footer>
 
-    <script src=
-"https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js">
-      </script>
-
     <script>
         function getDates() {
             let today = new Date();
-            let dotw = today.getDate();
-            mon = today - dotw;
-            let week = []
+            let dotw = today.getDay();
+            mon = today.getDate() - dotw + 1;
+            let week = [];
+            let current = new Date();
+            current.setDate(mon);
             for (var i = 0; i < 7; i++) {
-                week[i] = mon
+                week.push(new Date(+current));
+                current.setDate(current.getDate()+1);
             }
+            console.log('hello')
+            $('#monDate').html(week[0].toLocaleDateString());
+            $('#tuesDate').html(week[1].toLocaleDateString());
+            $('#wedDate').html(week[2].toLocaleDateString());
+            $('#thursDate').html(week[3].toLocaleDateString());
+            $('#friDate').html(week[4].toLocaleDateString());
+            $('#satDate').html(week[5].toLocaleDateString());
+            $('#sunDate').html(week[6].toLocaleDateString());
         }
 
         function getDetails() {
 
         }
+
+        function enablePopovers() {
+            $('#monDinnerManager').popover();
+            $('#monFirstDinner').popover();
+            $('#monSecondDinner').popover();
+            $('#monDishManager').popover();
+            $('#monFirstDish').popover();
+            $('#monSecondDish').popover();
+        }
+
+        function setup() {
+            getDates();
+            enablePopovers();
+        }
+
+        $('document').ready(setup);
 
     </script>
 
