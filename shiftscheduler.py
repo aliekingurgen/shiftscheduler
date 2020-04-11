@@ -71,7 +71,7 @@ def employeePage():
     errorMsg = request.args.get('errorMsg')
     if errorMsg is None:
         errorMsg = ''
-    
+
     # html = render_template('employeepage.html',
     #     ampm=getAmPm(),
     #     currentTime=currentTime,
@@ -103,6 +103,7 @@ def coordinatorPage():
     html = render_template('coordinatorbootstrap.html',
                            netid=netid)
     response = make_response(html)
+    response.set_cookie('netid', netid)
     return response
 
 #-----------------------------------------------------------------------
@@ -116,6 +117,7 @@ def profile():
     html = render_template('profile.html',
                            netid=netid)
     response = make_response(html)
+    response.set_cookie('netid', netid)
     return response
 
 #-----------------------------------------------------------------------
@@ -129,6 +131,7 @@ def team():
     html = render_template('team.html',
                            netid=netid)
     response = make_response(html)
+    response.set_cookie('netid', netid)
     return response
 
 #-----------------------------------------------------------------------
@@ -155,7 +158,114 @@ def test():
     html = render_template('test.html',
                            netid=netid)
     response = make_response(html)
+    response.set_cookie('netid', netid)
     return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/subIn', methods=['GET'])
+def subIn():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    date = request.args.get('date')
+    if date is None:
+        date = ''
+
+    task_id = request.args.get('taskid')
+    if task_id is None:
+        task_id = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    successful = database.subIn(netid, date, task_id)
+    database.disconnect()
+    if successful:
+        html = "<br>Sub-In successful!"
+    else:
+        html = "<br>Sub-In not successful. Please try again."
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/subOut', methods=['GET'])
+def subOut():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    date = request.args.get('date')
+    if date is None:
+        date = ''
+
+    task_id = request.args.get('taskid')
+    if task_id is None:
+        task_id = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    successful = database.subOut(netid, date, task_id)
+    database.disconnect()
+    if successful:
+        html = "<p>Sub-Out successful!</p>"
+    else:
+        html = "<p>Sub-Out not successful. Please try again. </p>"
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/myShifts', methods=['GET'])
+def myShifts():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    shifts = database.regularShifts(netid)
+    database.disconnect()
+    for shift in shifts:
+        print(shift)
+
+    return shifts
+
+#-----------------------------------------------------------------------
+
+@app.route('/needSubShifts', methods=['GET'])
+def needSubShifts():
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+    mon = request.args.get('mon')
+    if mon is None:
+        mon = ''
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    subs = database.allSubsForWeek(mon)
+    database.disconnect()
+
+    return subs
 
 # -----------------------------------------------------------------------
 

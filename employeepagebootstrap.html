@@ -31,7 +31,7 @@
 }
 </style>
 
-<body class="text-center">
+<body id="body" class="text-center">
 	<nav class="navbar navbar-expand navbar-light bg-light">
 		<div class="container">
           <a class="navbar-brand" href="/">ShiftScheduler
@@ -93,11 +93,11 @@
 			 <td id="satBrunch" day ="5" >
 				<div class="list-group">
 <!--					<div class="list-group" style = "width: 75px; font-size:12px" >-->
-					<a id="satBrunchManager" taskid = 7 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a id="5-7" taskid = 7 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop" > Manager</a>
-					<a data-href = '/shiftdetails' id="satFirstBrunch" taskid = 8 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="5-8" taskid = 8 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Brunch</a>
-					 <a data-href = '/shiftdetails' id="satSecondBrunch" taskid = 9 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a data-href = '/shiftdetails' id="5-9" taskid = 9 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Brunch</a>
 				</div>
 			</td>
@@ -114,11 +114,11 @@
 			<!--Sunday Brunch-->
 			  <td id="sunBrunch" day ="6">
 				<div class="list-group" >
-					<a id="sunBrunchManager" taskid = 7 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a id="6-7" taskid = 7 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop" >Manager   </a>
-					<a id="sunFirstBrunch" taskid = 8 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a id="6-8" taskid = 8 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop" >First Brunch</a>
-					 <a id="sunSecondBrunch" taskid = 9 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a id="6-9" taskid = 9 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Brunch</a>
 <!--					<a id="sunDishhManager" taskid = 10 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"-->
 <!--					   data-target="#staticBackdrop" style = "height: 30px; font-size:12px">Manager</a>-->
@@ -134,22 +134,22 @@
 			<!--Monday Dinner-->
 			<td id="monDinner" day ="0">
 				<div class="list-group">
-					<a id="monDinnerManager" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a id="0-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Manager</a>
-					<a id="monFirstDinner" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a id="0-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Dinner</a>
-					 <a id="monSecondDinner" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a id="0-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Dinner</a>
 				</div>
 			</td>
 				 <!--Tuesday Dinner-->
 			 <td id="tuesDinner" day ="1">
 				<div class="list-group">
-					<a data-href = '/shiftdetails' id="tuesDinnerManager" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="1-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Manager</a>
-					<a data-href = '/shiftdetails' id="tuesFirstDinner" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="1-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Dinner</a>
-					 <a data-href = '/shiftdetails' id="tuesSecondDinner" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a data-href = '/shiftdetails' id="1-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Dinner</a>
 				</div>
 			</td>
@@ -157,55 +157,55 @@
 			<!--Wednesday Dinner-->
 			  <td id="wedDinner" day ="2">
 				<div class="list-group">
-					<a data-href = '/shiftdetails' id="wedDinnerManager" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="2-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Manager</a>
-					<a data-href = '/shiftdetails' id="wedFirstDinner" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="2-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Dinner</a>
-					 <a data-href = '/shiftdetails' id="wedSecondDinner" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a data-href = '/shiftdetails' id="2-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Dinner</a>
 				</div>
 			</td>
 			<!--Thursday Dinner-->
 			  <td id="thurDinner" day ="3">
 				<div class="list-group">
-					<a data-href = '/shiftdetails' id="thursDinnerManager" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="3-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Manager</a>
-					<a data-href = '/shiftdetails' id="thursFirstDinner" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="3-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Dinner</a>
-					 <a data-href = '/shiftdetails' id="thursSecondDinner" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a data-href = '/shiftdetails' id="3-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Dinner</a>
 				</div>
 			</td>
 			<!--Friday Dinner-->
 			  <td id="friDinner" day ="4">
 				<div class="list-group">
-					<a data-href = '/shiftdetails' id="friDinnerManager" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="4-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Manager</a>
-					<a data-href = '/shiftdetails' id="friFirstDinner" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="4-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Dinner</a>
-					 <a data-href = '/shiftdetails' id="friSecondDinner" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a data-href = '/shiftdetails' id="4-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Dinner</a>
 				</div>
 			</td>
 			<!--Saturday Dinner-->
 			  <td id="satDinner" day ="5">
 				<div class="list-group">
-					<a data-href = '/shiftdetails' id="satDinnerManager" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="5-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Manager</a>
-					<a data-href = '/shiftdetails' id="satFirstDinner" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="5-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Dinner</a>
-					 <a data-href = '/shiftdetails' id="satSecondDinner" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a data-href = '/shiftdetails' id="5-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Dinner</a>
 				</div>
 			</td>
 			<!--Sunday Dinner-->
 			  <td id="sunDinner" day ="6">
 				<div class="list-group">
-					<a data-href = '/shiftdetails' id="sunDinnerManager" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="6-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Manager</a>
-					<a data-href = '/shiftdetails' id="sunFirstDinner" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					<a data-href = '/shiftdetails' id="6-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Dinner</a>
-					 <a data-href = '/shiftdetails' id="sunSecondDinner" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
+					 <a data-href = '/shiftdetails' id="6-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Dinner</a>
 				</div>
 			</td>
@@ -213,17 +213,38 @@
           </tbody>
 	  </table>
 
-		<div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal fade" id="staticBackdrop" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					 <div class="modal-header">
-						 <h5 class="modal-title" id="staticBackdropLabel">Shift</h5>
+						 <h5 class="modal-title" id="staticBackdropLabel">Shift Details</h5>
 						 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							 <span aria-hidden="true">&times;</span>
 						</button>
 					 </div>
-                    <div class="modal-body">
-                     <p id="modalText"></p>
+                    <div class="modal-body" id="normalBody">
+                     <p id="normalText"></p>
+                     <div class="modal-footer">
+						 <div id="success-text"></div>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						 <button id="subOutButton" type="button" class="btn btn-secondary">Sub-Out</button>
+						 <button id="subInButton" type="button" class="btn btn-secondary">Sub-In</button>
+                     </div>
+				</div>
+			</div>
+		</div>
+
+			<div class="modal fade" id="yourShift" tabindex="-1" role="dialog" aria-labelledby="yourShiftLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					 <div class="modal-header">
+						 <h5 class="modal-title" id="yourShiftLabel">Shift Details</h5>
+						 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							 <span aria-hidden="true">&times;</span>
+						</button>
+					 </div>
+                    <div class="modal-body" id="yourShiftBody">
+                     <p id="yourShiftText"></p>
                      <div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						 <button type="button" class="btn btn-secondary" data-dismiss="modal">Sub-Out</button>
@@ -231,6 +252,26 @@
 				</div>
 			</div>
 		</div>
+
+				<div class="modal fade" id="needsSub" tabindex="-1" role="dialog" aria-labelledby="needsSubLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					 <div class="modal-header">
+						 <h5 class="modal-title" id="needsSubLabel">Shift Details</h5>
+						 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							 <span aria-hidden="true">&times;</span>
+						</button>
+					 </div>
+                    <div class="modal-body" id="needsSubBody">
+                     <p id="needsSubText"></p>
+                     <div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						 <button type="button" class="btn btn-secondary" data-dismiss="modal">Sub-In</button>
+                     </div>
+				</div>
+			</div>
+		</div>
+
 
 	  <br>
 	  <strong>{{errorMsg}}</strong>
@@ -270,6 +311,12 @@
 		}
 
 		function getColors() {
+			url = '/myShifts'
+			shifts = $('#body').load(url);
+			for (var i = 0; i < shifts.length; i++){
+				console.log(shifts[i]);
+			}
+			// change color and data-target
             $('#satBrunchManager').attr("class", "list-group-item list-group-item-action list-group-item-danger");
             $('#monDinnerManager').attr("class", "list-group-item list-group-item-action list-group-item-info");
 		}
@@ -334,6 +381,32 @@
 		 //     "data-content": getDetails()
 		 // });
 
+		function subOut() {
+		 	$('#subOutButton').on('click',function() {
+				var url = "/subOut?date=";
+				var taskId = $(this).attr('taskid');
+				var date = $(this).attr('date');
+				url += date + "&taskid=" + taskId;
+				console.log(url);
+				$('#success-text').load(url,function() {
+						$('#staticBackdrop').modal('show');
+					});
+		 	});
+		}
+
+		function subIn() {
+			$('#subInButton').on('click',function() {
+				var url = "/subIn?date=";
+				var taskId = $(this).attr('taskid');
+				var date = $(this).attr('date');
+				url += date + "&taskid=" + taskId;
+				console.log(url);
+				$('#success-text').load(url,function() {
+						$('#staticBackdrop').modal('show');
+					});
+		 	});
+		}
+
         function getModalData(mon) {
             $('[data-toggle="modal"]').on('click',function() {
                 var dataURL = "/shiftdetails";
@@ -347,9 +420,30 @@
                 console.log(iso);
                 dataURL += "?date=" + iso;
                 dataURL += "&taskid=" + taskId;
-                $('#modalText').load(dataURL,function() {
-                    $('#modal-body').modal({show:true});
-                });
+                var modalId = $(this).attr('data-target');
+                $('#subOutButton').attr('date', iso);
+                $('#subOutButton').attr('taskid', taskId);
+                $('#subInButton').attr('date', iso);
+                $('#subInButton').attr('taskid', taskId);
+                if (modalId == '#staticBackdrop') {
+                	console.log("here");
+                	$('#normalText').load(dataURL,function() {
+						$('#staticBackdrop').modal('show');
+					});
+                }
+                else if (modalId == '#yourShift') {
+                	console.log(modalId);
+                	$('#yourShiftText').load(dataURL,function() {
+                		$('#staticBackdrop').modal({show:false});
+                		$('#needsSub').modal({show:false});
+						$('#yourShift').modal({show:true});
+					});
+                }
+                else {
+                	$('#needsSubText').load(dataURL,function() {
+						$('#modal-body').modal({show:true});
+					});
+                }
              });
         }
 
@@ -358,6 +452,8 @@
 			getModalData(mon);
 			getColors();
 			// enablePopovers();
+			subOut();
+			subIn();
 		}
 
 		$('document').ready(setup);
