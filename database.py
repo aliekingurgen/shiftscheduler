@@ -236,36 +236,111 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             return False
-    '''
-    def populateShiftInfo(self, firstShiftId, date):
+    
+    def populateShiftInfo(self, dateIn):
         
         try:
-            if datetime.date.fromisoformat(date).weekday() != 0:
+            if datetime.date.fromisoformat(dateIn).weekday() != 0:
                 print("Given date is not a Monday.")
                 return False
 
+            date = datetime.date.fromisoformat(dateIn)
             cur = self._conn.cursor()
 
-            
+            def convertDayReverse(dayNumber):
+                if (dayNumber == 0): return 'monday'
+                if (dayNumber == 1): return 'tuesday'
+                if (dayNumber == 2): return 'wednesday'
+                if (dayNumber == 3): return 'thursday'
+                if (dayNumber == 4): return 'friday'
+                if (dayNumber == 5): return 'saturday'
+                if (dayNumber == 6): return 'sunday'
 
-    
-            QUERY_STRING = 'INSERT INTO shift_info(shift_id, date, task_id, cur_people) VALUES ' + \
-                           '(%s, %s, %s, %s);'
-            cur.execute(QUERY_STRING, (shift_id, date, task_id, curPeople))
+            QUERY_STRING = 'SELECT * FROM max_shift_id'
+            cur.execute(QUERY_STRING)
+            row = cur.fetchone()
+            
+            shift_id = int(row[0])
+            for i in range(7):
+                for j in range(1, 7):
+                    QUERY_STRING = 'SELECT regular_shifts.netid FROM regular_shifts WHERE task_id = %s AND dotw = %s'
+                    cur.execute(QUERY_STRING, (j, convertDayReverse(i)))
+
+                    numPeople = 0
+                    rows = cur.fetchall()
+                    for row in rows:
+                        netid = row[0]
+                        QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
+                        cur.execute(QUERY_STRING, (shift_id, netid))
+                        print('Added entry to shift_assign:' + str(shift_id) + ' ' + str(netid))
+                        self._conn.commit()
+                        numPeople += 1
+
+                    QUERY_STRING = 'INSERT INTO shift_info(shift_id, date, task_id, cur_people) VALUES ' + \
+                        '(%s, %s, %s, %s);'
+                    cur.execute(QUERY_STRING, (shift_id, date.isoformat(), j, numPeople))
+                    self._conn.commit()
+                    print('Added entry to shift_info:' + str(shift_id) + ' ' + str(date) + ' ' + str(j) + ' ' + str(numPeople))
+                    shift_id += 1
+                
+                if (i > 4):
+                    for j in range(7, 13):
+                        QUERY_STRING = 'SELECT regular_shifts.netid FROM regular_shifts WHERE task_id = %s AND dotw = %s'
+                        cur.execute(QUERY_STRING, (j, convertDayReverse(i)))
+
+                        numPeople = 0
+                        rows = cur.fetchall()
+                        for row in rows:
+                            netid = row[0]
+                            QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
+                            cur.execute(QUERY_STRING, (shift_id, netid))
+                            print('Added entry to shift_assign:' + str(shift_id) + ' ' + str(netid))
+                            self._conn.commit()
+                            numPeople += 1
+
+                        QUERY_STRING = 'INSERT INTO shift_info(shift_id, date, task_id, cur_people) VALUES ' + \
+                            '(%s, %s, %s, %s);'
+                        cur.execute(QUERY_STRING, (shift_id, date.isoformat(), j, numPeople))
+                        self._conn.commit()
+                        print('Added entry to shift_info:' + str(shift_id) + ' ' + str(date) + ' ' + str(j) + ' ' + str(numPeople))
+                        shift_id += 1
+
+                if (i == 4):
+                    QUERY_STRING = 'SELECT regular_shifts.netid FROM regular_shifts WHERE task_id = %s AND dotw = %s'
+                    cur.execute(QUERY_STRING, (13, convertDayReverse(i)))
+
+                    numPeople = 0
+                    rows = cur.fetchall()
+                    for row in rows:
+                        netid = row[0]
+                        QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
+                        cur.execute(QUERY_STRING, (shift_id, netid))
+                        print('Added entry to shift_assign:' + str(shift_id) + ' ' + str(netid))
+                        self._conn.commit()
+                        numPeople += 1
+                    
+                    QUERY_STRING = 'INSERT INTO shift_info(shift_id, date, task_id, cur_people) VALUES ' + \
+                            '(%s, %s, %s, %s);'
+                    cur.execute(QUERY_STRING, (shift_id, date.isoformat(), 13, numPeople))
+                    self._conn.commit()
+                    print('Added entry to shift_info:' + str(shift_id) + ' ' + str(date) + ' ' + str(13) + ' ' + str(numPeople))
+                    shift_id += 1
+                
+                date += datetime.timedelta(days=1)
+
+            QUERY_STRING = 'UPDATE max_shift_id SET shift_id = %s, date = %s'
+            cur.execute(QUERY_STRING, (shift_id, datetime.date.today().isoformat()))
             self._conn.commit()
-            print('Shift_info table populated.')
             cur.close()
             return True
 
-            
-        
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
-            print('Could not populate shif_info table.')
+            print('Could not populate shift_info table.')
             cur.close()
             print(error)
             return False
-    '''
+    
         
 
 #-----------------------------------------------------------------------
@@ -319,8 +394,11 @@ if __name__ == '__main__':
     print('Regular shifts for yujl: ')
     for regShift in regShifts:
         print(regShift)
+    
+    # Test populateShiftInfo *********** WORKS
+    date = "2020-04-13"
+    boo = database.populateShiftInfo(date)
     '''
-
 
     database.disconnect()
 
