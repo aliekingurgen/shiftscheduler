@@ -59,7 +59,7 @@
 <main role="main">
 	<div class="container">
 		<br>
-		<h1>This Week's Calendar:</h1>
+		<h1 style = "font-size: 20px">This Week's Calendar:</h1>
 		<br>
 	  <table class="table" align="center" cellpadding="10" cellspacing="5">
           <thead>
@@ -90,25 +90,42 @@
 			<td></td>
 			<td></td>
 			<!--Saturday Brunch-->
-			 <td id="satBrunch" day ="5">
+			 <td id="satBrunch" day ="5" >
 				<div class="list-group">
+<!--					<div class="list-group" style = "width: 75px; font-size:12px" >-->
 					<a id="satBrunchManager" taskid = 7 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
-					   data-target="#staticBackdrop" >Manager</a>
+					   data-target="#staticBackdrop" > Manager</a>
 					<a data-href = '/shiftdetails' id="satFirstBrunch" taskid = 8 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">First Brunch</a>
 					 <a data-href = '/shiftdetails' id="satSecondBrunch" taskid = 9 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Brunch</a>
 				</div>
 			</td>
+<!--			 <td id="satBrunchDish" day ="5">-->
+<!--				<div class="list-group" style = "width: 75px; font-size:12px" >-->
+<!--					<a id="satBrunchDishManager" taskid = 10 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"-->
+<!--					   data-target="#staticBackdrop" >Dish Manager</a>-->
+<!--					<a data-href = '/shiftdetails' id="satFirstBrunchDish" taskid = 11 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"-->
+<!--					   data-target="#staticBackdrop">First Dish</a>-->
+<!--					 <a data-href = '/shiftdetails' id="satSecondBrunchDish" taskid = 12 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"-->
+<!--					   data-target="#staticBackdrop">Second Dish</a>-->
+<!--				</div>-->
+<!--			</td>-->
 			<!--Sunday Brunch-->
 			  <td id="sunBrunch" day ="6">
-				<div class="list-group">
+				<div class="list-group" >
 					<a id="sunBrunchManager" taskid = 7 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
-					   data-target="#staticBackdrop">Manager</a>
+					   data-target="#staticBackdrop" >Manager   </a>
 					<a id="sunFirstBrunch" taskid = 8 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
-					   data-target="#staticBackdrop">First Brunch</a>
+					   data-target="#staticBackdrop" >First Brunch</a>
 					 <a id="sunSecondBrunch" taskid = 9 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#staticBackdrop">Second Brunch</a>
+<!--					<a id="sunDishhManager" taskid = 10 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"-->
+<!--					   data-target="#staticBackdrop" style = "height: 30px; font-size:12px">Manager</a>-->
+<!--					<a id="sunFirstBrunchDish" taskid = 11 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"-->
+<!--					   data-target="#staticBackdrop" style = "height: 45px; font-size:12px">First Brunch</a>-->
+<!--					 <a id="sunSecondBrunchDish" taskid = 12 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"-->
+<!--					   data-target="#staticBackdrop" style = "height: 45px; font-size:12px">Second Brunch</a>-->
 				</div>
 			</td>
 		 </tr>
@@ -209,6 +226,7 @@
                      <p id="modalText"></p>
                      <div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						 <button type="button" class="btn btn-secondary" data-dismiss="modal">Sub-Out</button>
                      </div>
 				</div>
 			</div>
