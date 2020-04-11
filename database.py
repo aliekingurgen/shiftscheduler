@@ -42,38 +42,47 @@ class Database:
 
     def shiftDetails(self, dateIn, task_id):
 
-        # create a cursor
-        cur = self._conn.cursor()
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
 
-        shiftDate = datetime.date.fromisoformat(dateIn)
-        QUERY_STRING = 'SELECT shift_info.shift_id, shift_info.date,' + \
-            'shift_info.task_id, task_info.meal, task_info.task,' + \
-            'task_info.start_time, task_info.end_time, shift_info.cur_people FROM shift_info,' + \
-            'task_info WHERE shift_info.task_id = task_info.task_id AND ' + \
-            'shift_info.date = %s AND task_info.task_id = %s'
-        cur.execute(QUERY_STRING, (shiftDate, task_id))
-        
-        row = cur.fetchone()
-        shift = Shift(row[0], str(row[1]), row[2], row[3], row[4], row[5], row[6], row[7])
-        cur.close()
-        return shift
+            shiftDate = datetime.date.fromisoformat(dateIn)
+            QUERY_STRING = 'SELECT shift_info.shift_id, shift_info.date,' + \
+                'shift_info.task_id, task_info.meal, task_info.task,' + \
+                'task_info.start_time, task_info.end_time, shift_info.cur_people FROM shift_info,' + \
+                'task_info WHERE shift_info.task_id = task_info.task_id AND ' + \
+                'shift_info.date = %s AND task_info.task_id = %s'
+            cur.execute(QUERY_STRING, (shiftDate, task_id))
+            
+            row = cur.fetchone()
+            shift = Shift(row[0], str(row[1]), row[2], row[3], row[4], row[5], row[6], row[7])
+            cur.close()
+            return shift
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+                
 
     def shiftFromID(self, shiftId):
-
-        # create a cursor
-        cur = self._conn.cursor()
-
-        QUERY_STRING = 'SELECT shift_info.shift_id, shift_info.date,' + \
-            'shift_info.task_id, task_info.meal, task_info.task,' + \
-            'task_info.start_time, task_info.end_time, shift_info.cur_people FROM shift_info,' + \
-            'task_info WHERE shift_info.task_id = task_info.task_id AND ' + \
-            'shift_info.shift_id = %s'
-        cur.execute(QUERY_STRING, (shiftId,))
         
-        row = cur.fetchone()
-        shift = Shift(row[0], str(row[1]), row[2], row[3], row[4], row[5], row[6], row[7])
-        cur.close()
-        return shift
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'SELECT shift_info.shift_id, shift_info.date,' + \
+                'shift_info.task_id, task_info.meal, task_info.task,' + \
+                'task_info.start_time, task_info.end_time, shift_info.cur_people FROM shift_info,' + \
+                'task_info WHERE shift_info.task_id = task_info.task_id AND ' + \
+                'shift_info.shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftId,))
+            
+            row = cur.fetchone()
+            shift = Shift(row[0], str(row[1]), row[2], row[3], row[4], row[5], row[6], row[7])
+            cur.close()
+            return shift
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
 
     def subOut(self, netid, dateIn, taskId):
         try:
@@ -102,7 +111,7 @@ class Database:
             print(error)
             return False
 
-    def subIn(self, netid, dateIn, taskId, subOutId):
+    def subIn(self, netid, dateIn, taskId):
         try:
             cur = self._conn.cursor()
             shiftDate = datetime.date.fromisoformat(dateIn)
@@ -111,18 +120,18 @@ class Database:
                             'FROM shift_info, sub_requests ' + \
                            'WHERE shift_info.task_id = %s ' + \
                            'AND shift_info.date = %s ' + \
-                            'AND sub_requests.sub_out_netid = %s ' + \
                            'AND sub_requests.sub_in_netid = %s'
-            cur.execute(QUERY_STRING, (taskId, shiftDate, subOutId, 'needed'))
+            cur.execute(QUERY_STRING, (taskId, shiftDate, 'needed'))
             row = cur.fetchone()
             shiftId = row[0]
+            otherNetid = row[1]
 
             #need to figure out a way to only apply this once
             QUERY_STRING = 'UPDATE sub_requests ' + \
                            'SET sub_in_netid = %s' + \
                            'WHERE sub_requests.shift_id = %s ' + \
                            'AND sub_requests.sub_out_netid = %s'
-            cur.execute(QUERY_STRING, (netid, shiftId, subOutId))
+            cur.execute(QUERY_STRING, (netid, shiftId, otherNetid))
             self._conn.commit()
             print('Sub pick-up is committed.')
             cur.close()
@@ -168,6 +177,35 @@ class Database:
                 dateSubs.append(sub)
         return dateSubs
 
+    def allSubsForWeek(self, date):
+        subsList = self.allSubNeeded()
+
+        if datetime.date.fromisoformat(date).weekday() != 0:
+            print("Given date is not a Monday.")
+            return -1
+
+        monday = datetime.date.fromisoformat(date)
+        tuesday = monday + datetime.timedelta(days=1)
+        wednesday = tuesday + datetime.timedelta(days=1)
+        thursday = wednesday + datetime.timedelta(days=1)
+        friday = thursday + datetime.timedelta(days=1)
+        saturday = friday + datetime.timedelta(days=1)
+        sunday = saturday + datetime.timedelta(days=1)
+        week = [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+
+        weekFormatted = []
+        for day in week:
+            dayFormatted = day.isoformat()
+            weekFormatted.append(dayFormatted)
+        
+        retSubs = []
+        for sub in subsList:
+            if (sub.getDate() in weekFormatted):
+                retSub = str(datetime.date.fromisoformat(sub.getDate()).weekday()) + '-' + sub.getTaskID()
+                retSubs.append(retSub)
+
+        return retSubs
+
     def regularShifts(self, netid):
         try:
             cur = self._conn.cursor()
@@ -176,25 +214,58 @@ class Database:
                            'WHERE regular_shifts.netid = %s'
             cur.execute(QUERY_STRING, (netid, ))
 
+            def convertDay(dayString):
+                if (dayString == 'monday'): return '0'
+                if (dayString == 'tuesday'): return '1'
+                if (dayString == 'wednesday'): return '2'
+                if (dayString == 'thursday'): return '3'
+                if (dayString == 'friday'): return '4'
+                if (dayString == 'saturday'): return '5'
+                if (dayString == 'sunday'): return '6'
+
             row = cur.fetchone()
-            regShiftInfo = []
+            regShifts = []
             while row is not None:
-                regShiftInfo.append([row[0], row[1]])
+                regShift = convertDay(row[1]) + '-' + str(row[0])
+                regShifts.append(regShift)
                 row = cur.fetchone()
             cur.close()
 
-            return regShiftInfo
-            # Code below is not going to work because dotw is not same as date
-            '''
-            regShiftObjects = []
-            for info in regShiftInfo:
-                regShiftObject = self.shiftDetails(info[0], info[1])
-                regShiftObjects.append(regShiftObject)
-            return regShiftObjects
-            '''
+            return regShifts
+            
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             return False
+    '''
+    def populateShiftInfo(self, firstShiftId, date):
+        
+        try:
+            if datetime.date.fromisoformat(date).weekday() != 0:
+                print("Given date is not a Monday.")
+                return False
+
+            cur = self._conn.cursor()
+
+            
+
+    
+            QUERY_STRING = 'INSERT INTO shift_info(shift_id, date, task_id, cur_people) VALUES ' + \
+                           '(%s, %s, %s, %s);'
+            cur.execute(QUERY_STRING, (shift_id, date, task_id, curPeople))
+            self._conn.commit()
+            print('Shift_info table populated.')
+            cur.close()
+            return True
+
+            
+        
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Could not populate shif_info table.')
+            cur.close()
+            print(error)
+            return False
+    '''
         
 
 #-----------------------------------------------------------------------
@@ -204,7 +275,8 @@ class Database:
 if __name__ == '__main__':
     database = Database()
     database.connect()
-    
+
+    '''
     # Test shiftDetails *********** WORKS
     date = "2020-03-23"
     task_id = 1
@@ -235,14 +307,20 @@ if __name__ == '__main__':
     print('All Sub Needed Shifts for 2020-03-23: ')
     for shift in subNeededShiftsForDate:
         print(shift)
+    
+    # Test allSubsForWeek *********** WORKS
+    date = "2020-03-23"
+    print(database.allSubsForWeek(date))
 
     # Test regularShifts *********** WORKS
     netid = 'yujl'
     regShifts = database.regularShifts(netid)
     print()
     print('Regular shifts for yujl: ')
-    for i in range(len(regShifts)):
-        print(str(regShifts[i][0]) + ' ' + str(regShifts[i][1]))
+    for regShift in regShifts:
+        print(regShift)
+    '''
+
 
     database.disconnect()
 
