@@ -263,7 +263,10 @@
 			$('#friDate').html(week[4].toLocaleDateString());
 			$('#satDate').html(week[5].toLocaleDateString());
 			$('#sunDate').html(week[6].toLocaleDateString());
-			return week[0];
+			// return week[0];
+			var test = new Date(2020, 2, 23);
+			console.log(test);
+			return test;
 		}
 
 		function getColors() {
@@ -337,12 +340,13 @@
                 var taskId = $(this).attr('taskid');
                 var dotw = $(this).parents('td').attr("day");
                 var date = new Date();
-                date.setDate(mon.getDate() + parseInt(dotw));
+                date.setFullYear(mon.getFullYear(), mon.getMonth(), mon.getDate());
+                date.setDate(date.getDate() + parseInt(dotw));
                 iso = date.toISOString().substring(0, 10);
 
                 console.log(iso);
-                // dataURL += "?date=" + iso;
-                dataURL += "?taskid=" + taskId;
+                dataURL += "?date=" + iso;
+                dataURL += "&taskid=" + taskId;
                 $('#modalText').load(dataURL,function() {
                     $('#modal-body').modal({show:true});
                 });
@@ -353,10 +357,6 @@
 			mon = getDates();
 			getModalData(mon);
 			getColors();
-			// getDates();
-			// let test = new Date(2020, 2, 23);
-			// console.log(test);
-			// getModalData(test);
 			// enablePopovers();
 		}
 

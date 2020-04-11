@@ -162,7 +162,7 @@ def test():
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
     print("here")
-    date = "2020-03-23"
+    # date = "2020-03-23"
     # netid = request.cookies.get('netid')
     # if netid is None:
     #     netid = ''
@@ -171,9 +171,9 @@ def shiftDetails():
     # if errorMsg is None:
     #     errorMsg = ''
     #
-    # date = request.args.get('date')
-    # if date is None:
-    #     date = ''
+    date = request.args.get('date')
+    if date is None:
+        date = ''
 
     task_id = request.args.get('taskid')
     if task_id is None:
