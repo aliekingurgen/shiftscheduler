@@ -9,7 +9,7 @@ from sys import argv
 from database import Database
 from time import localtime, asctime, strftime
 from flask import Flask, request, make_response, redirect, url_for
-from flask import render_template
+from flask import render_template, jsonify
 from datetime import date, time
 from CASClient import CASClient
 
@@ -136,33 +136,6 @@ def team():
 
 #-----------------------------------------------------------------------
 
-@app.route('/test', methods=['GET'])
-def test():
-    netid = request.cookies.get('netid')
-    if netid is None:
-        netid = ''
-
-    try:
-        database = Database()
-        database.connect()
-    except Exception as e:
-        errorMsg = e
-
-    regShifts = database.regularShifts(netid)
-    print()
-    print('Regular shifts for yujl: ')
-    for i in range(len(regShifts)):
-        print(str(regShifts[i][0]) + ' ' + str(regShifts[i][1]))
-    database.disconnect()
-
-    html = render_template('test.html',
-                           netid=netid)
-    response = make_response(html)
-    response.set_cookie('netid', netid)
-    return response
-
-#-----------------------------------------------------------------------
-
 @app.route('/subIn', methods=['GET'])
 def subIn():
     netid = request.cookies.get('netid')
@@ -186,9 +159,9 @@ def subIn():
     successful = database.subIn(netid, date, task_id)
     database.disconnect()
     if successful:
-        html = "<br>Sub-In successful!"
+        html = "Sub-In successful!"
     else:
-        html = "<br>Sub-In not successful. Please try again."
+        html = "Sub-In not successful. Please try again."
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -218,9 +191,9 @@ def subOut():
     successful = database.subOut(netid, date, task_id)
     database.disconnect()
     if successful:
-        html = "<p>Sub-Out successful!</p>"
+        html = "Sub-Out successful!"
     else:
-        html = "<p>Sub-Out not successful. Please try again. </p>"
+        html = "Sub-Out not successful. Please try again."
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -241,18 +214,13 @@ def myShifts():
 
     shifts = database.regularShifts(netid)
     database.disconnect()
-    for shift in shifts:
-        print(shift)
 
-    return shifts
+    return jsonify(shifts)
 
 #-----------------------------------------------------------------------
 
 @app.route('/needSubShifts', methods=['GET'])
 def needSubShifts():
-    netid = request.cookies.get('netid')
-    if netid is None:
-        netid = ''
     mon = request.args.get('mon')
     if mon is None:
         mon = ''
@@ -265,7 +233,7 @@ def needSubShifts():
     subs = database.allSubsForWeek(mon)
     database.disconnect()
 
-    return subs
+    return jsonify(subs)
 
 # -----------------------------------------------------------------------
 
@@ -297,11 +265,14 @@ def shiftDetails():
 
     shift = database.shiftDetails(date, task_id)
     database.disconnect()
-    html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
-    html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
-    html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
-    html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
-    html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
+    if shift is None:
+        html = '<strong> Error: No data to display</strong>'
+    else:
+        html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
+        html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
+        html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
+        html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
+        html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
 
     response = make_response(html)
     return response
