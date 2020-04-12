@@ -237,7 +237,7 @@
 				<div class="modal-content">
 					 <div class="modal-header">
 						 <h5 class="modal-title" id="yourShiftLabel">Shift Details</h5>
-						 <button id = "subOutClose" onClick="window.location.reload();" data-dismiss="modal" type="button" class="close"  aria-label="Close">
+						 <button id = "subOutClose"  data-dismiss="modal" type="button" class="close"  aria-label="Close">
 							 <span aria-hidden="true">&times;</span>
 						</button>
 					 </div>
@@ -258,7 +258,7 @@
 				<div class="modal-content">
 					 <div class="modal-header">
 						 <h5 class="modal-title" id="needsSubShiftLabel">Shift Details</h5>
-						 <button id = "subInClose" type="button" onClick="window.location.reload();" data-dismiss="modal" class="close" aria-label="Close">
+						 <button id = "subInClose" type="button" data-dismiss="modal" class="close" aria-label="Close">
 							 <span aria-hidden="true">&times;</span>
 						</button>
 					 </div>
@@ -296,12 +296,12 @@
 	<script>
 		function getDates() {
 			let today = new Date();
-			console.log("today: " + today);
+
 			let dotw = today.getDay();
 			if(dotw == 0){
 				dotw = 6;
 			}
-			console.log("dotw: " + dotw);
+
 			mon = today.getDate() - dotw + 1;
 			let week = [];
 			let current = new Date();
@@ -325,8 +325,8 @@
 		function getColors(mon) {
 			url = '/myShifts'
 			$('#myShifts').load(url, function(responseTxt, statusTxt, xhr){
-				console.log("getColor")
-				console.log(responseTxt)
+
+
 				var found = false;
 				for (var i = 0; i < responseTxt.length; i++) {
 					curr = responseTxt[i];
@@ -442,7 +442,7 @@
 
 		function setup() {
 			mon = getDates();
-			console.log("monday: " + mon);
+
 			monFormat = mon.getFullYear() + '-';
 			if(mon.getMonth() < 10 ){
 				monFormat += "0" + (mon.getMonth()+1) + '-';
@@ -450,7 +450,6 @@
 				monFormat += mon.getMonth() + '-' ;
 			}
 			monFormat += mon.getDate();
-			console.log("monday passed in: " + monFormat);
 			getModalData(mon);
 			getColors(monFormat);
 			subOut();
