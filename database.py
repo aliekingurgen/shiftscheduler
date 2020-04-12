@@ -127,8 +127,8 @@ class Database:
             otherNetid = row[1]
 
             if otherNetid == netid:
-                QUERY_STRING = 'DELETE FROM sub_requests WHERE shift_id= %s AND sub_out_netid=%s AND sub_in_netid=%s'
-                cur.execute(QUERY_STRING, (shiftId, netid, netid))
+                QUERY_STRING = 'DELETE FROM sub_requests WHERE shift_id = %s AND sub_out_netid = %s'
+                cur.execute(QUERY_STRING, (shiftId, netid))
                 self._conn.commit()
                 print('Sub pick-up is committed.')
                 cur.close()
@@ -255,23 +255,24 @@ class Database:
                     regShifts.append(regShift)
                 row = cur.fetchone()
 
-            # remove netid's subbed out shifts
+            #remove netid's subbed out shifts
             QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
-                            'FROM sub_requests WHERE sub_out_netid = %s' + \
+                            'FROM sub_requests WHERE sub_out_netid = %s'
             cur.execute(QUERY_STRING, (netid,))
-            row = cur.fetchone()
-            while row is not None:
-                subbedOutShift = self.shiftFromID(row[0])
-                outShift = str(datetime.date.fromisoformat(subbedOutShift.getDate()).weekday()) + '-' + str(subbedOutShift.getTaskID())
-                if outShift in regShifts:
-                    regShifts.remove(outShift)
-                row = cur.fetchone()
-            
+            rows = cur.fetchall()
+            if rows is not None:
+                while row is rows:
+                    subbedOutShift = self.shiftFromID(row[0])
+                    outShift = str(datetime.date.fromisoformat(subbedOutShift.getDate()).weekday()) + '-' + str(subbedOutShift.getTaskID())
+                    if outShift in regShifts:
+                        regShifts.remove(outShift)
+
 
             cur.close()
             return regShifts
 
         except (Exception, psycopg2.DatabaseError) as error:
+            print("there is an error")
             print(error)
             return False
 
