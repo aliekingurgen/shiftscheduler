@@ -123,22 +123,29 @@ class Database:
                            'AND shift_info.shift_id = sub_requests.shift_id AND sub_requests.sub_in_netid = %s'
             cur.execute(QUERY_STRING, (taskId, shiftDate, 'needed'))
             row = cur.fetchone()
-            print(row)
             shiftId = row[0]
-            print(shiftId)
             otherNetid = row[1]
-            print(otherNetid)
 
-            # need to figure out a way to only apply this once
-            QUERY_STRING = 'UPDATE sub_requests ' + \
-                           'SET sub_in_netid = %s' + \
-                           'WHERE sub_requests.shift_id = %s ' + \
-                           'AND sub_requests.sub_out_netid = %s'
-            cur.execute(QUERY_STRING, (netid, shiftId, otherNetid))
-            self._conn.commit()
-            print('Sub pick-up is committed.')
-            cur.close()
-            return True
+            if otherNetid == netid:
+                QUERY_STRING = 'DELETE FROM sub_requests WHERE shift_id= %s AND sub_out_netid=%s AND sub_in_netid=%s'
+                cur.execute(QUERY_STRING, (shiftId, netid, netid))
+                self._conn.commit()
+                print('Sub pick-up is committed.')
+                cur.close()
+                return True
+
+            else:
+                # need to figure out a way to only apply this once
+                QUERY_STRING = 'UPDATE sub_requests ' + \
+                            'SET sub_in_netid = %s' + \
+                            'WHERE sub_requests.shift_id = %s ' + \
+                            'AND sub_requests.sub_out_netid = %s'
+                cur.execute(QUERY_STRING, (netid, shiftId, otherNetid))
+                self._conn.commit()
+                print('Sub pick-up is committed.')
+                cur.close()
+                return True
+
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Sub pick-up rolled back.')
@@ -211,12 +218,6 @@ class Database:
 
     def regularShifts(self, netid):
         try:
-            cur = self._conn.cursor()
-            QUERY_STRING = 'SELECT regular_shifts.task_id, regular_shifts.dotw ' + \
-                           'FROM regular_shifts ' + \
-                           'WHERE regular_shifts.netid = %s'
-            cur.execute(QUERY_STRING, (netid,))
-
             def convertDay(dayString):
                 if (dayString == 'monday'): return '0'
                 if (dayString == 'tuesday'): return '1'
@@ -226,23 +227,46 @@ class Database:
                 if (dayString == 'saturday'): return '5'
                 if (dayString == 'sunday'): return '6'
 
+            cur = self._conn.cursor()
+
+            # get netid's all regular shifts
+            QUERY_STRING = 'SELECT regular_shifts.task_id, regular_shifts.dotw ' + \
+                           'FROM regular_shifts ' + \
+                           'WHERE regular_shifts.netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
             row = cur.fetchone()
             regShifts = []
             while row is not None:
                 regShift = convertDay(row[1]) + '-' + str(row[0])
-                regShifts.append(regShift)
+                if regShift not in regShifts:
+                    regShifts.append(regShift)
                 row = cur.fetchone()
 
+            # get netid's all subbed in shifts
             QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
                            'FROM sub_requests WHERE sub_in_netid = %s'
             cur.execute(QUERY_STRING, (netid,))
             row = cur.fetchone()
             while row is not None:
                 subbedInShift = self.shiftFromID(row[0])
-                regShift = str(datetime.date.fromisoformat(subbedInShift.getDate()).weekday()) + '-' + str(
-                    subbedInShift.getTaskID())
-                regShifts.append(regShift)
+                regShift = str(datetime.date.fromisoformat(subbedInShift.getDate()).weekday()) + '-' + str(subbedInShift.getTaskID())
+                if regShift not in regShifts:
+                    regShifts.append(regShift)
                 row = cur.fetchone()
+
+            # remove netid's subbed out shifts
+            QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
+                            'FROM sub_requests WHERE sub_out_netid = %s' + \
+            cur.execute(QUERY_STRING, (netid,))
+            row = cur.fetchone()
+            while row is not None:
+                subbedOutShift = self.shiftFromID(row[0])
+                outShift = str(datetime.date.fromisoformat(subbedOutShift.getDate()).weekday()) + '-' + str(subbedOutShift.getTaskID())
+                if outShift in regShifts:
+                    regShifts.remove(outShift)
+                row = cur.fetchone()
+            
 
             cur.close()
             return regShifts
