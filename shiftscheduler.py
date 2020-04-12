@@ -213,6 +213,8 @@ def myShifts():
         errorMsg = e
 
     shifts = database.regularShifts(netid)
+    for shift in shifts:
+        print(shift)
     database.disconnect()
 
     return jsonify(shifts)
@@ -230,6 +232,7 @@ def needSubShifts():
     except Exception as e:
         errorMsg = e
 
+    print(mon);
     subs = database.allSubsForWeek(mon)
     database.disconnect()
 

@@ -21,7 +21,7 @@ from configparser import ConfigParser
 
 class Database:
 
-    def __init__(self):
+    def _init_(self):
         self._conn = None
 
     def connect(self):
@@ -120,11 +120,14 @@ class Database:
                            'FROM shift_info, sub_requests ' + \
                            'WHERE shift_info.task_id = %s ' + \
                            'AND shift_info.date = %s ' + \
-                           'AND sub_requests.sub_in_netid = %s'
+                           'AND shift_info.shift_id = sub_requests.shift_id AND sub_requests.sub_in_netid = %s'
             cur.execute(QUERY_STRING, (taskId, shiftDate, 'needed'))
             row = cur.fetchone()
+            print(row)
             shiftId = row[0]
+            print(shiftId)
             otherNetid = row[1]
+            print(otherNetid)
 
             # need to figure out a way to only apply this once
             QUERY_STRING = 'UPDATE sub_requests ' + \
@@ -229,8 +232,19 @@ class Database:
                 regShift = convertDay(row[1]) + '-' + str(row[0])
                 regShifts.append(regShift)
                 row = cur.fetchone()
-            cur.close()
 
+            QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
+                           'FROM sub_requests WHERE sub_in_netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+            row = cur.fetchone()
+            while row is not None:
+                subbedInShift = self.shiftFromID(row[0])
+                regShift = str(datetime.date.fromisoformat(subbedInShift.getDate()).weekday()) + '-' + str(
+                    subbedInShift.getTaskID())
+                regShifts.append(regShift)
+                row = cur.fetchone()
+
+            cur.close()
             return regShifts
 
         except (Exception, psycopg2.DatabaseError) as error:
@@ -354,42 +368,42 @@ if __name__ == '__main__':
     database.connect()
 
     '''
-    # Test shiftDetails *********** WORKS
+    # Test shiftDetails ***** WORKS
     date = "2020-03-23"
     task_id = 1
     shift = database.shiftDetails(date, task_id)
     print(shift)
 
-    # Test subOut ************* WORKS
+    # Test subOut ***** WORKS
     netid_out = 'trt2'
     sub_in_success = database.subOut(netid_out, date, task_id)
     print(sub_in_success)
 
-    # Test subIn ************* WORKS
+    # Test subIn ***** WORKS
     netid_in = 'ortaoglu'
     netid_out = 'trt2'
     sub_out_success = database.subIn(netid_in, date, task_id, netid_out)
     print(sub_out_success)
 
-    # Test allSubNeeded *********** WORKS
+    # Test allSubNeeded ***** WORKS
     subNeededShifts = database.allSubNeeded()
     print()
     print('All Sub Needed Shifts: ')
     for shift in subNeededShifts:
         print(shift)
 
-    # Test allSubsForData *********** WORKS
+    # Test allSubsForData ***** WORKS
     subNeededShiftsForDate = database.allSubsForDate(date)
     print()
     print('All Sub Needed Shifts for 2020-03-23: ')
     for shift in subNeededShiftsForDate:
         print(shift)
 
-    # Test allSubsForWeek *********** WORKS
+    # Test allSubsForWeek ***** WORKS
     date = "2020-03-23"
     print(database.allSubsForWeek(date))
 
-    # Test regularShifts *********** WORKS
+    # Test regularShifts ***** WORKS
     netid = 'yujl'
     regShifts = database.regularShifts(netid)
     print()
@@ -397,11 +411,9 @@ if __name__ == '__main__':
     for regShift in regShifts:
         print(regShift)
 
-    # Test populateShiftInfo *********** WORKS
+    # Test populateShiftInfo ***** WORKS
     date = "2020-04-13"
     boo = database.populateShiftInfo(date)
     '''
 
     database.disconnect()
-
-

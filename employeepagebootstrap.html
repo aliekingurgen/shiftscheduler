@@ -237,7 +237,7 @@
 				<div class="modal-content">
 					 <div class="modal-header">
 						 <h5 class="modal-title" id="yourShiftLabel">Shift Details</h5>
-						 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						 <button id = "subOutClose" onClick="window.location.reload();" data-dismiss="modal" type="button" class="close"  aria-label="Close">
 							 <span aria-hidden="true">&times;</span>
 						</button>
 					 </div>
@@ -246,7 +246,7 @@
 						</div>
                      <div class="modal-footer">
 						 <div id="sub-out-text"></div>
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+<!--						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
 						 <button type="button" id="subOutButton" class="btn btn-secondary">Sub-Out</button>
                      </div>
 				</div>
@@ -258,7 +258,7 @@
 				<div class="modal-content">
 					 <div class="modal-header">
 						 <h5 class="modal-title" id="needsSubShiftLabel">Shift Details</h5>
-						 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						 <button id = "subInClose" type="button" onClick="window.location.reload();" data-dismiss="modal" class="close" aria-label="Close">
 							 <span aria-hidden="true">&times;</span>
 						</button>
 					 </div>
@@ -267,7 +267,7 @@
 						</div>
                      <div class="modal-footer">
 						 <div id="sub-in-text"></div>
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+<!--						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
 						 <button type="button" id="subInButton" class="btn btn-secondary">Sub-In</button>
                      </div>
 				</div>
@@ -296,7 +296,12 @@
 	<script>
 		function getDates() {
 			let today = new Date();
+			console.log("today: " + today);
 			let dotw = today.getDay();
+			if(dotw == 0){
+				dotw = 6;
+			}
+			console.log("dotw: " + dotw);
 			mon = today.getDate() - dotw + 1;
 			let week = [];
 			let current = new Date();
@@ -313,18 +318,19 @@
 			$('#satDate').html(week[5].toLocaleDateString());
 			$('#sunDate').html(week[6].toLocaleDateString());
 			// return week[0];
-			var test = new Date(2020, 2, 23);
+			var test = new Date(2020, 3, 13);
 			return test;
 		}
 
 		function getColors(mon) {
 			url = '/myShifts'
 			$('#myShifts').load(url, function(responseTxt, statusTxt, xhr){
+				console.log("getColor")
 				console.log(responseTxt)
 				var found = false;
 				for (var i = 0; i < responseTxt.length; i++) {
 					curr = responseTxt[i];
-					// console.log(curr);
+					console.log(curr);
 					if (curr == "\"") {
 						if (!found) {
 							found = true;
@@ -339,9 +345,10 @@
 					}
 				}
 			});
+			console.log("mon2: "  + mon);
 			url = '/needSubShifts?mon=' + mon
 			$('#needsSubShifts').load(url, function(responseTxt, statusTxt, xhr){
-				console.log(responseTxt)
+				// console.log(responseTxt);
 				var found = false;
 				for (var i = 0; i < responseTxt.length; i++) {
 					curr = responseTxt[i];
@@ -370,8 +377,9 @@
 				url += date + "&taskid=" + taskId;
 				console.log(url);
 				$('#sub-out-text').load(url,function() {
-						$('#otherShift').modal('show');
-					});
+						$('#yourShift').modal('show');
+				});
+
 		 	});
 		}
 
@@ -383,8 +391,10 @@
 				url += date + "&taskid=" + taskId;
 				console.log(url);
 				$('#sub-in-text').load(url,function() {
-						$('#otherShift').modal('show');
-					});
+						$('#modalBody').modal('show');
+
+				});
+
 		 	});
 		}
 
@@ -432,10 +442,20 @@
 
 		function setup() {
 			mon = getDates();
+			console.log("monday: " + mon);
+			monFormat = mon.getFullYear() + '-';
+			if(mon.getMonth() < 10 ){
+				monFormat += "0" + (mon.getMonth()+1) + '-';
+			}else{
+				monFormat += mon.getMonth() + '-' ;
+			}
+			monFormat += mon.getDate();
+			console.log("monday passed in: " + monFormat);
 			getModalData(mon);
-			getColors(mon.toISOString().substring(0, 10));
+			getColors(monFormat);
 			subOut();
 			subIn();
+
 		}
 
 		$('document').ready(setup);
