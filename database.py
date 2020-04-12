@@ -96,13 +96,28 @@ class Database:
             row = cur.fetchone()
             shiftId = row[0]
 
-            QUERY_STRING = 'INSERT INTO sub_requests (shift_id, sub_out_netid, sub_in_netid) VALUES ' + \
-                           '(%s, %s, %s);'
-            cur.execute(QUERY_STRING, (shiftId, netid, 'needed'))
-            self._conn.commit()
-            print('Sub request is committed.')
-            cur.close()
-            return True
+            QUERY_STRING = 'SELECT sub_requests.shift_id FROM sub_requests ' + \
+                           'WHERE sub_requests.sub_in_netid = %s ' + \
+                           'AND sub_requests.shift_id = %s'
+            cur.execute(QUERY_STRING, (netid, shiftId))
+            row = cur.fetchone()
+            if row is not None:
+                QUERY_STRING = 'UPDATE sub_requests SET sub_requests.sub_in_netid = %s WHERE' + \
+                               'sub_requests.sub_in_netid = %s AND sub_requests.shift_id = %s'
+                cur.execute(QUERY_STRING, ('needed', netid, shiftId))
+                self._conn.commit()
+                print('Sub request is committed.')
+                cur.close()
+                return True
+
+            else:
+                QUERY_STRING = 'INSERT INTO sub_requests (shift_id, sub_out_netid, sub_in_netid) VALUES ' + \
+                               '(%s, %s, %s);'
+                cur.execute(QUERY_STRING, (shiftId, netid, 'needed'))
+                self._conn.commit()
+                print('Sub request is committed.')
+                cur.close()
+                return True
 
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
