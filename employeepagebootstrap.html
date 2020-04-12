@@ -325,8 +325,6 @@
 		function getColors(mon) {
 			url = '/myShifts'
 			$('#myShifts').load(url, function(responseTxt, statusTxt, xhr){
-
-
 				var found = false;
 				for (var i = 0; i < responseTxt.length; i++) {
 					curr = responseTxt[i];
@@ -334,7 +332,6 @@
 						if (!found) {
 							found = true;
 							var id = "#" + responseTxt.substring(i + 1, i + 4);
-							// console.log(id);
 							$(id).attr("class", "list-group-item list-group-item-action list-group-item-info");
 							$(id).attr("data-target", "#yourShift");
 						}
@@ -344,19 +341,15 @@
 					}
 				}
 			});
-			console.log("mon2: "  + mon);
 			url = '/needSubShifts?mon=' + mon
 			$('#needsSubShifts').load(url, function(responseTxt, statusTxt, xhr){
-				// console.log(responseTxt);
 				var found = false;
 				for (var i = 0; i < responseTxt.length; i++) {
 					curr = responseTxt[i];
-					// console.log(curr);
 					if (curr == "\"") {
 						if (!found) {
 							found = true;
 							var id = "#" + responseTxt.substring(i + 1, i + 4);
-							// console.log(id);
 							$(id).attr("class", "list-group-item list-group-item-action list-group-item-danger");
 							$(id).attr("data-target", "#needsSubShift");
 						}

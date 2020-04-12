@@ -260,12 +260,14 @@ class Database:
                             'FROM sub_requests WHERE sub_out_netid = %s'
             cur.execute(QUERY_STRING, (netid,))
             rows = cur.fetchall()
+            print(rows)
             if rows is not None:
-                while row is rows:
+                for row in rows:
                     subbedOutShift = self.shiftFromID(row[0])
                     outShift = str(datetime.date.fromisoformat(subbedOutShift.getDate()).weekday()) + '-' + str(subbedOutShift.getTaskID())
                     if outShift in regShifts:
                         regShifts.remove(outShift)
+
 
 
             cur.close()
