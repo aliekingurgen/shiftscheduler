@@ -59,7 +59,7 @@
 <main role="main">
 	<div class="container">
 		<br>
-		<h1 style = "font-size: 20px">This Week's Calendar:</h1>
+		<h1 style="font-size: 20px">This Week's Calendar:</h1>
 		<br>
 	  <table class="table" align="center" cellpadding="10" cellspacing="5">
           <thead>
@@ -135,7 +135,7 @@
 			<td id="monDinner" day ="0">
 				<div class="list-group">
 					<a id="0-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
-					   data-target="#yourShift">Manager</a>
+					   data-target="#otherShift">Manager</a>
 					<a id="0-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
 					   data-target="#otherShift">First Dinner</a>
 					 <a id="0-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light" data-container="body" data-toggle="modal"
@@ -280,11 +280,11 @@
 	</div>
 </main>
 
-<!--	<input type="hidden" id="myShifts">-->
-<!--	<input type="hidden" id="needsSubShifts">-->
+	<input type="hidden" id="myShifts">
+	<input type="hidden" id="needsSubShifts">
 
-	<div id="myShifts"></div>
-	<div id="needsSubShifts"> </div>
+<!--	<div id="myShifts"></div>-->
+<!--	<div id="needsSubShifts"> </div>-->
 
 
 	<footer class="footer">
@@ -298,9 +298,6 @@
 			let today = new Date();
 
 			let dotw = today.getDay();
-			if(dotw == 0){
-				dotw = 6;
-			}
 
 			mon = today.getDate() - dotw + 1;
 			let week = [];
@@ -317,9 +314,9 @@
 			$('#friDate').html(week[4].toLocaleDateString());
 			$('#satDate').html(week[5].toLocaleDateString());
 			$('#sunDate').html(week[6].toLocaleDateString());
-			// return week[0];
-			var test = new Date(2020, 3, 13);
-			return test;
+			return week[0];
+			// var test = new Date(2020, 3, 13);
+			// return test;
 		}
 
 		function getColors(mon) {
@@ -367,9 +364,9 @@
 				var taskId = $(this).attr('taskid');
 				var date = $(this).attr('date');
 				url += date + "&taskid=" + taskId;
-				console.log(url);
+				// console.log(url);
 				$('#sub-out-text').load(url,function() {
-						$('#yourShift').modal('show');
+					$('#yourShift').modal('show');
 				});
 
 		 	});
@@ -381,12 +378,10 @@
 				var taskId = $(this).attr('taskid');
 				var date = $(this).attr('date');
 				url += date + "&taskid=" + taskId;
-				console.log(url);
+				// console.log(url);
 				$('#sub-in-text').load(url,function() {
-						$('#modalBody').modal('show');
-
+					$('#modalBody').modal('show');
 				});
-
 		 	});
 		}
 
@@ -400,7 +395,7 @@
                 date.setDate(date.getDate() + parseInt(dotw));
                 iso = date.toISOString().substring(0, 10);
 
-                console.log(iso);
+                // console.log(iso);
                 dataURL += "?date=" + iso;
                 dataURL += "&taskid=" + taskId;
                 var modalId = $(this).attr('data-target');
@@ -409,13 +404,11 @@
                 $('#subInButton').attr('date', iso);
                 $('#subInButton').attr('taskid', taskId);
                 if (modalId == '#otherShift') {
-                	console.log("here");
                 	$('#otherShiftText').load(dataURL,function() {
 						$('#otherShift').modal('show');
 					});
                 }
                 else if (modalId == '#yourShift') {
-                	console.log(modalId);
                 	$('#yourShiftText').load(dataURL,function() {
                 		$('#otherShift').modal('hide');
                 		$('#otherShift').modal('hide');
@@ -434,7 +427,6 @@
 
 		function setup() {
 			mon = getDates();
-
 			monFormat = mon.getFullYear() + '-';
 			if(mon.getMonth() < 10 ){
 				monFormat += "0" + (mon.getMonth()+1) + '-';
@@ -446,7 +438,6 @@
 			getColors(monFormat);
 			subOut();
 			subIn();
-
 		}
 
 		$('document').ready(setup);

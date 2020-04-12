@@ -20,37 +20,12 @@ app = Flask(__name__, template_folder='.')
 app.secret_key = b'\xcdt\x8dn\xe1\xbdW\x9d[}yJ\xfc\xa3~/'
 #-----------------------------------------------------------------------
 
-def getAmPm():
-    if strftime('%p') == "AM":
-        return 'morning'
-    return 'afternoon' 
-
-#-----------------------------------------------------------------------
-
-# def getCurrentTime():
-#     return asctime(localtime())
-
-#-----------------------------------------------------------------------
-
-def getCalendarDate():
-    return asctime(localtime())
-
-#-----------------------------------------------------------------------
-
-def getURL(date, taskid):
-    return '/shiftdetails?date=' + date + '&taskid=' + taskid
-
-#-----------------------------------------------------------------------
-
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
 
     netid = CASClient().authenticate().strip()
-    # html = render_template('index.html',
-    #     name = username,
-    #     ampm=getAmPm(),
-    #     currentTime=getCurrentTime())
+
     html = render_template('indexbootstrap.html',
         name = netid)
     response = make_response(html)
@@ -62,8 +37,6 @@ def index():
 @app.route('/employeepage', methods=['GET'])
 def employeePage():
 
-    NUM_DAYS = 7
-
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
@@ -72,22 +45,9 @@ def employeePage():
     if errorMsg is None:
         errorMsg = ''
 
-    # html = render_template('employeepage.html',
-    #     ampm=getAmPm(),
-    #     currentTime=currentTime,
-    #     errorMsg=errorMsg,
-    #     monday=dates[0],
-    #     tuesday=dates[1],
-    #     wednesday=dates[2],
-    #     thursday=dates[3],
-    #     friday=dates[4],
-    #     saturday=dates[5],
-    #     sunday=dates[6]
-    #                        )
     html = render_template('employeepagebootstrap.html',
         netid=netid,
-        errorMsg=errorMsg,
-                    )
+        errorMsg=errorMsg)
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -96,6 +56,7 @@ def employeePage():
 
 @app.route('/coordinatorpage', methods=['GET'])
 def coordinatorPage():
+
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
@@ -110,6 +71,7 @@ def coordinatorPage():
 
 @app.route('/profile', methods=['GET'])
 def profile():
+
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
@@ -124,6 +86,7 @@ def profile():
 
 @app.route('/team', methods=['GET'])
 def team():
+
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
@@ -138,6 +101,7 @@ def team():
 
 @app.route('/subIn', methods=['GET'])
 def subIn():
+
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
@@ -170,6 +134,7 @@ def subIn():
 
 @app.route('/subOut', methods=['GET'])
 def subOut():
+
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
@@ -202,6 +167,7 @@ def subOut():
 
 @app.route('/myShifts', methods=['GET'])
 def myShifts():
+
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
@@ -216,13 +182,13 @@ def myShifts():
     for shift in shifts:
         print(shift)
     database.disconnect()
-
     return jsonify(shifts)
 
 #-----------------------------------------------------------------------
 
 @app.route('/needSubShifts', methods=['GET'])
 def needSubShifts():
+
     mon = request.args.get('mon')
     if mon is None:
         mon = ''
@@ -242,7 +208,6 @@ def needSubShifts():
 
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
-    print("here")
     # date = "2020-03-23"
     # netid = request.cookies.get('netid')
     # if netid is None:
