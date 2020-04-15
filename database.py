@@ -10,6 +10,7 @@ from sys import stderr
 # from os import path, environ
 import os
 from shift import Shift
+from employee import Employee
 
 import psycopg2
 import datetime
@@ -399,7 +400,91 @@ class Database:
             cur.close()
             print(error)
             return False
+    
+    def employeeDetails(self, netid):
 
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return 'Employee does not exist.'
+
+            QUERY_STRING = 'SELECT * FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+            cur.close()
+            return employee
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+        
+    def insertEmployee(self, netid, first_name, last_name, manager):
+
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is not None:
+                print('Employee already exists.')
+                cur.close()
+                return 'Employee already exists.'
+                
+            email = netid + '@princeton.edu'
+            QUERY_STRING = 'INSERT INTO employees (netid, first_name, last_name, hours, total_hours, email, manager) ' + \
+                            'VALUES (%s, %s, %s, 0, 0, %s, %s)'
+            cur.execute(QUERY_STRING, (netid, first_name, last_name, email, manager))
+            self._conn.commit()
+            print('Added employee: ' + netid + ' ' + first_name + ' ' + last_name + ' ' + manager)
+
+            cur.close()
+            return True
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Could not add the employee.')
+            cur.close()
+            print(error)
+            return False
+    
+    def removeEmployee(self, netid):
+
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return 'Employee does not exist.'
+                
+            QUERY_STRING = 'DELETE FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+            self._conn.commit()
+            print('Removed employee: ' + netid)
+            cur.close()
+            return True
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Could not remove the employee.')
+            cur.close()
+            print(error)
+            return False
 
 # -----------------------------------------------------------------------
 
@@ -457,5 +542,17 @@ if __name__ == '__main__':
     date = "2020-04-13"
     boo = database.populateShiftInfo(date)
     '''
+
+    # Test insertEmployee ***** WORKS
+    database.insertEmployee('testguy', 'test', 'guy', 'N')
+
+    # Test employeeDetails ***** WORKS
+    employee = database.employeeDetails('testguy')
+    print (employee.getFirstName() + ' ' + employee.getLastName() + ' ' + employee.getPosition()
+            + ' ' + employee.getHours() + ' ' + employee.getTotalHours() + ' ' + employee.getEmail())
+
+    # Test removeEmployee ***** WORKS
+    database.removeEmployee('testguy')
+
 
     database.disconnect()
