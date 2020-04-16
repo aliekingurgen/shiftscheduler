@@ -87,12 +87,12 @@ class Database:
 
     def subOut(self, netid, dateIn, taskId):
         try:
+            cur = self._conn.cursor()
             shiftDate = datetime.date.fromisoformat(dateIn)
-            if shiftDate < datetime.now():
+            if shiftDate < datetime.datetime.now().date():
                 print('SubOut requested for an old shift.')
                 return False
 
-            cur = self._conn.cursor()
             shiftDate = datetime.date.fromisoformat(dateIn)
 
             QUERY_STRING = 'SELECT shift_info.shift_id FROM shift_info ' + \
@@ -134,12 +134,12 @@ class Database:
 
     def subIn(self, netid, dateIn, taskId):
         try:
+            cur = self._conn.cursor()
             shiftDate = datetime.date.fromisoformat(dateIn)
-            if shiftDate < datetime.now():
+            if shiftDate < datetime.datetime.now().date():
                 print('SubOut requested for an old shift.')
                 return False
 
-            cur = self._conn.cursor()
             shiftDate = datetime.date.fromisoformat(dateIn)
 
             QUERY_STRING = 'SELECT shift_info.shift_id, sub_requests.sub_out_netid ' + \
