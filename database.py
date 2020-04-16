@@ -283,8 +283,40 @@ class Database:
                     outShift = str(datetime.date.fromisoformat(subbedOutShift.getDate()).weekday()) + '-' + str(subbedOutShift.getTaskID())
                     if outShift in regShifts:
                         regShifts.remove(outShift)
+            cur.close()
+            return regShifts
 
+        except (Exception, psycopg2.DatabaseError) as error:
+            print("there is an error")
+            print(error)
+            return False
+    
+    def regularShifts2(self, netid):
+        try:
+            def convertDay(dayString):
+                if (dayString == 'monday'): return '0'
+                if (dayString == 'tuesday'): return '1'
+                if (dayString == 'wednesday'): return '2'
+                if (dayString == 'thursday'): return '3'
+                if (dayString == 'friday'): return '4'
+                if (dayString == 'saturday'): return '5'
+                if (dayString == 'sunday'): return '6'
 
+            cur = self._conn.cursor()
+
+            # get netid's all regular shifts
+            QUERY_STRING = 'SELECT regular_shifts.task_id, regular_shifts.dotw ' + \
+                           'FROM regular_shifts ' + \
+                           'WHERE regular_shifts.netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            regShifts = []
+            while row is not None:
+                regShift = convertDay(row[1]) + '-' + str(row[0])
+                if regShift not in regShifts:
+                    regShifts.append(regShift)
+                row = cur.fetchone()
 
             cur.close()
             return regShifts
