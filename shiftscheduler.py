@@ -61,6 +61,17 @@ def coordinatorPage():
     if netid is None:
         netid = ''
 
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    allSubsNeeded = database.allSubNeeded()
+    for shift in allSubsNeeded:
+        print(shift)
+    database.disconnect()
+
     html = render_template('coordinatorbootstrap.html',
                            netid=netid)
     response = make_response(html)
@@ -76,8 +87,23 @@ def profile():
     if netid is None:
         netid = ''
 
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    employee = database.employeeDetails(netid)
+    shifts = database.regularShifts(netid)
+    database.disconnect()
+
+    name = employee.getFirstName() + ' ' + employee.getLastName()
+    position = employee.getPosition()
+
     html = render_template('profile.html',
-                           netid=netid)
+                           netid=netid,
+                           name=name,
+                           position=position)
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -203,6 +229,78 @@ def needSubShifts():
     database.disconnect()
 
     return jsonify(subs)
+
+#-----------------------------------------------------------------------
+
+@app.route('/insertEmployee', methods=['GET'])
+def insertEmployee():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    employeenetid = request.args.get('employeenetid')
+    if employeenetid is None:
+        employeenetid = ''
+
+    firstname = request.args.get('firstname')
+    if firstname is None:
+        firstname = ''
+
+    lastname = request.args.get('lastname')
+    if lastname is None:
+        lastname = ''
+
+    manager = request.args.get('manager')
+    if manager is None:
+        manager = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    successful = database.insertEmployee(employeenetid, firstname, lastname, manager)
+    database.disconnect()
+
+    if successful:
+        html = employeenetid + ' was successfully added!'
+    else:
+        html = employeenetid + ' was not added. Please try again.'
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/removeEmployee', methods=['GET'])
+def removeEmployee():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    employeenetid = request.args.get('employeenetid')
+    if employeenetid is None:
+        employeenetid = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    successful = database.removeEmployee(employeenetid)
+    database.disconnect()
+
+    if successful:
+        html = employeenetid + ' was successfully removed!'
+    else:
+        html = employeenetid + ' was not removed. Please try again.'
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
 
 # -----------------------------------------------------------------------
 
