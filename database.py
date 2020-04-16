@@ -462,6 +462,10 @@ class Database:
     def insertEmployee(self, netid, first_name, last_name, manager):
 
         try:
+            if (not netid) or (not first_name) or (not last_name) or (not manager):
+                print('Please enter all required information.')
+                return 'Please enter all required information.'
+
             # create a cursor
             cur = self._conn.cursor()
 
@@ -493,6 +497,11 @@ class Database:
     def removeEmployee(self, netid):
 
         try:
+
+            if not netid:
+                print('Please enter all required information.')
+                return 'Please enter all required information.'
+
             # create a cursor
             cur = self._conn.cursor()
 
