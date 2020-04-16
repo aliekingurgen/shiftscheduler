@@ -464,7 +464,7 @@ class Database:
         try:
             if (not netid) or (not first_name) or (not last_name) or (not manager):
                 print('Please enter all required information.')
-                return 'Please enter all required information.'
+                return False
 
             # create a cursor
             cur = self._conn.cursor()
@@ -476,7 +476,7 @@ class Database:
             if row is not None:
                 print('Employee already exists.')
                 cur.close()
-                return 'Employee already exists.'
+                return False
                 
             email = netid + '@princeton.edu'
             QUERY_STRING = 'INSERT INTO employees (netid, first_name, last_name, hours, total_hours, email, manager) ' + \
@@ -500,7 +500,7 @@ class Database:
 
             if not netid:
                 print('Please enter all required information.')
-                return 'Please enter all required information.'
+                return False
 
             # create a cursor
             cur = self._conn.cursor()
@@ -512,7 +512,7 @@ class Database:
             if row is None:
                 print('Employee does not exist.')
                 cur.close()
-                return 'Employee does not exist.'
+                return False
                 
             QUERY_STRING = 'DELETE FROM employees WHERE netid = %s'
             cur.execute(QUERY_STRING, (netid,))
