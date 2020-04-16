@@ -79,6 +79,31 @@ def coordinatorPage():
     return response
 
 #-----------------------------------------------------------------------
+@app.route('/coordinatorschedule', methods=['GET'])
+def coordinatorSchedule():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    allSubsNeeded = database.allSubNeeded()
+    for shift in allSubsNeeded:
+        print(shift)
+    database.disconnect()
+
+    html = render_template('coordinatorschedule.html',
+                           netid=netid)
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
 
 @app.route('/profile', methods=['GET'])
 def profile():
@@ -94,7 +119,7 @@ def profile():
         errorMsg = e
 
     employee = database.employeeDetails(netid)
-    shifts = database.regularShifts(netid)
+    shifts = database.regularShifts2(netid)
     database.disconnect()
 
     name = employee.getFirstName() + ' ' + employee.getLastName()
