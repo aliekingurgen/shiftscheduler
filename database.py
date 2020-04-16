@@ -153,9 +153,9 @@ class Database:
             else:
                 # need to figure out a way to only apply this once
                 QUERY_STRING = 'UPDATE sub_requests ' + \
-                            'SET sub_in_netid = %s' + \
-                            'WHERE sub_requests.shift_id = %s ' + \
-                            'AND sub_requests.sub_out_netid = %s'
+                               'SET sub_in_netid = %s' + \
+                               'WHERE sub_requests.shift_id = %s ' + \
+                               'AND sub_requests.sub_out_netid = %s'
                 cur.execute(QUERY_STRING, (netid, shiftId, otherNetid))
                 self._conn.commit()
                 print('Sub pick-up is committed.')
@@ -266,21 +266,23 @@ class Database:
             row = cur.fetchone()
             while row is not None:
                 subbedInShift = self.shiftFromID(row[0])
-                regShift = str(datetime.date.fromisoformat(subbedInShift.getDate()).weekday()) + '-' + str(subbedInShift.getTaskID())
+                regShift = str(datetime.date.fromisoformat(subbedInShift.getDate()).weekday()) + '-' + str(
+                    subbedInShift.getTaskID())
                 if regShift not in regShifts:
                     regShifts.append(regShift)
                 row = cur.fetchone()
 
-            #remove netid's subbed out shifts
+            # remove netid's subbed out shifts
             QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
-                            'FROM sub_requests WHERE sub_out_netid = %s'
+                           'FROM sub_requests WHERE sub_out_netid = %s'
             cur.execute(QUERY_STRING, (netid,))
             rows = cur.fetchall()
             print(rows)
             if rows is not None:
                 for row in rows:
                     subbedOutShift = self.shiftFromID(row[0])
-                    outShift = str(datetime.date.fromisoformat(subbedOutShift.getDate()).weekday()) + '-' + str(subbedOutShift.getTaskID())
+                    outShift = str(datetime.date.fromisoformat(subbedOutShift.getDate()).weekday()) + '-' + str(
+                        subbedOutShift.getTaskID())
                     if outShift in regShifts:
                         regShifts.remove(outShift)
             cur.close()
@@ -290,7 +292,7 @@ class Database:
             print("there is an error")
             print(error)
             return False
-    
+
     def regularShifts2(self, netid):
         try:
             def convertDay(dayString):
@@ -432,7 +434,7 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     def employeeDetails(self, netid):
 
         try:
@@ -458,10 +460,14 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             print(error)
-        
+
     def insertEmployee(self, netid, first_name, last_name, manager):
 
         try:
+            if (not netid) or (not first_name) or (not last_name) or (not manager):
+                print('Please enter all required information.')
+                return False
+
             # create a cursor
             cur = self._conn.cursor()
 
@@ -472,11 +478,11 @@ class Database:
             if row is not None:
                 print('Employee already exists.')
                 cur.close()
-                return 'Employee already exists.'
-                
+                return False
+
             email = netid + '@princeton.edu'
             QUERY_STRING = 'INSERT INTO employees (netid, first_name, last_name, hours, total_hours, email, manager) ' + \
-                            'VALUES (%s, %s, %s, 0, 0, %s, %s)'
+                           'VALUES (%s, %s, %s, 0, 0, %s, %s)'
             cur.execute(QUERY_STRING, (netid, first_name, last_name, email, manager))
             self._conn.commit()
             print('Added employee: ' + netid + ' ' + first_name + ' ' + last_name + ' ' + manager)
@@ -489,10 +495,15 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     def removeEmployee(self, netid):
 
         try:
+
+            if not netid:
+                print('Please enter all required information.')
+                return False
+
             # create a cursor
             cur = self._conn.cursor()
 
@@ -503,8 +514,8 @@ class Database:
             if row is None:
                 print('Employee does not exist.')
                 cur.close()
-                return 'Employee does not exist.'
-                
+                return False
+
             QUERY_STRING = 'DELETE FROM employees WHERE netid = %s'
             cur.execute(QUERY_STRING, (netid,))
             self._conn.commit()
@@ -517,6 +528,7 @@ class Database:
             cur.close()
             print(error)
             return False
+
 
 # -----------------------------------------------------------------------
 
@@ -580,11 +592,10 @@ if __name__ == '__main__':
 
     # Test employeeDetails ***** WORKS
     employee = database.employeeDetails('testguy')
-    print (employee.getFirstName() + ' ' + employee.getLastName() + ' ' + employee.getPosition()
-            + ' ' + employee.getHours() + ' ' + employee.getTotalHours() + ' ' + employee.getEmail())
+    print(employee.getFirstName() + ' ' + employee.getLastName() + ' ' + employee.getPosition()
+          + ' ' + employee.getHours() + ' ' + employee.getTotalHours() + ' ' + employee.getEmail())
 
     # Test removeEmployee ***** WORKS
     database.removeEmployee('testguy')
-
 
     database.disconnect()
