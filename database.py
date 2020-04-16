@@ -87,6 +87,11 @@ class Database:
 
     def subOut(self, netid, dateIn, taskId):
         try:
+            shiftDate = datetime.date.fromisoformat(dateIn)
+            if shiftDate < datetime.now():
+                print('SubOut requested for an old shift.')
+                return False
+
             cur = self._conn.cursor()
             shiftDate = datetime.date.fromisoformat(dateIn)
 
@@ -129,6 +134,11 @@ class Database:
 
     def subIn(self, netid, dateIn, taskId):
         try:
+            shiftDate = datetime.date.fromisoformat(dateIn)
+            if shiftDate < datetime.now():
+                print('SubOut requested for an old shift.')
+                return False
+
             cur = self._conn.cursor()
             shiftDate = datetime.date.fromisoformat(dateIn)
 
@@ -232,7 +242,7 @@ class Database:
 
         return retSubs
 
-    def regularShifts(self, netid):
+    def myShifts(self, netid):
         try:
             def convertDay(dayString):
                 if (dayString == 'monday'): return '0'
@@ -293,7 +303,7 @@ class Database:
             print(error)
             return False
 
-    def regularShifts2(self, netid):
+    def regularShifts(self, netid):
         try:
             def convertDay(dayString):
                 if (dayString == 'monday'): return '0'
