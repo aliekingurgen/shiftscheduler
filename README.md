@@ -1,4 +1,4 @@
-# shiftscheduler
+# shiftscheduler - https://shiftscheduler.herokuapp.com/
 COS 333 Advanced Programming Techniques final project
 
 **Team member names and email addresses:**<br/>
