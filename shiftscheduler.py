@@ -27,7 +27,7 @@ def index():
     netid = CASClient().authenticate().strip()
 
     html = render_template('indexbootstrap.html',
-        name = netid)
+        netid = netid)
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
