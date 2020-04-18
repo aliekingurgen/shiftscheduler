@@ -96,7 +96,7 @@
 			<br>
 
       <div style="overflow-y:scroll;height:400px;">
-				<table class="table overflow-auto">
+				<table class="table">
 					{%for employee in employees %}
 					{% set url = "/employeeDetails?netid=" + employee.getNetID()%}
 					<tr><td><a href="#" link={{url}} class="text-info employeeItem">
@@ -194,6 +194,9 @@ function insertEmployee() {
     url +=  "&lastname=" + lastname + "&manager=" + manager;
     // console.log(url);
     $('#add-text').load(url);
+		setTimeout(function(){
+			window.location.reload()
+		},1000);
     // $('#add-employee').val('');
     // $('#firstName').val('');
     // $('#lastName').val('');
@@ -207,7 +210,9 @@ function removeEmployee() {
     var url = "/removeEmployee?employeenetid=" + netid;
     // console.log(url);
     $('#remove-text').load(url);
-    // $('#remove-employee').val('');
+		setTimeout(function(){
+			window.location.reload()
+		},1000);
   });
 }
 
