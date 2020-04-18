@@ -2,7 +2,7 @@
 
 # -----------------------------------------------------------------------
 # database.py
-# Author: Bob Dondero
+# Author: Shift Scheduler Team
 # -----------------------------------------------------------------------
 
 from sqlite3 import connect
@@ -102,6 +102,8 @@ class Database:
             row = cur.fetchone()
             shiftId = row[0]
 
+            self.unassignShift(netid, shiftId)
+
             QUERY_STRING = 'SELECT sub_requests.shift_id FROM sub_requests ' + \
                            'WHERE sub_requests.sub_in_netid = %s ' + \
                            'AND sub_requests.shift_id = %s'
@@ -151,6 +153,8 @@ class Database:
             row = cur.fetchone()
             shiftId = row[0]
             otherNetid = row[1]
+
+            self.assignShift(netid, shiftId)
 
             if otherNetid == netid:
                 QUERY_STRING = 'DELETE FROM sub_requests WHERE shift_id = %s AND sub_out_netid = %s'
@@ -534,13 +538,12 @@ class Database:
                     employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
                     employeeList.append(employee)
             cur.close()
-            return employeeList
+            employeeListSorted = sorted(employeeList, key=lambda x: x._last_name)
+            return employeeListSorted
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             print(error)
                 
-            
-
     def insertEmployee(self, netid, first_name, last_name, manager):
 
         try:
@@ -578,7 +581,6 @@ class Database:
     def removeEmployee(self, netid):
 
         try:
-
             if not netid:
                 print('Please enter all required information.')
                 return False
@@ -603,6 +605,124 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not remove the employee.')
+            cur.close()
+            print(error)
+            return False
+
+    def assignShift(self, netid, shiftid):
+        try:
+            if (not netid) or (shiftid is None):
+                print('Please enter all required information.')
+                return False
+            
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if netid exists
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return False
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+
+            # Check if shift-netid par is already in the table
+            QUERY_STRING = 'SELECT * FROM shift_assign WHERE shift_id = %s AND netid = %s'
+            cur.execute(QUERY_STRING, (shiftid, netid))
+            row = cur.fetchone()
+            if row is not None:
+                print('Employee is already assigned to this shift.')
+                cur.close()
+                return False
+            
+            # Insert into shift_assign
+            QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
+            cur.execute(QUERY_STRING, (shiftid, netid))
+            self._conn.commit()
+            print('Added shift-employee pair: ' + str(shiftid) + ' ' + netid)
+
+            # Update shift_info
+            QUERY_STRING = 'UPDATE shift_info SET cur_people = cur_people + 1 WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+            self._conn.commit()
+            print('Incremented current people for shift: ' + str(shiftid))
+
+            cur.close()
+            return True
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Could not assign the shift to employee.')
+            cur.close()
+            print(error)
+            return False
+
+    def unassignShift(self, netid, shiftid):
+        try:
+            if (not netid) or (shiftid is None):
+                print('Please enter all required information.')
+                return False
+            
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if netid exists
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return False
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+
+            # Check if shift-netid pair is already in the table
+            QUERY_STRING = 'SELECT * FROM shift_assign WHERE shift_id = %s AND netid = %s'
+            cur.execute(QUERY_STRING, (shiftid, netid))
+            row = cur.fetchone()
+            if row is None:
+                print('Employee is not assigned to this shift.')
+                cur.close()
+                return False
+            
+            # Remove from shift_assign
+            QUERY_STRING = 'DELETE FROM shift_assign WHERE shift_id = %s AND netid = %s'
+            cur.execute(QUERY_STRING, (shiftid, netid))
+            self._conn.commit()
+            print('Removed shift-employee pair: ' + str(shiftid) + ' ' + netid)
+
+            # Update shift_info
+            QUERY_STRING = 'UPDATE shift_info SET cur_people = cur_people - 1 WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+            self._conn.commit()
+            print('Decremented current people for shift: ' + str(shiftid))
+
+            cur.close()
+            return True
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Could not unassign the shift to employee.')
             cur.close()
             print(error)
             return False
@@ -663,7 +783,6 @@ if __name__ == '__main__':
     # Test populateShiftInfo ***** WORKS
     date = "2020-04-13"
     boo = database.populateShiftInfo(date)
-    '''
 
     # Test insertEmployee ***** WORKS
     database.insertEmployee('testguy', 'test', 'guy', 'N')
@@ -684,15 +803,17 @@ if __name__ == '__main__':
     employee = database.employeeDetails('testguy')
     print(employee.getFirstName() + ' ' + employee.getLastName() + ' ' + employee.getPosition()
           + ' ' + employee.getHours() + ' ' + employee.getTotalHours() + ' ' + employee.getEmail())
-
     '''
     # Test getAllEmployees ***** WORKS
     employees = database.getAllEmployees()
     for indEmployee in employees:
         print(str(indEmployee))
     '''
-
     # Test removeEmployee ***** WORKS
     database.removeEmployee('testguy')
-
+    
+    # Test assignShift ***** WORKS
+    database.unassignShift('agurgen', 440)
+    '''
+    
     database.disconnect()
