@@ -338,6 +338,54 @@ class Database:
             print(error)
             return False
 
+    def addRegularShift(self, netid, taskid, dotw):
+        try:
+            # should probably check input, currently assuming dotw is in string format and not number? will add later
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'INSERT INTO regular_shifts(netid, task_id, dotw) VALUES (%s, %s, %s)'
+            cur.execute(QUERY_STRING, (netid, taskid, dotw))
+            self._conn.commit()
+            print('Added regular shift: ' + str(taskid) + ' on ' + str(dotw) + ' to '  + str(netid))
+
+            cur.close()
+            return True
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Could not add the regular shift.')
+            cur.close()
+            print(error)
+            return False
+
+    def removeRegularShift(self, netid, taskid, dotw):
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'SELECT regular_shifts.netid, regular_shifts.task_id, regular_shifts.dotw FROM regular_shifts WHERE netid = %s AND task_id = %s AND dotw = %s'
+            print('hello there')
+            cur.execute(QUERY_STRING, (netid, taskid, dotw,))
+            print('general kenobi')
+
+            row = cur.fetchone()
+            if row is None:
+                print('Regular shift does not exist.')
+                cur.close()
+                return False
+            QUERY_STRING = 'DELETE FROM regular_shifts WHERE netid = %s AND task_id = %s AND dotw = %s'
+            cur.execute(QUERY_STRING, (netid, taskid, dotw))
+            self._conn.commit()
+            print('Removed regular shift: ' + str(taskid) + ' on ' + str(dotw) + ' from '  + str(netid))
+            cur.close()
+            return True
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Could not remove the regular shift.')
+            cur.close()
+            print(error)
+            return False
+
     def populateShiftInfo(self, dateIn):
 
         try:
@@ -471,6 +519,28 @@ class Database:
             cur.close()
             print(error)
 
+    def getAllEmployees(self):
+        
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+            QUERY_STRING = 'SELECT * FROM employees'
+            cur.execute(QUERY_STRING, ())
+        
+            employeeList = []
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+                    employeeList.append(employee)
+            cur.close()
+            return employeeList
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+                
+            
+
     def insertEmployee(self, netid, first_name, last_name, manager):
 
         try:
@@ -598,10 +668,29 @@ if __name__ == '__main__':
     # Test insertEmployee ***** WORKS
     database.insertEmployee('testguy', 'test', 'guy', 'N')
 
+    # Test addRegularShift ***** WORKS
+    database.addRegularShift('testguy', 13, 'friday')
+
+    # Test removeRegularShift ***** WORKS
+    database.removeRegularShift('testguy', 13, 'friday')
+    regShifts = database.regularShifts('testguy')
+    print()
+    print('Regular shifts for testguy: ')
+    #should be none
+    for regShift in regShifts:
+        print(regShift)
+
     # Test employeeDetails ***** WORKS
     employee = database.employeeDetails('testguy')
     print(employee.getFirstName() + ' ' + employee.getLastName() + ' ' + employee.getPosition()
           + ' ' + employee.getHours() + ' ' + employee.getTotalHours() + ' ' + employee.getEmail())
+
+    '''
+    # Test getAllEmployees ***** WORKS
+    employees = database.getAllEmployees()
+    for indEmployee in employees:
+        print(str(indEmployee))
+    '''
 
     # Test removeEmployee ***** WORKS
     database.removeEmployee('testguy')

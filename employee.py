@@ -17,7 +17,12 @@ class Employee:
         self._total_hours = total_hours
         
     def __str__(self):
-        return str(self._shiftID)
+        return ('Netid: ' + str(self._netid) + ' | ' + \
+                'Name: ' + str(self._first_name) + ' ' + str(self._last_name) + ' | ' + \
+                'Email: ' + str(self._email) + ' | ' + \
+                'Manager: ' + str(self._manager) + ' | ' + \
+                'Hours: ' + str(self._hours) + ' | ' + \
+                'Total Hours: ' + str(self._total_hours))
 
     def getNetID(self):
         return str(self._netid)
