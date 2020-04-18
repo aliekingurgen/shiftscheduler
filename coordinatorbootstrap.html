@@ -64,7 +64,7 @@
 	</div>
 </nav>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
   <!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon" ></span>
@@ -78,26 +78,38 @@
         <a class="nav-link" href="/coordinatorschedule">Shift Schedule</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/coordinatorpage">Add Employees</a>
+        <a class="nav-link active" href="/coordinatorpage">Edit Employees</a>
       </li>
     </ul>
   </div>
 </nav>
+
 <main role="main">
   <br>
   <!--    <div class="container">This page is currently not supported. Return to the <a class="text-info" href="/">home page</a>.-->
 </div>
 <div class="container">
   <div class="row">
-    <div class="col-md">
+    <div class="container col-md-4">
       <br>
-      <h3 >All Shifts Requiring Subs:</h3>
-      <div>
+      <h3 >All Current Employees:</h3>
+			<br>
 
+      <div style="overflow-y:scroll;height:400px;">
+				<table class="table overflow-auto">
+					{%for employee in employees %}
+					{% set url = "/employeeDetails?netid=" + employee.getNetID()%}
+					<tr><td><a href="#" link={{url}} class="text-info employeeItem">
+						{{employee.getFirstName()}} {{employee.getLastName()}}</a></td></tr>
+					{% endfor %}
+				</table>
       </div>
 
     </div>
-    <div class="col-md order-md-1">
+		<div class="container col-md-4">
+			<p id="employeeDetails"></p>
+		</div>
+    <div class="container col-md-4 order-md-1">
       <br>
       <h3>Add a New Employee:</h3>
       <br>
@@ -199,10 +211,17 @@ function removeEmployee() {
   });
 }
 
+function employeeDetails() {
+	$('.employeeItem').on('click',function() {
+		url = $(this).attr('link');
+		$('#employeeDetails').load(url);
+  });
+}
 
 function setup() {
   insertEmployee();
   removeEmployee();
+	employeeDetails();
 }
 
 $('document').ready(setup);

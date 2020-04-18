@@ -15,13 +15,13 @@ class Employee:
         self._manager = manager
         self._hours = hours
         self._total_hours = total_hours
-        
+
     def __str__(self):
-        return ('Netid: ' + str(self._netid) + ' | ' + \
-                'Name: ' + str(self._first_name) + ' ' + str(self._last_name) + ' | ' + \
-                'Email: ' + str(self._email) + ' | ' + \
-                'Manager: ' + str(self._manager) + ' | ' + \
-                'Hours: ' + str(self._hours) + ' | ' + \
+        return ('NetID: ' + str(self._netid) + ' <br> ' + \
+                'Name: ' + str(self._first_name) + ' ' + str(self._last_name) + ' <br> ' + \
+                'Email: ' + str(self._email) + ' <br> ' + \
+                'Manager: ' + str(self._manager) + ' <br> ' + \
+                'Hours: ' + str(self._hours) + ' <br> ' + \
                 'Total Hours: ' + str(self._total_hours))
 
     def getNetID(self):
@@ -29,10 +29,10 @@ class Employee:
 
     def getFirstName(self):
         return str(self._first_name)
-    
+
     def getLastName(self):
         return str(self._last_name)
-    
+
     def getEmail(self):
         return str(self._email)
 
@@ -40,15 +40,10 @@ class Employee:
         if self._manager == "Y":
             return "Manager"
         else:
-            return "Regular" 
-    
+            return "Regular"
+
     def getHours(self):
         return str(self._hours)
-    
+
     def getTotalHours(self):
         return str(self._total_hours)
-
-
-
-    
-    

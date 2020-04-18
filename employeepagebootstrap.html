@@ -67,17 +67,18 @@
 <main role="main">
 	<div class="container">
 		<br>
-		<button type="button" class="btn btn-outline-dark btn-sm" aria-label="Last Week" style="position: relative;
-		left: 625px;display:inline-block;">
+		<button type="button" id="lastWeekButton" class="btn btn-outline-dark btn-sm" aria-label="Last Week" style="position: relative;
+		left: 600px;display:inline-block;">
 		<span class="fa fa-chevron-left" aria-hidden="true"></span>
 	</button>
-	<button type="button" class="btn btn-outline-dark btn-sm" aria-label="Next Week" style="position: relative;
-	left: 645px;display:inline-block;">
+	<button type="button" id="nextWeekButton" class="btn btn-outline-dark btn-sm" aria-label="Next Week" style="position: relative;
+	left: 620px;display:inline-block;">
 	<span class="fa fa-chevron-right" aria-hidden="true"></span>
 </button>
-<h1 style="font-size: 20px; display:inline-block">This Week's Calendar:</h1>
+<h1 style="font-size: 20px; display:inline-block">Weekly Calendar</h1>
 <br>
 <br>
+<div id="calendar">
 <table class="table" align="center" cellpadding="5" cellspacing="2">
 	<thead>
 		<tr>
@@ -357,7 +358,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="yourShiftLabel">Shift Details</h5>
-				<button id = "subOutClose" onClick="window.location.reload();" data-dismiss="modal" type="button" class="close"  aria-label="Close">
+				<button id = "subOutClose" data-dismiss="modal" type="button" class="close"  aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -380,7 +381,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="needsSubShiftLabel">Shift Details</h5>
-					<button id = "subInClose" type="button" onClick="window.location.reload();" data-dismiss="modal" class="close" aria-label="Close">
+					<button id = "subInClose" type="button" data-dismiss="modal" class="close" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -402,11 +403,14 @@
 </div>
 </main>
 
-<input type="hidden" id="myShifts">
-<input type="hidden" id="needsSubShifts">
+<!-- Hidden Form Fields -->
+<input type="hidden" id="myShifts"></input>
+<input type="hidden" id="needsSubShifts"></input>
+<!-- <input type="hidden" id="monday">{{monday}}</input> -->
 
 <!--	<div id="myShifts"></div>-->
 <!--	<div id="needsSubShifts"> </div>-->
+<div id="monday">{{monday}}</div>
 
 
 <footer class="footer">
@@ -415,20 +419,37 @@
 	</div>
 </footer>
 
+</div>
+
 <script>
 function getDates() {
-	let today = new Date();
-
-	let dotw = today.getDay();
-
-	mon = today.getDate() - dotw + 1;
-	let week = [];
+	let mon = $('#monday').text().trim();
+	console.log(mon);
 	let current = new Date();
-	current.setDate(mon);
+
+	if (mon == 'today') {
+		let today = new Date();
+
+		let dotw = today.getDay();
+
+		mon = today.getDate() - dotw + 1
+		current.setDate(mon);
+	}
+	else {
+		console.log(current);
+		console.log(mon);
+		current = new Date(mon);
+		// i don't understand why but the following line needs the + 1
+		current.setDate(current.getDate() + 1);
+		console.log(current);
+	}
+	let week = [];
+	console.log(current);
 	for (var i = 0; i < 7; i++) {
-		week.push(new Date(+current));
+		week.push(new Date(current));
 		current.setDate(current.getDate()+1);
 	}
+	console.log(week[0]);
 	$('#monDate').html(week[0].toLocaleDateString());
 	$('#tuesDate').html(week[1].toLocaleDateString());
 	$('#wedDate').html(week[2].toLocaleDateString());
@@ -464,6 +485,7 @@ function getColors(mon) {
 		}
 	});
 	url = '/needSubShifts?mon=' + mon
+	// console.log(url);
 	$('#needsSubShifts').load(url, function(responseTxt, statusTxt, xhr){
 		var found = false;
 		for (var i = 0; i < responseTxt.length; i++) {
@@ -555,19 +577,86 @@ function getModalData(mon) {
 	});
 }
 
-function setup() {
-	mon = getDates();
+function format(mon) {
 	monFormat = mon.getFullYear() + '-';
-	if(mon.getMonth() < 10 ){
+	if (mon.getMonth() < 10 ) {
 		monFormat += "0" + (mon.getMonth()+1) + '-';
-	}else{
+	} else {
 		monFormat += mon.getMonth() + '-' ;
 	}
-	monFormat += mon.getDate();
+
+	if(mon.getDate() < 10 ){
+		monFormat += "0" + (mon.getDate());
+	} else {
+		monFormat += mon.getDate();
+	}
+	return monFormat;
+}
+
+// let request = null;
+
+function lastWeek(mon) {
+	$('#lastWeekButton').on('click',function() {
+		console.log(mon);
+		let newMon = new Date(mon);
+		newMon.setDate(newMon.getDate() - 7);
+		console.log(newMon);
+		window.location = "?monday=" + format(newMon)
+		// var url = "/calendar?monday=" + format(newMon);
+		// console.log(url);
+		// $('#calendar').load(url);
+
+		// if (request != null) {
+		// 	request.abort();
+		// }
+		// request = $.ajax(
+		// 	{
+		// 		type: "GET",
+		// 		url: url,
+		// 		success: setup
+		// 	}
+		// );
+	});
+}
+
+function nextWeek(mon) {
+	$('#nextWeekButton').on('click',function() {
+		console.log(mon);
+		let newMon = new Date(mon);
+		newMon.setDate(newMon.getDate() + 7);
+		console.log(newMon);
+		window.location = "?monday=" + format(newMon)
+		// var url = "/calendar?monday=" + format(newMon);
+		// console.log(url);
+		// $('#calendar').load(url);
+
+		// if (request != null) {
+		// 	request.abort();
+		// }
+		// request = $.ajax(
+		// 	{
+		// 		type: "GET",
+		// 		url: url,
+		// 		success: setup
+		// 	}
+		// );
+	});
+}
+
+function setup() {
+	mon = getDates();
+	console.log(mon);
+	monFormat = format(mon);
 	getModalData(mon);
 	getColors(monFormat);
 	subOut();
 	subIn();
+	lastWeek(mon);
+	nextWeek(mon);
+	// let url = "/";
+	// $("#monday").load(url+" #elementName>*","");
+	// $("#monday").load("#monday > *");
+	// $('#monday').load({{monday}});
 }
 
 $('document').ready(setup);

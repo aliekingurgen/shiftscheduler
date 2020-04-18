@@ -40,6 +40,7 @@ def logout():
 
 #-----------------------------------------------------------------------
 
+@app.route('/employee', methods=['GET'])
 @app.route('/employeepage', methods=['GET'])
 def employeePage():
 
@@ -51,9 +52,45 @@ def employeePage():
     if errorMsg is None:
         errorMsg = ''
 
+    monday = request.args.get('monday')
+    if monday is None:
+        monday = 'today'
+
+    # print('monday: ' + monday)
+
     html = render_template('employeepagebootstrap.html',
         netid=netid,
-        errorMsg=errorMsg)
+        errorMsg=errorMsg,
+        monday=monday)
+
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/calendar', methods=['GET'])
+def calendar():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    errorMsg = request.args.get('errorMsg')
+    if errorMsg is None:
+        errorMsg = ''
+
+    monday = request.args.get('monday')
+    if monday is None:
+        monday = 'today'
+
+    # print('monday: ' + monday)
+
+    html = render_template('calendar.html',
+        netid=netid,
+        errorMsg=errorMsg,
+        monday=monday)
+
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -73,13 +110,17 @@ def coordinatorPage():
     except Exception as e:
         errorMsg = e
 
-    allSubsNeeded = database.allSubNeeded()
-    for shift in allSubsNeeded:
-        print(shift)
+    # allSubsNeeded = database.allSubNeeded()
+    # for shift in allSubsNeeded:
+    #     print(shift)
+
+    employees = database.getAllEmployees()
+
     database.disconnect()
 
     html = render_template('coordinatorbootstrap.html',
-                           netid=netid)
+                           netid=netid,
+                           employees=employees)
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -91,6 +132,10 @@ def coordinatorSchedule():
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
+
+    monday = request.args.get('monday')
+    if monday is None:
+        monday = 'today'
 
     try:
         database = Database()
@@ -104,7 +149,8 @@ def coordinatorSchedule():
     database.disconnect()
 
     html = render_template('coordinatorschedule.html',
-                           netid=netid)
+                           netid=netid,
+                           monday=monday)
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -235,8 +281,8 @@ def myShifts():
         errorMsg = e
 
     shifts = database.myShifts(netid)
-    for shift in shifts:
-        print(shift)
+    # for shift in shifts:
+    #     print(shift)
     database.disconnect()
     return jsonify(shifts)
 
@@ -390,6 +436,39 @@ def shiftDetails():
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
         html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
+
+    response = make_response(html)
+    return response
+
+# -----------------------------------------------------------------------
+
+@app.route('/employeeDetails', methods=['GET'])
+def employeeDetails():
+    # date = "2020-03-23"
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    # errorMsg = request.args.get('errorMsg')
+    # if errorMsg is None:
+    #     errorMsg = ''
+    #
+    netid = request.args.get('netid')
+    if netid is None:
+        netid = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    employee = database.employeeDetails(netid)
+    database.disconnect()
+    if employee is None:
+        employee = '<strong> Error: No data to display</strong>'
+    else:
+        html = "<br><h3>Employee Details:</h3><br>" + str(employee)
 
     response = make_response(html)
     return response
