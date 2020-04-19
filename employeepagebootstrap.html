@@ -448,7 +448,7 @@ function getDates() {
 	console.log(current);
 	for (var i = 0; i < 7; i++) {
 		week.push(new Date(current));
-		current.setDate(current.getDate()+1);
+		current.setDate(current.getDate());
 	}
 	console.log(week[0]);
 	$('#monDate').html(week[0].toLocaleDateString());
