@@ -391,21 +391,27 @@ function getDates() {
 	console.log(mon);
 	let current = new Date();
 
-	if (mon == 'today') {
+  if (mon == 'today') {
 		let today = new Date();
-
+		// console.log("today: " + today)
 		let dotw = today.getDay();
-
-		mon = today.getDate() - dotw + 1
+		if (dotw == 0) {
+			dotw = 7
+		}
+		mon = today.getDate() - dotw +1 ;
 		current.setDate(mon);
 	}
 	else {
-		console.log(current);
-		console.log(mon);
+		// console.log(current);
+		// console.log('mon: ' + mon);
+		offset = current.getTimezoneOffset();
+		// console.log('offset: ' + offset);
 		current = new Date(mon);
-		// i don't understand why but the following line needs the + 1
-		current.setDate(current.getDate() + 1);
-		console.log(current);
+		// console.log('current: ' + current);
+		if (offset >= 0) {
+			current.setDate(current.getDate() + 1);
+		}
+		// console.log('start: ' + current);
 	}
 	let week = [];
 	console.log(current);
