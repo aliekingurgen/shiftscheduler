@@ -543,6 +543,7 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             print(error)
+            return False
                 
     def insertEmployee(self, netid, first_name, last_name, manager):
 
@@ -727,6 +728,54 @@ class Database:
             print(error)
             return False
 
+    def employeesInShift(self, shiftid):
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+            
+            # Get all employee netids working in the shift
+            QUERY_STRING = 'SELECT netid FROM shift_assign WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            employeeNetids = []
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    netid = row[0]
+                    if netid not in employeeNetids:
+                        employeeNetids.append(netid)
+
+            # Get all employee full names working in the shift
+            employeeFullNames = []
+            for netid in employeeNetids:
+                QUERY_STRING = 'SELECT first_name, last_name FROM employees WHERE netid = %s'
+                cur.execute(QUERY_STRING, (netid,))
+
+                row = cur.fetchone()
+                if row is not None:
+                    fullName = row[0] + ' ' + row[1]
+                    if fullName not in employeeFullNames:
+                        employeeFullNames.append(fullName)
+
+            cur.close()
+            employeeFullNames.sort(key=str.lower)
+            return employeeFullNames
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
+
 
 # -----------------------------------------------------------------------
 
@@ -779,11 +828,11 @@ if __name__ == '__main__':
     print('Regular shifts for yujl: ')
     for regShift in regShifts:
         print(regShift)
-
+    
     # Test populateShiftInfo ***** WORKS
-    date = "2020-04-13"
+    date = "2020-04-27"
     boo = database.populateShiftInfo(date)
-
+    
     # Test insertEmployee ***** WORKS
     database.insertEmployee('testguy', 'test', 'guy', 'N')
 
@@ -803,17 +852,21 @@ if __name__ == '__main__':
     employee = database.employeeDetails('testguy')
     print(employee.getFirstName() + ' ' + employee.getLastName() + ' ' + employee.getPosition()
           + ' ' + employee.getHours() + ' ' + employee.getTotalHours() + ' ' + employee.getEmail())
-    '''
+    
     # Test getAllEmployees ***** WORKS
     employees = database.getAllEmployees()
     for indEmployee in employees:
         print(str(indEmployee))
-    '''
+    
     # Test removeEmployee ***** WORKS
     database.removeEmployee('testguy')
     
     # Test assignShift ***** WORKS
     database.unassignShift('agurgen', 440)
     '''
+
+    # Test employeesInShift ***** WORKS
+    myEmployees = database.employeesInShift(494)
+    print(myEmployees)
     
     database.disconnect()
