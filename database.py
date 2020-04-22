@@ -776,6 +776,50 @@ class Database:
             print(error)
             return False
 
+    def isCoordinator(self, netid):
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if coordinator
+            QUERY_STRING = 'SELECT netid FROM coordinators WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Not a coordinator')
+                cur.close()
+                return False
+            else:
+                return True
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
+    
+    def isEmployee(self, netid):
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if employee
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Not an employee')
+                cur.close()
+                return False
+            else:
+                return True
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
+
 
 # -----------------------------------------------------------------------
 
@@ -863,10 +907,16 @@ if __name__ == '__main__':
     
     # Test assignShift ***** WORKS
     database.unassignShift('agurgen', 440)
-    '''
 
     # Test employeesInShift ***** WORKS
     myEmployees = database.employeesInShift(494)
     print(myEmployees)
+    '''
+
+    # Test isCoordinator ***** WORKS
+    print(database.isCoordinator('agurgen'))
+
+    # Test isEmployee ***** WORKS
+    print(database.isEmployee('agurgen'))
     
     database.disconnect()
