@@ -65,17 +65,27 @@
 </nav>
 
 <main role="main">
-  <div class="container" style = "font-size: 20px">
+  <div class="container col-4" style = "font-size:20px">
     <br>
+    <div class="card">
+      <div class="card-header">
+        Your Profile
+      </div>
+      <div class="card-body">
     <strong>NetID:</strong> {{netid}}
     <br>
     <strong>Name:</strong> {{name}}
     <br>
     <strong>Position:</strong> {{position}}
     <br>
-    <strong>Regular Shifts:</strong> <ul id="regularShifts"style="list-style:inside"></ul> <input type="hidden" id="myStrShifts"></input>
+    <strong>Regular Shifts:</strong>
+    <ul id="regularShifts" style="text-align:left; list-style:inside"></ul> <input type="hidden" id="myStrShifts"></input>
+    <p style="text-align:center">
     Return to
     <a class="text-info" href="/employee">your calendar</a>.
+  </p>
+</div>
+</div>
   </div>
 </main>
 
