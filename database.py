@@ -775,6 +775,30 @@ class Database:
             cur.close()
             print(error)
             return False
+    
+    def numberOfEmployeesInShift(self, shiftid):
+
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT cur_people FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+            else:
+                cur.close()
+                return row[0]
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
 
     def isCoordinator(self, netid):
         try:
@@ -911,12 +935,15 @@ if __name__ == '__main__':
     # Test employeesInShift ***** WORKS
     myEmployees = database.employeesInShift(494)
     print(myEmployees)
-    '''
 
     # Test isCoordinator ***** WORKS
     print(database.isCoordinator('agurgen'))
 
     # Test isEmployee ***** WORKS
     print(database.isEmployee('agurgen'))
+    '''
+
+    # Test numberOfEmployeesInShift ***** WORKS
+    print(database.numberOfEmployeesInShift(494))
     
     database.disconnect()
