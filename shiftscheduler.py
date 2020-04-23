@@ -747,7 +747,7 @@ def employeeDetails():
 @app.route('/unassign', methods=['GET'])
 def unassignShift():
     print("HERE")
-    netid = request.cookies.get('netid')
+    netid = request.args.get('netid')
     taskid = request.args.get("taskid")
     dow = request.args.get("day")
     print("netid" + netid)
@@ -765,27 +765,30 @@ def unassignShift():
     return redirect("/manageshifts?employee=" + netid)
 
 #-----------------------------------------------------------------------
-@app.route('/assign', methods=['POST'])
+@app.route('/assign', methods=['GET'])
 def assignShift():
     print("HERE")
+    netid = request.cookies.get('netid')
+    data = request.args.get("shifts")
+    shifts = data.split('_')
+    try:
+        database = Database()
+        database.connect()
+        for shift in shifts:
+            if shift is not '':
+                info = shift.split("-")
+                day = info[0]
+                taskid = info[1]
+                print(day)
+                print(taskid)
+                database.addRegularShift(netid, int(taskid), day)
 
-    data = request.json
+        database.disconnect()
+    except Exception as e:
+        errorMsg = e
 
-    print(data)
-    #
-    # for item in data:
-    #     print(item)
-
-    # try:
-    #     database = Database()
-    #     database.connect()
-    #     database.addRegularShift(netid, taskid, dow)
-    #     database.disconnect()
-    # except Exception as e:
-    #     errorMsg = e
-    #
-    # # response = make_response(html)
-    # return redirect("/manageshifts?employee=" + netid)
+    response = make_response('')
+    return location.reload()
 
 #-----------------------------------------------------------------------
 
