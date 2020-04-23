@@ -10,6 +10,7 @@ from database import Database
 from time import localtime, asctime, strftime
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template, jsonify
+import json
 from datetime import date, time
 from CASClient import CASClient
 
@@ -239,6 +240,10 @@ def manageShifts():
     if netid is None:
         netid = ''
 
+    employee = request.args.get('employee')
+    if employee is None:
+        employee = ''
+
     try:
         database = Database()
         database.connect()
@@ -259,7 +264,8 @@ def manageShifts():
 
     html = render_template('manageshifts.html',
                            netid=netid,
-                           employees=employees)
+                           employees=employees,
+                           employee = employee)
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -648,6 +654,58 @@ def idToStr(shiftStr):
     elif (taskid == 12): str += 'Brunch Second Dish'
     elif (taskid == 13): str +=  'CJL Swipe'
     return str
+
+#-----------------------------------------------------------------------
+@app.route('/employeeShiftDetails', methods=['GET'])
+def employeeShiftDetails():
+    # date = "2020-03-23"
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
+
+    # errorMsg = request.args.get('errorMsg')
+    # if errorMsg is None:
+    #     errorMsg = ''
+    #
+    netid = request.args.get('netid')
+    if netid is None or netid == '':
+        response = make_response('')
+        response.set_cookie('netid', my_netid)
+        return response
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(my_netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+    employee = database.employeeDetails(netid)
+
+    regularShifts = database.regularShifts(netid)
+    database.disconnect()
+    if employee is None:
+        employee = '<strong> Error: No data to display</strong>'
+    else:
+        html = "<br><h3>Employee Details:</h3><br>" + str(employee) + "<br>"
+
+        html += "<ul class = \" list-group list-group-flush \" style=\"overflow-y:scroll;height:200px;\" >"
+        for shift in regularShifts:
+            day = idToDay(str(shift))
+            taskid = shift[2]
+            html += "<li class=\"list-group-item\">" + idToStr(str(shift)) + "&nbsp&nbsp&nbsp&nbsp"
+            html += "<a class = \"btn  btn-info btn-sm \" href = \"/unassign?day=" + day
+            html += "&taskid="+taskid+"\" >"
+            html += "unassign </a> </li>"
+            # print(html)
+        html += "</ul>"
+
+    response = make_response(html)
+    response.set_cookie('netid', my_netid)
+    return response
+
 #-----------------------------------------------------------------------
 @app.route('/employeeDetails', methods=['GET'])
 def employeeDetails():
@@ -673,26 +731,13 @@ def employeeDetails():
     if not database.isCoordinator(my_netid):
         database.disconnect()
         return redirect(url_for('noPermissions'))
-    employee = database.employeeDetails(netid)
 
-    regularShifts = database.regularShifts(netid)
+    employee = database.employeeDetails(netid)
     database.disconnect()
     if employee is None:
         employee = '<strong> Error: No data to display</strong>'
     else:
-
         html = "<br><h3>Employee Details:</h3><br>" + str(employee) + "<br>"
-
-        html += "<ul class = \" list-group list-group-flush \" style=\"overflow-y:scroll;height:200px;\" >"
-        for shift in regularShifts:
-            day = idToDay(str(shift))
-            taskid = shift[2]
-            html += "<li class=\"list-group-item\">" + idToStr(str(shift)) + "&nbsp&nbsp&nbsp&nbsp"
-            html += "<a class = \"btn  btn-info btn-sm \" href = \"/unassign?day=" + day
-            html += "&taskid="+taskid+"\" >"
-            html += "unassign </a> </li>"
-            print(html)
-        html += "</ul>"
 
     response = make_response(html)
     response.set_cookie('netid', my_netid)
@@ -717,7 +762,30 @@ def unassignShift():
         errorMsg = e
 
     # response = make_response(html)
-    return redirect("/manageshifts")
+    return redirect("/manageshifts?employee=" + netid)
+
+#-----------------------------------------------------------------------
+@app.route('/assign', methods=['POST'])
+def assignShift():
+    print("HERE")
+
+    data = request.json
+
+    print(data)
+    #
+    # for item in data:
+    #     print(item)
+
+    # try:
+    #     database = Database()
+    #     database.connect()
+    #     database.addRegularShift(netid, taskid, dow)
+    #     database.disconnect()
+    # except Exception as e:
+    #     errorMsg = e
+    #
+    # # response = make_response(html)
+    # return redirect("/manageshifts?employee=" + netid)
 
 #-----------------------------------------------------------------------
 

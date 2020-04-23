@@ -65,149 +65,208 @@
 </nav>
 
 <nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
-  <!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon" ></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarText">
-    <ul class="navbar-nav mr-auto">
-      <!--      <li class="nav-item active">-->
-      <!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
-      <!--      </li>-->
-      <li class="nav-item">
-        <a class="nav-link" href="/coordinatorschedule">Shift Schedule</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/manageemployees">Manage Employees</a>
-      </li>
+	<!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon" ></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarText">
+		<ul class="navbar-nav mr-auto">
+			<!--      <li class="nav-item active">-->
+			<!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
+			<!--      </li>-->
 			<li class="nav-item">
-        <a class="nav-link active" href="/manageshifts">Manage Shifts</a>
-      </li>
-    </ul>
-  </div>
+				<a class="nav-link" href="/coordinatorschedule">Shift Schedule</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/manageemployees">Manage Employees</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link active" href="/manageshifts">Manage Shifts</a>
+			</li>
+		</ul>
+	</div>
 </nav>
 
 <main role="main">
-  <br>
-  <!--    <div class="container">This page is currently not supported. Return to the <a class="text-info" href="/">home page</a>.-->
+	<br>
+	<!--    <div class="container">This page is currently not supported. Return to the <a class="text-info" href="/">home page</a>.-->
 </div>
 <div class="container">
-  <div class="row">
-    <div class="container col-md-4">
-      <br>
-      <h3 >All Current Employees:</h3>
+	<div class="row">
+		<div class="container col-md-4">
+			<br>
+			<h3 >All Current Employees:</h3>
 			<br>
 
-      <div style="overflow-y:scroll;height:400px;">
+			<div style="overflow-y:scroll;height:400px;">
 				<table class="table">
 					{%for employee in employees %}
-					{% set url = "/employeeDetails?netid=" + employee.getNetID()%}
+					{% set url = "/employeeShiftDetails?netid=" + employee.getNetID()%}
 					<tr><td><a href="#" link={{url}} class="text-info employeeItem">
 						{{employee.getFirstName()}} {{employee.getLastName()}}</a></td></tr>
-					{% endfor %}
-				</table>
-      </div>
+						{% endfor %}
+					</table>
+				</div>
 
-    </div>
-		<div class="container col-md-4">
-			<p id="employeeDetails"></p>
+			</div>
+			<div class="container col-md-4">
+				<p id="employeeDetails" link={{employee}}></p>
+			</div>
+
+			<div class="container col-md-4 order-md-1">
+				<form>
+					<div class="form-group">
+						<label for="daySelect">Select a Day</label>
+						<select class="form-control" id="daySelect">
+							<option>Monday</option>
+							<option>Tuesday</option>
+							<option>Wednesday</option>
+							<option>Thursday</option>
+							<option>Friday</option>
+							<option>Saturday</option>
+							<option>Sunday</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="taskSelect">Select a Task</label>
+						<select class="form-control" id="taskSelect">
+							<option>Dinner Manager</option>
+							<option>Dinner First Shift</option>
+							<option>Dinner Second Shift</option>
+							<option>Dinner Dish Manager</option>
+							<option>Dinner First Dish</option>
+							<option>Dinner Second Dish</option>
+							<option>Brunch Manager</option>
+							<option>Brunch First Shift</option>
+							<option>Brunch Second Shift</option>
+							<option>Brunch Dish Manager</option>
+							<option>Brunch First Dish</option>
+							<option>Brunch Second Dish</option>
+							<option>CJL Swipe</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<button id="insertShift" type="button"
+						class="btn btn-secondary">Insert Regular Shift into List</button>
+					</div>
+					<div class="form-group">
+						<label for="toBeAdded">Regular Shifts to be Added</label>
+						<select multiple class="form-control" id="toBeAdded" size="6">
+						</select>
+					</div>
+					<div class="form-group">
+						<button id="insertAllShifts" type="button"
+						class="btn btn-secondary">Insert All Shifts</button>
+					</div>
+				</form>
+			</div>
 		</div>
-
-
-    <div class="container col-md-4 order-md-1">
-        <form>
-          <br>
-          <h3>Assign a Regular Shift:</h3>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" name = "shift">
-                <label class="form-check-label" for="inlineCheckbox1">1</label>
-            </div>
-            <br>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2" name = "shift">
-                <label class="form-check-label" for="inlineCheckbox2">2</label>
-            </div>
-            <br>
-            <button type ="button" class="btn btn-info" id = "addRShifts" >add</button>
-        </form>
-
-
-
-    </div>
-  </div>
-</div>
+	</div>
 </main>
 
 <footer class="footer">
-  <div class="container">
-    <span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
-  </div>
+	<div class="container">
+		<span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
+	</div>
 </footer>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
 <script>
-    function addRegularShifts() {
-        $("#addRShifts").click(function(){
-            console.log("clicked");
-           var shifts = [];
 
-           $.each($("input[name='shift']:checked"), function(){
-                console.log("checked");
-                console.log("value : " + $(this).value());
-                console.log("val : " + $(this).val());
-                shifts.push($(this).value());
-            });
-        });
-    }
+function addRegularShifts() {
 
-function insertEmployee() {
-  $('#add-button').on('click',function() {
-    var netid = $('#add-employee').val();
-    var firstname = $('#firstName').val();
-    var lastname = $('#lastName').val();
-    var manager = $('#manager').val();
-    var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstname
-    url +=  "&lastname=" + lastname + "&manager=" + manager;
-    // console.log(url);
-    $('#add-text').load(url);
-		setTimeout(function(){
-			window.location.reload()
-		},1000);
-    // $('#add-employee').val('');
-    // $('#firstName').val('');
-    // $('#lastName').val('');
-    // $('#manager').val('');
-  });
-}
+	$('#insertShift').on('click', function(){
+		var day = $('#daySelect').val();
+		var task = $('#taskSelect').val();
+		var string = $('#toBeAdded').html();
+		// console.log(string);
+		string += '<option class="selectThis">' + day + ' ' + task + '</option>';
+		// console.log(string);
+		$('#toBeAdded').html(string);
+		// console.log(day);
+		// console.log(task);
+	});
 
-function removeEmployee() {
-  $('#remove-button').on('click',function() {
-    var netid = $('#remove-employee').val();
-    var url = "/removeEmployee?employeenetid=" + netid;
-    // console.log(url);
-    $('#remove-text').load(url);
-		setTimeout(function(){
-			window.location.reload()
-		},1000);
-  });
-}
+	$('#insertAllShifts').on('click', function(){
+		// var string = $('#toBeAdded').html();
+		var shifts = [];
+		$("option").each(function() {
+			if ($(this).attr("class") == 'selectThis') {
+				shifts.push($(this).val());
+				// console.log($(this).val());
+			}
+		});
+		
+		// console.log(shifts);
+		// if (request != null) {
+		// 	request.abort();
+		// }
+		// request = $.ajax(
+		// 	{
+		// 		type: "POST",
+		// 		url: '/assign',
+		// 		dataType: "json",
+		// 		data: JSON.stringify(shifts),
+		// 		success: handleResponse
+		// 	}
+		// );
 
-function employeeDetails() {
-	$('.employeeItem').on('click',function() {
-		url = $(this).attr('link');
-		$('#employeeDetails').load(url);
-  });
-}
+			// $.post("assign", shifts, function(){
+			// });
+		});
+	}
 
-function setup() {
-  // insertEmployee();
-  // removeEmployee();
-  employeeDetails();
-  addRegularShifts();
+	function insertEmployee() {
+		$('#add-button').on('click',function() {
+			var netid = $('#add-employee').val();
+			var firstname = $('#firstName').val();
+			var lastname = $('#lastName').val();
+			var manager = $('#manager').val();
+			var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstname
+			url +=  "&lastname=" + lastname + "&manager=" + manager;
+			// console.log(url);
+			$('#add-text').load(url);
+			setTimeout(function(){
+				window.location.reload()
+			},1000);
+			// $('#add-employee').val('');
+			// $('#firstName').val('');
+			// $('#lastName').val('');
+			// $('#manager').val('');
+		});
+	}
 
-}
+	function removeEmployee() {
+		$('#remove-button').on('click',function() {
+			var netid = $('#remove-employee').val();
+			var url = "/removeEmployee?employeenetid=" + netid;
+			// console.log(url);
+			$('#remove-text').load(url);
+			setTimeout(function(){
+				window.location.reload()
+			},1000);
+		});
+	}
 
-$('document').ready(setup);
-</script>
+	function employeeDetails() {
+		$('#employeeDetails').load('/employeeShiftDetails?netid=' + $('#employeeDetails').attr('link'));
 
-</body>
-</html>
+		$('.employeeItem').on('click',function() {
+			url = $(this).attr('link');
+			$('#employeeDetails').load(url);
+		});
+	}
+
+	function setup() {
+		// insertEmployee();
+		// removeEmployee();
+		employeeDetails();
+		addRegularShifts();
+	}
+
+	$('document').ready(setup);
+	</script>
+
+	</body>
+	</html>
