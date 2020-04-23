@@ -272,6 +272,8 @@ class Database:
                 if regShift not in regShifts:
                     regShifts.append(regShift)
                 row = cur.fetchone()
+            
+            # get netid's one time shifts
 
             # get netid's all subbed in shifts
             QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
@@ -291,7 +293,6 @@ class Database:
                            'FROM sub_requests WHERE sub_out_netid = %s'
             cur.execute(QUERY_STRING, (netid,))
             rows = cur.fetchall()
-            print(rows)
             if rows is not None:
                 for row in rows:
                     subbedOutShift = self.shiftFromID(row[0])
@@ -329,7 +330,7 @@ class Database:
             row = cur.fetchone()
             regShifts = []
             while row is not None:
-                regShift = convertDay(row[1]) + '-' + str(row[0])
+                regShift = convertDay(row[1]) + '-' + str(row[0]) # Convention: dayNo-taskId
                 if regShift not in regShifts:
                     regShifts.append(regShift)
                 row = cur.fetchone()
@@ -344,7 +345,7 @@ class Database:
 
     def addRegularShift(self, netid, taskid, dotw):
         try:
-            # should probably check input, currently assuming dotw is in string format and not number? will add later
+            # should probably check input, currently assuming dotw is in string format
             cur = self._conn.cursor()
 
             QUERY_STRING = 'INSERT INTO regular_shifts(netid, task_id, dotw) VALUES (%s, %s, %s)'
@@ -496,6 +497,28 @@ class Database:
             cur.close()
             print(error)
             return False
+    
+    def populateForPeriod(self, start, end):
+
+        try:
+            if datetime.date.fromisoformat(start).weekday() != 0:
+                print("Given date is not a Monday.")
+                return False
+            
+            dateStart = datetime.date.fromisoformat(start)
+            dateEnd = datetime.date.fromisoformat(end)
+            cur = self._conn.cursor()
+
+            while dateStart < dateEnd:
+                self.populateShiftInfo(start)
+                deltaWeek = datetime.timedelta(weeks = 1)
+                dateStart += deltaWeek
+                start = dateStart.isoformat()
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print('Could not populate the tables.')
+            print(error)
+            return False
 
     def employeeDetails(self, netid):
 
@@ -538,7 +561,7 @@ class Database:
                     employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
                     employeeList.append(employee)
             cur.close()
-            employeeListSorted = sorted(employeeList, key=lambda x: x._last_name)
+            employeeListSorted = sorted(employeeList, key=lambda x: x._first_name)
             return employeeListSorted
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
@@ -844,6 +867,24 @@ class Database:
             print(error)
             return False
 
+    def getAllEmails(self):
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+            QUERY_STRING = 'SELECT email FROM employees'
+            cur.execute(QUERY_STRING, ())
+        
+            emailList = []
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    emailList.append(row[0])
+            cur.close()
+            return emailList
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
 
 # -----------------------------------------------------------------------
 
@@ -941,9 +982,17 @@ if __name__ == '__main__':
 
     # Test isEmployee ***** WORKS
     print(database.isEmployee('agurgen'))
-    '''
 
     # Test numberOfEmployeesInShift ***** WORKS
     print(database.numberOfEmployeesInShift(494))
+    
+    # Test getAllEmails ***** WORKS
+    print(database.getAllEmails())
+
+    # Test populateForPeriod ***** WORKS
+    start = "2020-05-04"
+    end = "2020-05-10"
+    print(database.populateForPeriod(start, end))
+    '''
     
     database.disconnect()
