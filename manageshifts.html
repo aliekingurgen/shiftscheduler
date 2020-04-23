@@ -102,7 +102,8 @@
 				<table class="table">
 					{%for employee in employees %}
 					{% set url = "/employeeShiftDetails?netid=" + employee.getNetID()%}
-					<tr><td><a href="#" link={{url}} class="text-info employeeItem">
+					{% set netid = employee.getNetID() %}
+					<tr><td><a href="#" link={{url}} netid={{netid}} class="text-info employeeItem">
 						{{employee.getFirstName()}} {{employee.getLastName()}}</a></td></tr>
 						{% endfor %}
 					</table>
@@ -113,7 +114,7 @@
 				<p id="employeeDetails" link={{employee}}></p>
 			</div>
 
-			<div class="container col-md-4 order-md-1">
+			<div id = "assignShift" style = "visibility:hidden" class="container col-md-4 order-md-1">
 				<form>
 					<div class="form-group">
 						<label for="daySelect">Select a Day</label>
@@ -174,7 +175,7 @@
 
 <script>
 	let request = null;
-
+	let netid = null;
 function addRegularShifts() {
 
 	$('#insertShift').on('click', function(){
@@ -188,7 +189,6 @@ function addRegularShifts() {
 		// console.log(day);
 		// console.log(task);
 	});
-
 
 	$('#insertAllShifts').on('click', function() {
 		// var string = $('#toBeAdded').html();
@@ -208,19 +208,20 @@ function addRegularShifts() {
 				shifts += day.toLowerCase() +"-" + convertTaskId(task)  + "_"
 			}
 		});
-
+		console.log("netid" + netid);
 		shifts = encodeURIComponent(shifts);
-		let url = "/assign?shifts=" + shifts;
+		let url = "/assign?netid=" + netid + "&shifts=" + shifts;
 
 		// console.log(shifts);
 		if (request != null) {
 			request.abort();
 		}
+		reloadUrl =  "/manageshifts?netid=" + netid;
 		request = $.ajax(
 			{
 				type: "GET",
 				url: url,
-				success: location.reload(),
+				success: window.location = reloadUrl,
 			}
 		);
 
@@ -228,11 +229,6 @@ function addRegularShifts() {
 			// });
 		});
 	}
-
-	 function handleResponse(response)
-         {
-       		consol
-         }
 
 	function convertTaskId(str){
 	    if (str == 'DinnerManager') taskid = 1;
@@ -250,37 +246,7 @@ function addRegularShifts() {
 		else if( str ==  'CJLSwipe') taskid = 13;
 		return taskid;
 	}
-	function insertEmployee() {
-		$('#add-button').on('click',function() {
-			var netid = $('#add-employee').val();
-			var firstname = $('#firstName').val();
-			var lastname = $('#lastName').val();
-			var manager = $('#manager').val();
-			var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstname
-			url +=  "&lastname=" + lastname + "&manager=" + manager;
-			// console.log(url);
-			$('#add-text').load(url);
-			setTimeout(function(){
-				window.location.reload()
-			},1000);
-			// $('#add-employee').val('');
-			// $('#firstName').val('');
-			// $('#lastName').val('');
-			// $('#manager').val('');
-		});
-	}
 
-	function removeEmployee() {
-		$('#remove-button').on('click',function() {
-			var netid = $('#remove-employee').val();
-			var url = "/removeEmployee?employeenetid=" + netid;
-			// console.log(url);
-			$('#remove-text').load(url);
-			setTimeout(function(){
-				window.location.reload()
-			},1000);
-		});
-	}
 
 	function employeeDetails() {
 		$('#employeeDetails').load('/employeeShiftDetails?netid=' + $('#employeeDetails').attr('link'));
@@ -288,12 +254,12 @@ function addRegularShifts() {
 		$('.employeeItem').on('click',function() {
 			url = $(this).attr('link');
 			$('#employeeDetails').load(url);
+			$('#assignShift').attr('style', "visibility:visible");
+			netid = $(this).attr('netid');
 		});
 	}
 
 	function setup() {
-		// insertEmployee();
-		// removeEmployee();
 		employeeDetails();
 		addRegularShifts();
 	}

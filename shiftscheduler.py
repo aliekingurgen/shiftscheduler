@@ -697,7 +697,7 @@ def employeeShiftDetails():
             taskid = shift[2]
             html += "<li class=\"list-group-item\">" + idToStr(str(shift)) + "&nbsp&nbsp&nbsp&nbsp"
             html += "<a class = \"btn  btn-info btn-sm \" href = \"/unassign?day=" + day
-            html += "&taskid="+taskid+"\" >"
+            html += "&taskid="+taskid+"&netid=" + employee.getNetID()+  "\" >"
             html += "unassign </a> </li>"
             # print(html)
         html += "</ul>"
@@ -768,7 +768,7 @@ def unassignShift():
 @app.route('/assign', methods=['GET'])
 def assignShift():
     print("HERE")
-    netid = request.cookies.get('netid')
+    netid = request.args.get('netid')
     data = request.args.get("shifts")
     shifts = data.split('_')
     try:

@@ -576,7 +576,7 @@ class Database:
             cur.execute(QUERY_STRING, (netid,))
 
             row = cur.fetchone()
-            employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10]))
+            employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
             cur.close()
             return employee
         except (Exception, psycopg2.DatabaseError) as error:
