@@ -34,7 +34,7 @@ def landing():
 def login():
 
     netid = CASClient().authenticate().strip()
-
+    print("netid: " + netid)
     try:
         database = Database()
         database.connect()
@@ -72,7 +72,9 @@ def noPermissions():
 @app.route('/index', methods=['GET'])
 def index():
 
-    netid = request.cookies.get('netid')
+    # netid = request.cookies.get('netid')
+    netid = CASClient().authenticate().strip()
+    print("netid2: " + netid)
     if netid is None:
         netid = ''
 
@@ -602,7 +604,51 @@ def shiftDetails():
     return response
 
 # -----------------------------------------------------------------------
-
+def idToDay(shiftStr):
+    day = int(shiftStr[0])
+    str = ''
+    if (day == 0):
+        str = 'monday'
+    elif (day == 1):
+        str = 'tuesday'
+    elif (day == 2):
+        str = 'wednesday'
+    elif (day == 3):
+        str = 'thursday'
+    elif (day == 4):
+        str = 'friday'
+    elif (day == 5):
+        str = 'saturday'
+    elif (day == 6):
+        str = 'sunday'
+    return str
+# -----------------------------------------------------------------------
+def idToStr(shiftStr):
+    day = int(shiftStr[0])
+    str = ''
+    if (day == 0): str = 'Monday '
+    elif (day == 1): str = 'Tuesday '
+    elif (day == 2): str = 'Wednesday '
+    elif (day == 3): str = 'Thursday '
+    elif (day == 4): str = 'Friday '
+    elif (day == 5): str = 'Saturday '
+    elif (day == 6): str = 'Sunday '
+    taskid = int(shiftStr[2])
+    if (taskid == 1): str += 'Dinner Manager'
+    elif (taskid == 2): str +=  'Dinner First Shift'
+    elif (taskid == 3): str +=  'Dinner Second Shift'
+    elif (taskid == 4): str +=  'Dinner Dish Manager'
+    elif (taskid == 5): str +=  'Dinner First Dish'
+    elif (taskid == 6): str +=  'Dinner Second Dish'
+    elif (taskid == 7): str +=  'Brunch Manager'
+    elif (taskid == 8): str +=  'Brunch First Shift'
+    elif (taskid == 9): str +=  'Brunch Second Shift'
+    elif (taskid == 10): str +=  'Brunch Dish Manager'
+    elif (taskid == 11): str +=  'Brunch First Dish'
+    elif (taskid == 12): str += 'Brunch Second Dish'
+    elif (taskid == 13): str +=  'CJL Swipe'
+    return str
+#-----------------------------------------------------------------------
 @app.route('/employeeDetails', methods=['GET'])
 def employeeDetails():
     # date = "2020-03-23"
@@ -627,17 +673,51 @@ def employeeDetails():
     if not database.isCoordinator(my_netid):
         database.disconnect()
         return redirect(url_for('noPermissions'))
-
     employee = database.employeeDetails(netid)
+
+    regularShifts = database.regularShifts(netid)
     database.disconnect()
     if employee is None:
         employee = '<strong> Error: No data to display</strong>'
     else:
-        html = "<br><h3>Employee Details:</h3><br>" + str(employee)
+
+        html = "<br><h3>Employee Details:</h3><br>" + str(employee) + "<br>"
+
+        html += "<ul class = \" list-group list-group-flush \" style=\"overflow-y:scroll;height:200px;\" >"
+        for shift in regularShifts:
+            day = idToDay(str(shift))
+            taskid = shift[2]
+            html += "<li class=\"list-group-item\">" + idToStr(str(shift)) + "&nbsp&nbsp&nbsp&nbsp"
+            html += "<a class = \"btn  btn-info btn-sm \" href = \"/unassign?day=" + day
+            html += "&taskid="+taskid+"\" >"
+            html += "unassign </a> </li>"
+            print(html)
+        html += "</ul>"
 
     response = make_response(html)
     response.set_cookie('netid', my_netid)
     return response
+
+#-----------------------------------------------------------------------
+@app.route('/unassign', methods=['GET'])
+def unassignShift():
+    print("HERE")
+    netid = request.cookies.get('netid')
+    taskid = request.args.get("taskid")
+    dow = request.args.get("day")
+    print("netid" + netid)
+    print("taskid" + taskid)
+    print("dow" + dow )
+    try:
+        database = Database()
+        database.connect()
+        database.removeRegularShift(netid, taskid, dow)
+        database.disconnect()
+    except Exception as e:
+        errorMsg = e
+
+    # response = make_response(html)
+    return redirect("/manageshifts")
 
 #-----------------------------------------------------------------------
 
