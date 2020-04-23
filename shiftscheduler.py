@@ -18,17 +18,38 @@ from CASClient import CASClient
 app = Flask(__name__, template_folder='.')
 
 app.secret_key = b'\xcdt\x8dn\xe1\xbdW\x9d[}yJ\xfc\xa3~/'
+
+#-----------------------------------------------------------------------
+@app.route('/', methods=['GET'])
+@app.route('/landing', methods=['GET'])
+def landing():
+
+    html = render_template('landing.html')
+    response = make_response(html)
+    return response
+
 #-----------------------------------------------------------------------
 
-@app.route('/', methods=['GET'])
-@app.route('/index', methods=['GET'])
-def index():
+@app.route('/login', methods=['GET'])
+def login():
 
     netid = CASClient().authenticate().strip()
 
-    html = render_template('indexbootstrap.html',
-        netid = netid)
-    response = make_response(html)
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if database.isCoordinator(netid):
+        return redirect(url_for('index'))
+    elif database.isEmployee(netid):
+        return redirect(url_for('employee'))
+    else:
+        return redirect(url_for('noPermissions'))
+
+    database.disconnect()
+
     response.set_cookie('netid', netid)
     return response
 
@@ -40,65 +61,16 @@ def logout():
 
 #-----------------------------------------------------------------------
 
-@app.route('/employee', methods=['GET'])
-@app.route('/employeepage', methods=['GET'])
-def employeePage():
-
-    netid = request.cookies.get('netid')
-    if netid is None:
-        netid = ''
-
-    errorMsg = request.args.get('errorMsg')
-    if errorMsg is None:
-        errorMsg = ''
-
-    monday = request.args.get('monday')
-    if monday is None:
-        monday = 'today'
-
-    # print('monday: ' + monday)
-
-    html = render_template('employeepagebootstrap.html',
-        netid=netid,
-        errorMsg=errorMsg,
-        monday=monday)
-
+@app.route('/nopermissions', methods=['GET'])
+def noPermissions():
+    html = render_template('nopermissions.html')
     response = make_response(html)
-    response.set_cookie('netid', netid)
     return response
 
 #-----------------------------------------------------------------------
 
-@app.route('/calendar', methods=['GET'])
-def calendar():
-
-    netid = request.cookies.get('netid')
-    if netid is None:
-        netid = ''
-
-    errorMsg = request.args.get('errorMsg')
-    if errorMsg is None:
-        errorMsg = ''
-
-    monday = request.args.get('monday')
-    if monday is None:
-        monday = 'today'
-
-    # print('monday: ' + monday)
-
-    html = render_template('calendar.html',
-        netid=netid,
-        errorMsg=errorMsg,
-        monday=monday)
-
-    response = make_response(html)
-    response.set_cookie('netid', netid)
-    return response
-
-#-----------------------------------------------------------------------
-
-@app.route('/coordinatorpage', methods=['GET'])
-def coordinatorPage():
+@app.route('/index', methods=['GET'])
+def index():
 
     netid = request.cookies.get('netid')
     if netid is None:
@@ -110,6 +82,103 @@ def coordinatorPage():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
+    database.disconnect()
+
+    html = render_template('index.html',
+        netid = netid)
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/employee', methods=['GET'])
+def employee():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    errorMsg = request.args.get('errorMsg')
+    if errorMsg is None:
+        errorMsg = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
+    database.disconnect()
+
+    monday = request.args.get('monday')
+    if monday is None:
+        monday = 'today'
+
+    html = render_template('employee.html',
+        netid=netid,
+        errorMsg=errorMsg,
+        monday=monday)
+
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+# #-----------------------------------------------------------------------
+#
+# @app.route('/calendar', methods=['GET'])
+# def calendar():
+#
+#     netid = request.cookies.get('netid')
+#     if netid is None:
+#         netid = ''
+#
+#     errorMsg = request.args.get('errorMsg')
+#     if errorMsg is None:
+#         errorMsg = ''
+#
+#     monday = request.args.get('monday')
+#     if monday is None:
+#         monday = 'today'
+#
+#     # print('monday: ' + monday)
+#
+#     html = render_template('calendar.html',
+#         netid=netid,
+#         errorMsg=errorMsg,
+#         monday=monday)
+#
+#     response = make_response(html)
+#     response.set_cookie('netid', netid)
+#     return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/manageemployees', methods=['GET'])
+def manageEmployees():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     # allSubsNeeded = database.allSubNeeded()
     # for shift in allSubsNeeded:
     #     print(shift)
@@ -118,7 +187,7 @@ def coordinatorPage():
 
     database.disconnect()
 
-    html = render_template('coordinatorbootstrap.html',
+    html = render_template('manageemployees.html',
                            netid=netid,
                            employees=employees)
     response = make_response(html)
@@ -143,6 +212,10 @@ def coordinatorSchedule():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     allSubsNeeded = database.allSubNeeded()
     for shift in allSubsNeeded:
         print(shift)
@@ -151,6 +224,40 @@ def coordinatorSchedule():
     html = render_template('coordinatorschedule.html',
                            netid=netid,
                            monday=monday)
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/manageshifts', methods=['GET'])
+def manageShifts():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
+    # allSubsNeeded = database.allSubNeeded()
+    # for shift in allSubsNeeded:
+    #     print(shift)
+
+    employees = database.getAllEmployees()
+
+    database.disconnect()
+
+    html = render_template('manageshifts.html',
+                           netid=netid,
+                           employees=employees)
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -169,6 +276,10 @@ def profile():
         database.connect()
     except Exception as e:
         errorMsg = e
+
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
 
     employee = database.employeeDetails(netid)
     database.disconnect()
@@ -222,6 +333,10 @@ def subIn():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     successful = database.subIn(netid, date, task_id)
     database.disconnect()
     if successful:
@@ -255,6 +370,10 @@ def subOut():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     successful = database.subOut(netid, date, task_id)
     database.disconnect()
     if successful:
@@ -280,6 +399,10 @@ def myShifts():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     shifts = database.myShifts(netid)
     # for shift in shifts:
     #     print(shift)
@@ -301,6 +424,10 @@ def regularShifts():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     shifts = database.regularShifts(netid)
     for shift in shifts:
         print(shift)
@@ -312,6 +439,10 @@ def regularShifts():
 @app.route('/needSubShifts', methods=['GET'])
 def needSubShifts():
 
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
     mon = request.args.get('mon')
     if mon is None:
         mon = ''
@@ -320,6 +451,10 @@ def needSubShifts():
         database.connect()
     except Exception as e:
         errorMsg = e
+
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
 
     print(mon);
     subs = database.allSubsForWeek(mon)
@@ -358,6 +493,10 @@ def insertEmployee():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     successful = database.insertEmployee(employeenetid, firstname, lastname, manager)
     database.disconnect()
 
@@ -388,6 +527,10 @@ def removeEmployee():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     successful = database.removeEmployee(employeenetid)
     database.disconnect()
 
@@ -404,10 +547,10 @@ def removeEmployee():
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
     # date = "2020-03-23"
-    # netid = request.cookies.get('netid')
-    # if netid is None:
-    #     netid = ''
-    #
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
     # errorMsg = request.args.get('errorMsg')
     # if errorMsg is None:
     #     errorMsg = ''
@@ -426,18 +569,36 @@ def shiftDetails():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     shift = database.shiftDetails(date, task_id)
-    database.disconnect()
+
+
     if shift is None:
         html = '<strong> Error: No data to display</strong>'
     else:
+        shift_id = shift.getShiftID()
+        employees = database.employeesInShift(shift_id)
+        numEmployees = database.numberOfEmployeesInShift(shift_id)
         html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
         html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
+        # can get rid of the second condition once numEmployees fixed?
+        if numEmployees != 0 and numEmployees == len(employees):
+            html += '<strong>Working: </strong>'
+            for i in range(numEmployees):
+                html += employees[i]
+                if i != numEmployees - 1:
+                    html += ", "
+            html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
 
+    database.disconnect()
     response = make_response(html)
+    response.set_cookie('netid', netid)
     return response
 
 # -----------------------------------------------------------------------
@@ -445,9 +606,9 @@ def shiftDetails():
 @app.route('/employeeDetails', methods=['GET'])
 def employeeDetails():
     # date = "2020-03-23"
-    netid = request.cookies.get('netid')
-    if netid is None:
-        netid = ''
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
 
     # errorMsg = request.args.get('errorMsg')
     # if errorMsg is None:
@@ -463,6 +624,10 @@ def employeeDetails():
     except Exception as e:
         errorMsg = e
 
+    if not database.isCoordinator(my_netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     employee = database.employeeDetails(netid)
     database.disconnect()
     if employee is None:
@@ -471,6 +636,7 @@ def employeeDetails():
         html = "<br><h3>Employee Details:</h3><br>" + str(employee)
 
     response = make_response(html)
+    response.set_cookie('netid', my_netid)
     return response
 
 #-----------------------------------------------------------------------
