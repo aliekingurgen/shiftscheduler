@@ -16,6 +16,7 @@ import psycopg2
 import datetime
 # from config import config
 from configparser import ConfigParser
+import pandas as pd
 
 
 # -----------------------------------------------------------------------
@@ -114,6 +115,12 @@ class Database:
                                'sub_requests.sub_in_netid = %s AND sub_requests.shift_id = %s'
                 cur.execute(QUERY_STRING, ('needed', netid, shiftId))
                 self._conn.commit()
+
+                # decrement # of subins of the employee
+                QUERY_STRING = 'UPDATE employees SET subins = subins - 1 WHERE netid=%s'
+                cur.execute(QUERY_STRING, (netid,))
+                self._conn.commit()
+
                 print('Sub request is committed.')
                 cur.close()
                 return True
@@ -123,6 +130,12 @@ class Database:
                                '(%s, %s, %s);'
                 cur.execute(QUERY_STRING, (shiftId, netid, 'needed'))
                 self._conn.commit()
+
+                # increment # of subouts of the employee
+                QUERY_STRING = 'UPDATE employees SET subouts = subouts + 1 WHERE netid=%s'
+                cur.execute(QUERY_STRING, (netid,))
+                self._conn.commit()
+
                 print('Sub request is committed.')
                 cur.close()
                 return True
@@ -160,21 +173,34 @@ class Database:
                 QUERY_STRING = 'DELETE FROM sub_requests WHERE shift_id = %s AND sub_out_netid = %s'
                 cur.execute(QUERY_STRING, (shiftId, netid))
                 self._conn.commit()
+
+                # decrement # of subouts of the employee
+                QUERY_STRING = 'UPDATE employees SET subouts = subouts - 1 WHERE netid=%s'
+                cur.execute(QUERY_STRING, (netid,))
+                self._conn.commit()
+
                 print('Sub pick-up is committed.')
                 cur.close()
                 return True
 
             else:
-                # need to figure out a way to only apply this once
+                # update sub_requests table
                 QUERY_STRING = 'UPDATE sub_requests ' + \
                                'SET sub_in_netid = %s' + \
                                'WHERE sub_requests.shift_id = %s ' + \
                                'AND sub_requests.sub_out_netid = %s'
                 cur.execute(QUERY_STRING, (netid, shiftId, otherNetid))
                 self._conn.commit()
+
+                # increment # of subins of the employee
+                QUERY_STRING = 'UPDATE employees SET subins = subins + 1 WHERE netid=%s'
+                cur.execute(QUERY_STRING, (netid,))
+                self._conn.commit()
+
                 print('Sub pick-up is committed.')
                 cur.close()
                 return True
+
 
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
@@ -336,6 +362,7 @@ class Database:
                 row = cur.fetchone()
 
             cur.close()
+            regShifts.sort(key=str.lower)
             return regShifts
 
         except (Exception, psycopg2.DatabaseError) as error:
@@ -345,6 +372,16 @@ class Database:
 
     def addRegularShift(self, netid, taskid, dotw):
         try:
+            if dotw == 'monday' or dotw == 'tuesday' or dotw == 'wednesday' or dotw == 'thursday' or dotw == 'friday':
+                if taskid == 8 or taskid == 9 or taskid == 10 or taskid == 11  or taskid == 12:
+                    print("Shift not valid.")
+                    return False
+            
+            if dotw != 'friday':
+                if taskid == 13:
+                    print("Shift not valid.")
+                    return False 
+
             # should probably check input, currently assuming dotw is in string format
             cur = self._conn.cursor()
 
@@ -558,7 +595,7 @@ class Database:
             rows = cur.fetchall()
             if rows is not None:
                 for row in rows:
-                    employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+                    employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
                     employeeList.append(employee)
             cur.close()
             employeeListSorted = sorted(employeeList, key=lambda x: x._first_name)
@@ -886,6 +923,24 @@ class Database:
             print(error)
             return False
 
+    def exportEmployeeData(self):
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+            QUERY_STRING = 'SELECT * FROM employees'
+            
+            data = pd.read_sql_query(QUERY_STRING, self._conn)
+            writer = pd.ExcelWriter('Dining_Hall_Employees.xlsx')
+            data.to_excel(writer, sheet_name='employees')
+            writer.save()
+            return True
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
+
+
 # -----------------------------------------------------------------------
 
 # For testing:
@@ -994,5 +1049,8 @@ if __name__ == '__main__':
     end = "2020-05-10"
     print(database.populateForPeriod(start, end))
     '''
+
+    # Test exportEmployeeData ***** WORKS
+    database.exportEmployeeData()
     
     database.disconnect()
