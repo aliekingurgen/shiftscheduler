@@ -16,7 +16,7 @@ import psycopg2
 import datetime
 # from config import config
 from configparser import ConfigParser
-import pandas as pd
+#import pandas as pd
 
 
 # -----------------------------------------------------------------------
@@ -1146,6 +1146,11 @@ class Database:
             cur.execute(QUERY_STRING, (netid,))
             self._conn.commit()
 
+            QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
+            cur.execute(QUERY_STRING, (shiftid, netid))
+            self._conn.commit()
+            print('Added walk-on to shift_assign')
+
             print('Walk-on is committed.')
             cur.close()
             return True
@@ -1194,6 +1199,13 @@ class Database:
             QUERY_STRING = 'UPDATE employees SET noshows = noshows + 1 WHERE netid=%s'
             cur.execute(QUERY_STRING, (netid,))
             self._conn.commit()
+            print('Updated noshows number')
+
+            # Remove shift pairing from shift_assign
+            QUERY_STRING = 'DELETE FROM shift_assign WHERE netid = %s AND shift_id = %s'
+            cur.execute(QUERY_STRING, (netid, shiftid))
+            self._conn.commit()
+            print('Removed assignment pariing from shift_assign')
 
             print('No-show is committed.')
             cur.close()
@@ -1205,6 +1217,80 @@ class Database:
             cur.close()
             print(error)
             return False
+
+    def getShiftHours(self, taskid):
+
+        if (taskid > 13 or taskid < 1):
+            print("Taskid must be an integer between 1 and 13")
+            return False
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'SELECT start_time, end_time FROM task_info WHERE task_id = %s'
+            cur.execute(QUERY_STRING, (taskid,))
+            
+            row = cur.fetchone()
+            if row is None:
+                print('Something went wrong.')
+                cur.close()
+                return False
+
+            #time_delta = timedelta(row[0])
+            #can't just subtract time so we need to add in a common date
+            hours = datetime.datetime.combine(datetime.date.today(), row[1]) - datetime.datetime.combine(datetime.date.today(), row[0])
+            print('Subtracted ' + str(row[0]) + ' from ' + str(row[1]) + ' to get a shift time of ' + str(hours))
+            cur.close()
+            return hours
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
+            
+    #draft, probably does not work
+        '''
+    def addHoursForShift(self, netid, shiftid):
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+
+            # Check if netid exists
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return False
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id, task_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+
+            print('task: ' + row[1])
+            hours = getShiftHours(row[1])
+
+            #this might only work with interval?
+            QUERY_STRING = 'UPDATE employees SET hours = hours + %s, total_hours = total_hours + %s WHERE netid = %s'
+            cur.execute(QUERY_STRING, (hours, hours, netid))
+            print('Added shift hours to employees table')
+            self._conn.commit()
+            cur.close()
+            return True
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Hour addition rolled back.')
+            cur.close()
+            print(error)
+            return False
+            '''
 
 
 # -----------------------------------------------------------------------
@@ -1323,6 +1409,9 @@ if __name__ == '__main__':
     '''
 
     # Test addNoShow ***** WORKS
-    database.addNoShow(440, 'agurgen')
+    #database.addNoShow(440, 'agurgen')
+
+    # Test getShiftHours
+    print(str(database.getShiftHours(1)))
 
     database.disconnect()

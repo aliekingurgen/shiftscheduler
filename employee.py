@@ -67,3 +67,10 @@ class Employee:
 
     def getNoShows(self):
         return str(self._noshows)
+
+    def addHours(self, amount):
+        hours = hours + amount
+        total_hours = total_hours + amount
+
+    def resetPayPeriod(self):
+        hours = 0
