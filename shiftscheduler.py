@@ -208,7 +208,6 @@ def coordinatorSchedule():
     monday = request.args.get('monday')
     if monday is None:
         monday = 'today'
-
     try:
         database = Database()
         database.connect()
@@ -558,6 +557,66 @@ def removeEmployee():
 
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
+    # date = "2020-03-23"
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    # errorMsg = request.args.get('errorMsg')
+    # if errorMsg is None:
+    #     errorMsg = ''
+    #
+    date = request.args.get('date')
+    if date is None:
+        date = ''
+
+    task_id = request.args.get('taskid')
+    if task_id is None:
+        task_id = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
+    shift = database.shiftDetails(date, task_id)
+
+
+    if shift is None:
+        html = '<strong> Error: No data to display</strong>'
+    else:
+        shift_id = shift.getShiftID()
+        employees = database.employeesInShift(shift_id)
+        numEmployees = database.numberOfEmployeesInShift(shift_id)
+        html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
+        html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
+        html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
+        html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
+        html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
+        html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
+        # can get rid of the second condition once numEmployees fixed?
+        if numEmployees != 0 and numEmployees == len(employees):
+            html += '<strong>Working: </strong>'
+            for i in range(numEmployees):
+                html += employees[i]
+                if i != numEmployees - 1:
+                    html += ", "
+            html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
+
+    database.disconnect()
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+# -----------------------------------------------------------------------
+
+@app.route('/shiftdetailsco', methods=['GET'])
+def shiftDetailsCoordinator():
     # date = "2020-03-23"
     netid = request.cookies.get('netid')
     if netid is None:

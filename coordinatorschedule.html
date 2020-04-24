@@ -106,29 +106,29 @@
 <div id="calendar">
 <table class="table" align="center" cellpadding="5" cellspacing="2">
 	<thead>
-		<tr>
+<tr>
 			<!-- <th> </th> -->
-			<th>Monday Dinner</th>
-			<th>Tuesday Dinner</th>
-			<th>Wednesday Dinner</th>
-			<th>Thursday Dinner</th>
-			<th>Friday &nbsp Dinner&nbsp </th>
-			<th>Saturday Brunch</th>
-			<th>Saturday Dinner</th>
-			<th>Sunday Brunch</th>
-			<th>Sunday Dinner</th>
+			<th class = "mon">Monday Dinner</th>
+			<th class = "tue" >Tuesday Dinner</th>
+			<th class = "wed" >Wednesday Dinner</th>
+			<th class = "thu" >Thursday Dinner</th>
+			<th class = "fri" >Friday &nbsp Dinner&nbsp </th>
+			<th class = "sat" >Saturday Brunch</th>
+			<th class = "sat">Saturday Dinner</th>
+			<th class = "sun" >Sunday Brunch</th>
+			<th class = "sun">Sunday Dinner</th>
 		</tr>
 		<tr>
 			<!-- <th> </th> -->
-			<td id="monDate"></td>
-			<td id="tuesDate"></td>
-			<td id ="wedDate"></td>
-			<td id ="thursDate"></td>
-			<td id="friDate"></td>
-			<td id="satDate"></td>
-			<td id="satDate2"></td>
-			<td id="sunDate"></td>
-			<td id = "sunDate2"></td>
+			<td class = "mon" id="monDate"></td>
+			<td class = "tue" id="tuesDate"></td>
+			<td class = "wed" id ="wedDate"></td>
+			<td class = "thu" id ="thursDate"></td>
+			<td class = "fri" id="friDate"></td>
+			<td class = "sat" id="satDate"></td>
+			<td class = "sat" id="satDate2"></td>
+			<td class = "sun" id="sunDate"></td>
+			<td class = "sun" id = "sunDate2"></td>
 		</tr>
 	</thead>
 	<tbody>
@@ -395,12 +395,24 @@ function getDates() {
 	let current = new Date();
 
   if (mon == 'today') {
+  		console.log("HERE");
 		let today = new Date();
-		// console.log("today: " + today)
+		console.log("today: " + today)
 		let dotw = today.getDay();
 		if (dotw == 0) {
 			dotw = 7
 		}
+		var dayStr = null;
+		if(dotw  == 1) dayStr = '.mon';
+		else if(dotw  == 2) dayStr = '.tue';
+		else if(dotw  == 3) dayStr = '.wed';
+		else if(dotw  == 4) dayStr = '.thu';
+		else if(dotw  == 5) dayStr = '.fri';
+		else if(dotw  == 6) dayStr = '.sat';
+		else if(dotw  == 7) dayStr = '.sun';
+
+		var classStr =  dayStr +  " table-warning";
+		$(dayStr).attr("class" , classStr);
 		mon = today.getDate() - dotw +1 ;
 		current.setDate(mon);
 	}
