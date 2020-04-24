@@ -689,16 +689,16 @@ def employeeShiftDetails():
     if employee is None:
         employee = '<strong> Error: No data to display</strong>'
     else:
-        html = "<br><h3>Employee Details:</h3><br>" + str(employee) + "<br>"
+        html = str(employee) + "<br>"
 
-        html += "<ul class = \" list-group list-group-flush \" style=\"overflow-y:scroll;height:200px;\" >"
+        html += "<ul class = \" list-group list-group-flush \" style=\"overflow-y:scroll;height:200px;font-size:13px;\" >"
         for shift in regularShifts:
             day = idToDay(str(shift))
             taskid = shift[2]
             html += "<li class=\"list-group-item\">" + idToStr(str(shift)) + "&nbsp&nbsp&nbsp&nbsp"
             html += "<a class = \"btn  btn-info btn-sm \" href = \"/unassign?day=" + day
-            html += "&taskid="+taskid+"&netid=" + employee.getNetID()+  "\" >"
-            html += "unassign </a> </li>"
+            html += "&taskid="+taskid+"&netid=" + employee.getNetID()+  "\""
+            html += "style=\"font-size:13px\"> unassign </a> </li>"
             # print(html)
         html += "</ul>"
 
@@ -737,7 +737,8 @@ def employeeDetails():
     if employee is None:
         employee = '<strong> Error: No data to display</strong>'
     else:
-        html = "<br><h3>Employee Details:</h3><br>" + str(employee) + "<br>"
+        # html = "<h3>Employee Details:</h3>" + str(employee) + "<br>"
+        html = str(employee) + "<br>"
 
     response = make_response(html)
     response.set_cookie('netid', my_netid)

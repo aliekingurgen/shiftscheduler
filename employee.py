@@ -21,16 +21,16 @@ class Employee:
         self._noshows = noshows
 
     def __str__(self):
-        return ('NetID: ' + str(self._netid) + ' <br> ' + \
-                'Name: ' + str(self._first_name) + ' ' + str(self._last_name) + ' <br> ' + \
-                'Email: ' + str(self._email) + ' <br> ' + \
-                'Manager: ' + str(self._manager) + ' <br> ' + \
-                'Hours: ' + str(self._hours) + ' <br> ' + \
-                'Total Hours: ' + str(self._total_hours) + ' <br> ' + \
-                'Sub-Ins: ' + str(self._subins) + ' <br> ' + \
-                'Sub-Outs: ' + str(self._subouts) + ' <br> ' + \
-                'Walk-Ons: ' + str(self._walkons) + ' <br> ' + \
-                'No-Shows: ' + str(self._noshows))
+        return ('<strong>NetID:</strong> ' + str(self._netid) + ' <br> ' + \
+                '<strong>Name:</strong> ' + str(self._first_name) + ' ' + str(self._last_name) + ' <br> ' + \
+                '<strong>Email:</strong> ' + str(self._email) + ' <br> ' + \
+                '<strong>Manager:</strong> ' + str(self._manager) + ' <br> ' + \
+                '<strong>Hours:</strong> ' + str(self._hours) + ' <br> ' + \
+                '<strong>Total Hours:</strong> ' + str(self._total_hours) + ' <br> ' + \
+                '<strong>Sub-Ins:</strong> ' + str(self._subins) + ' <br> ' + \
+                '<strong>Sub-Outs:</strong> ' + str(self._subouts) + ' <br> ' + \
+                '<strong>Walk-Ons:</strong> ' + str(self._walkons) + ' <br> ' + \
+                '<strong>No-Shows:</strong> ' + str(self._noshows))
 
     def getNetID(self):
         return str(self._netid)
@@ -58,12 +58,12 @@ class Employee:
 
     def getSubIns(self):
         return str(self._subins)
-    
+
     def getSubOuts(self):
         return str(self._subouts)
 
     def getWalkOns(self):
         return str(self._walkons)
-    
+
     def getNoShows(self):
         return str(self._noshows)

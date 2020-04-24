@@ -94,7 +94,6 @@
 <div class="container">
 	<div class="row">
 		<div class="container col-md-4">
-			<br>
 			<h3 >All Current Employees:</h3>
 			<br>
 
@@ -110,12 +109,16 @@
 				</div>
 
 			</div>
+
 			<div class="container col-md-4">
-				<p id="employeeDetails" link={{employee}}></p>
+				<h3>Unassign Regular Shifts:</h3><br>
+				<p id="employeeDetails" employee="{{employee}}">Click an employee on the
+					left to unassign/assign regular shifts.</p>
 			</div>
 
-			<div id = "assignShift" style = "visibility:hidden" class="container col-md-4 order-md-1">
-				<form>
+			<div id = "assignShift" class="container col-md-4 order-md-1">
+				<h3>Assign Regular Shifts:</h3><br>
+				<form id="assignShiftForm" style = "visibility:hidden" >
 					<div class="form-group">
 						<label for="daySelect">Select a Day</label>
 						<select class="form-control" id="daySelect">
@@ -148,7 +151,7 @@
 					</div>
 					<div class="form-group">
 						<button id="insertShift" type="button"
-						class="btn btn-secondary">Insert Regular Shift into List</button>
+						class="btn btn-secondary">Add Regular Shift</button>
 					</div>
 					<div class="form-group">
 						<label for="toBeAdded">Regular Shifts to be Added</label>
@@ -157,7 +160,7 @@
 					</div>
 					<div class="form-group">
 						<button id="insertAllShifts" type="button"
-						class="btn btn-secondary">Insert All Shifts</button>
+						class="btn btn-secondary">Assign Selected Employee All Above Regular Shifts</button>
 					</div>
 				</form>
 			</div>
@@ -174,8 +177,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
 <script>
+
 	let request = null;
 	let netid = null;
+
 function addRegularShifts() {
 
 	$('#insertShift').on('click', function(){
@@ -198,25 +203,25 @@ function addRegularShifts() {
 			if ($(this).attr("class") == 'selectThis') {
 				var shiftName = $(this).val();
 
-				var splited = shiftName.split(' ');
+				var split = shiftName.split(' ');
 
-				var day = splited[0];
+				var day = split[0];
 				var task  = '';
-				for(var i = 1; i < splited.length ; i++){
-					task += splited[i];
+				for(var i = 1; i < split.length ; i++){
+					task += split[i];
 				}
 				shifts += day.toLowerCase() +"-" + convertTaskId(task)  + "_"
 			}
 		});
-		console.log("netid" + netid);
 		shifts = encodeURIComponent(shifts);
+		console.log(netid);
 		let url = "/assign?netid=" + netid + "&shifts=" + shifts;
 
 		// console.log(shifts);
 		if (request != null) {
 			request.abort();
 		}
-		reloadUrl =  "/manageshifts?netid=" + netid;
+		reloadUrl =  "/manageshifts?employee=" + netid;
 		request = $.ajax(
 			{
 				type: "GET",
@@ -224,9 +229,6 @@ function addRegularShifts() {
 				success: window.location = reloadUrl,
 			}
 		);
-
-			// $.post("assign", shifts, function(){
-			// });
 		});
 	}
 
@@ -247,15 +249,19 @@ function addRegularShifts() {
 		return taskid;
 	}
 
-
 	function employeeDetails() {
-		$('#employeeDetails').load('/employeeShiftDetails?netid=' + $('#employeeDetails').attr('link'));
-
+		var employee = $('#employeeDetails').attr('employee');
+		console.log(employee);
+		$('#employeeDetails').load('/employeeShiftDetails?netid=' + employee);
+		if (employee != '') {
+			$('#assignShiftForm').attr('style', "visibility:visible");
+		}
 		$('.employeeItem').on('click',function() {
 			url = $(this).attr('link');
 			$('#employeeDetails').load(url);
-			$('#assignShift').attr('style', "visibility:visible");
+			$('#assignShiftForm').attr('style', "visibility:visible");
 			netid = $(this).attr('netid');
+			console.log(netid);
 		});
 	}
 
