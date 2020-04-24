@@ -400,6 +400,10 @@ def myShifts():
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
+    
+    mon = request.args.get('mon')
+    if mon is None:
+        mon = ''
 
     try:
         database = Database()
@@ -411,9 +415,9 @@ def myShifts():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-    shifts = database.myShifts(netid)
-    # for shift in shifts:
-    #     print(shift)
+    shifts = database.myShifts(netid, mon)
+    #for shift in shifts:
+     #   print(shift)
     database.disconnect()
     return jsonify(shifts)
 
@@ -591,6 +595,7 @@ def shiftDetails():
         employees = database.employeesInShift(shift_id)
         numEmployees = database.numberOfEmployeesInShift(shift_id)
         html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
+        html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
@@ -776,7 +781,7 @@ def assignShift():
         database = Database()
         database.connect()
         for shift in shifts:
-            if shift is not '':
+            if shift != '':
                 info = shift.split("-")
                 day = info[0]
                 taskid = info[1]
