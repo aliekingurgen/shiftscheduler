@@ -1107,6 +1107,104 @@ class Database:
             cur.close()
             print(error)
             return False
+    
+    #-----------------------------------------------------------------------
+
+    def addWalkOn(self, shiftid, netid):
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+
+            # Check if netid exists
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return False
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+
+            # Insert walkon into walkons table
+            QUERY_STRING = 'INSERT INTO walkons(netid, shift_id) VALUES (%s, %s)'
+            cur.execute(QUERY_STRING, (netid, shiftid))
+            self._conn.commit()
+            print('Added walk-on: ' + netid + ' ' + str(shiftid))
+
+            # Increment netid's walkons by 1
+            QUERY_STRING = 'UPDATE employees SET walkons = walkons + 1 WHERE netid=%s'
+            cur.execute(QUERY_STRING, (netid,))
+            self._conn.commit()
+
+            print('Walk-on is committed.')
+            cur.close()
+            return True
+    
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Walk-on rolled back.')
+            cur.close()
+            print(error)
+            return False
+    
+    #-----------------------------------------------------------------------
+
+    def addNoShow(self, shiftid, netid):
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+
+            # Check if netid exists
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return False
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+
+            # Insert noshow into noshows table
+            QUERY_STRING = 'INSERT INTO noshows(netid, shift_id) VALUES (%s, %s)'
+            cur.execute(QUERY_STRING, (netid, shiftid))
+            self._conn.commit()
+            print('Added no-show: ' + netid + ' ' + str(shiftid))
+
+            # Increment netid's noshows by 1
+            QUERY_STRING = 'UPDATE employees SET noshows = noshows + 1 WHERE netid=%s'
+            cur.execute(QUERY_STRING, (netid,))
+            self._conn.commit()
+
+            print('No-show is committed.')
+            cur.close()
+            return True
+    
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('No-show rolled back.')
+            cur.close()
+            print(error)
+            return False
 
 
 # -----------------------------------------------------------------------
@@ -1216,9 +1314,15 @@ if __name__ == '__main__':
     start = "2020-05-04"
     end = "2020-05-10"
     print(database.populateForPeriod(start, end))
-    '''
-
+    
     # Test exportEmployeeData ***** WORKS
     database.exportEmployeeData()
-    
+
+    # Test addWalkOn ***** WORKS
+    database.addWalkOn(440, 'agurgen')
+    '''
+
+    # Test addNoShow ***** WORKS
+    database.addNoShow(440, 'agurgen')
+
     database.disconnect()
