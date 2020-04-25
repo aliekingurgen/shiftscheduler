@@ -381,8 +381,6 @@ class Database:
                     regShifts.append(regShift)
                     # print("A: " + str(regShift))
                 row = cur.fetchone()
-            
-            # get netid's one time shifts
 
             # get netid's all subbed in shifts
             QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
@@ -1352,6 +1350,58 @@ class Database:
         
     #-----------------------------------------------------------------------
 
+    def noShowsInShift(self, shiftid):
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+            
+            # Get all employee netids in the noshows table
+            QUERY_STRING = 'SELECT netid FROM noshows WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            employeeNetids = []
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    netid = row[0]
+                    if netid not in employeeNetids:
+                        employeeNetids.append(netid)
+
+            # Get all employee full names working in the shift
+            employeeObjects = []
+            for netid in employeeNetids:
+                QUERY_STRING = 'SELECT * FROM employees WHERE netid = %s'
+                cur.execute(QUERY_STRING, (netid,))
+
+                row = cur.fetchone()
+                if row is not None:
+                    employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
+                    if employee not in employeeObjects:
+                        employeeObjects.append(employee)
+
+            cur.close()
+            employeeLObjectsSorted = sorted(employeeObjects, key=lambda x: x._first_name)
+            return employeeLObjectsSorted
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
+
+
+    #-----------------------------------------------------------------------
+
+
     def getShiftHours(self, taskid):
 
         if (taskid > 13 or taskid < 1):
@@ -1557,5 +1607,9 @@ if __name__ == '__main__':
     for employee in employees:
         print(employee.getNetID())
     '''
+    # Test noShowsinShift ***** WORKS
+    noShows = database.noShowsInShift(407)
+    for employee in noShows:
+        print(employee.getNetID())
 
     database.disconnect()
