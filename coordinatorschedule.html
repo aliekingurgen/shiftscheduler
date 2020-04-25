@@ -356,7 +356,7 @@
 <br>
 <br>
 <br>
-
+</div>
 <!-- Modal with close button -->
 <div class="modal fade" id="otherShift" tabindex="-1" role="dialog" aria-labelledby="otherShiftLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -377,15 +377,16 @@
 					<div class="input-group-prepend">
 				  		<div class="input-group-text">@</div>
 					</div>
-				<input type="text" class="form-control" id="inlineFormInputGroup" placeholder="netid">
-			  	</div>
-				<button type="button" class="btn btn-secondary">Add WalkOn</button>
+					<input type="text" class="form-control" id="inlineFormInputGroup" placeholder="netid">
+			  		<button type="button" class="btn btn-secondary">Add WalkOn</button>
+				  </div>
 				</form>
 			</div>
 		</div>
 	</div>
 </div>
-</div>
+
+	</div>
 </main>
 
 <input type="hidden" id="myShifts">
@@ -502,24 +503,18 @@ function getModalData(mon) {
     if (modalId == '#otherShift') {
       $('#otherShiftText').load(dataURL,function() {
         $('#otherShift').modal('show');
+         $(".noShow").on("click", function(){
+        	console.log("ITS HERE CMON");
+			var url = $(this).attr("href");
+			var noShowNetID = $(this).attr("netid").trim();
+			var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+			$(this).parent("span").load(url);
+	  });
       });
     }
-    // else if (modalId == '#yourShift') {
-    // 	$('#yourShiftText').load(dataURL,function() {
-    // 		$('#otherShift').modal('hide');
-    // 		$('#otherShift').modal('hide');
-    // 		$('#yourShift').modal({show:true});
-    // 	});
-    // }
-    // else {
-    // 	$('#needsSubShiftText').load(dataURL,function() {
-    // 		$('#otherShift').modal('hide');
-    // 		$('#otherShift').modal('hide');
-    // 		$('#modal-body').modal({show:true});
-    // 	});
-    // }
   });
 }
+
 
 function format(mon) {
 	monFormat = mon.getFullYear() + '-';

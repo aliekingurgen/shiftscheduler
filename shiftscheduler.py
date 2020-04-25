@@ -652,6 +652,8 @@ def shiftDetailsCoordinator():
     else:
         shift_id = shift.getShiftID()
         employees = database.employeeObjectsInShift(shift_id)
+        for employee in employees:
+            print(employee.getNetID())
 
         numEmployees = database.numberOfEmployeesInShift(shift_id)
         html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
@@ -662,24 +664,68 @@ def shiftDetailsCoordinator():
         html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
         # can get rid of the second condition once numEmployees fixed?
 
-        if numEmployees != 0 and numEmployees == len(employees):
+        # if numEmployees != 0 and numEmployees == len(employees):
+        if len(employees) != 0:
+            print("here")
             html += '<strong>Working: </strong>'
-            for i in range(numEmployees):
+            for i in range(len(employees)):
                 html += "<br>"
                 html += employees[i].getFirstName() + " " + employees[i].getLastName()
-                html += "<button  class=\"btn btn-secondary\" href = /noshow?netid=\"" + employees[i].getNetID() + "&shiftid=" + shift_id
-                html += "\" > no show </button> "
                 html += "&nbsp&nbsp&nbsp"
-                # if i != numEmployees - 1:
-                #     html += ", "
-            html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
+                html += "<span id = \"noshow"  + employees[i].getNetID() + "\" >"
+                html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = \"" + employees[i].getNetID() + "\" "
+                html += "href = \"/noShow?netid=" + employees[i].getNetID() + "&shiftid=" + shift_id
+                html += "\" > no show </button> "
 
+                html += " </span>"
+            html += '<br><strong>Current Number Working: </strong>' + str(len(employees)) + '<br>'
+
+
+    print(html)
     database.disconnect()
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
 
 # -----------------------------------------------------------------------
+@app.route('/noShow', methods=['GET'])
+def noShow():
+    print("NO SHOW HERE")
+    netid = request.args.get('netid')
+    if netid is None:
+        netid = ''
+
+    shift_id = request.args.get('shiftid')
+    if shift_id is None:
+        shift_id = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+    print("shiftid: " + shift_id)
+    print("netid" + netid)
+    successful = database.addNoShow(shift_id, netid)
+    database.disconnect()
+    html = ""
+    if successful:
+        html += "<button  class=\"btn btn-danger btn-sm noShow\"> no show </button> "
+    else:
+        html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" > no show </button> "
+        html += "<p> try again </p>"
+
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
 def idToDay(shiftStr):
     day = int(shiftStr[0])
     str = ''
@@ -852,8 +898,7 @@ def assignShift():
                 taskid = info[1]
                 print(day)
                 print(taskid)
-                database.addRegularShift(netid, int(taskid), day)
-
+                result = database.addRegularShift(netid, int(taskid), day)
         database.disconnect()
     except Exception as e:
         errorMsg = e
