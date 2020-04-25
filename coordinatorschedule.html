@@ -352,11 +352,12 @@
 
 	</tbody>
 </table>
-<br>
-<br>
-<br>
-<br>
 </div>
+
+<br>
+<br>
+<br>
+<br>
 <!-- Modal with close button -->
 <div class="modal fade" id="otherShift" tabindex="-1" role="dialog" aria-labelledby="otherShiftLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
@@ -368,8 +369,8 @@
 				</button>
 			</div>
 			<div class="modal-body" id="otherShiftBody">
-				<p id="otherShiftText"></p>
-				<p id = "walkOnText"></p>
+				<span id="otherShiftText"></span>
+				<span id = "walkOnText"></span>
 			</div>
 			<div class="modal-footer">
 				<form>
@@ -379,6 +380,7 @@
 				  		<div class="input-group-text">@</div>
 					</div>
 					<input type="text" class="form-control" id="walkOn" placeholder="netid">
+          &nbsp&nbsp
 			  		<button type="button" class="btn btn-secondary" id = walkOnSubmit>Add WalkOn</button>
 				  </div>
 				</form>
@@ -485,6 +487,8 @@ function getSubColors(mon) {
 
 function getModalData(mon) {
   $('[data-toggle="modal"]').on('click',function() {
+    $("#walkOn").val('');
+    $("#walkOnText").val('');
     var dataURL = "/shiftdetailsco";
     var taskId = $(this).attr('taskid');
     var dotw = $(this).parents('td').attr("day");
@@ -514,13 +518,22 @@ function getModalData(mon) {
 			walkOnUrl += "date=" + iso;
     		walkOnUrl += "&taskid=" + taskId;
     		walkOnUrl += "&netid=" + walkOnNetId;
+      // var currText = $("#walkOnText").text();
+      // console.log(currText);
 			$("#walkOnText").load(walkOnUrl);
+      // console.log(currText);
+      // $("#walkOnText").text(currText + '<br>' + 'netid');
+      // console.log($("#walkOn").text());
+      $("#walkOn").val('');
+      $('#otherShift').on('hide.bs.modal',function() {
+        console.log('closed');
+        window.location.reload();
+      });
 		});
       });
     }
   });
 }
-
 
 function format(mon) {
 	monFormat = mon.getFullYear() + '-';
