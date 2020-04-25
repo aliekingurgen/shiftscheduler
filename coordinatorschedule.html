@@ -491,16 +491,13 @@ function getModalData(mon) {
     var date = new Date();
     date.setFullYear(mon.getFullYear(), mon.getMonth(), mon.getDate());
     date.setDate(date.getDate() + parseInt(dotw));
-    iso = date.toISOString().substring(0, 10);
+    var iso = date.toISOString().substring(0, 10);
 
     // console.log(iso);
     dataURL += "?date=" + iso;
     dataURL += "&taskid=" + taskId;
     var modalId = $(this).attr('data-target');
-    $('#subOutButton').attr('date', iso);
-    $('#subOutButton').attr('taskid', taskId);
-    $('#subInButton').attr('date', iso);
-    $('#subInButton').attr('taskid', taskId);
+
     if (modalId == '#otherShift') {
       $('#otherShiftText').load(dataURL,function() {
         $('#otherShift').modal('show');
@@ -513,7 +510,10 @@ function getModalData(mon) {
 	 	 });
 		$("#walkOnSubmit").on("click", function(){
 			var walkOnNetId = $("#walkOn").val();
-			var walkOnUrl =
+			var walkOnUrl = "/walkOn?"
+			walkOnUrl += "date=" + iso;
+    		walkOnUrl += "&taskid=" + taskId;
+    		walkOnUrl += "&netid=" + walkOnNetId;
 			$("#walkOnText").load(walkOnUrl);
 		});
       });
