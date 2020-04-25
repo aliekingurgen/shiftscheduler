@@ -371,7 +371,11 @@
 				<p id="otherShiftText"></p>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				 <label class="sr-only" >netid</label>
+				<div class="input-group-prepend">
+				  <div class="input-group-text">@</div>
+				</div>
+				<button type="button" class="btn btn-secondary">Add WalkOn</button>
 			</div>
 		</div>
 	</div>
@@ -474,7 +478,7 @@ function getSubColors(mon) {
 
 function getModalData(mon) {
   $('[data-toggle="modal"]').on('click',function() {
-    var dataURL = "/shiftdetails";
+    var dataURL = "/shiftdetailsco";
     var taskId = $(this).attr('taskid');
     var dotw = $(this).parents('td').attr("day");
     var date = new Date();

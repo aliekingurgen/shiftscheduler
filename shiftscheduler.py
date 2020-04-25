@@ -652,6 +652,8 @@ def shiftDetailsCoordinator():
     else:
         shift_id = shift.getShiftID()
         employees = database.employeesInShift(shift_id)
+        for employee in employees:
+            print("employees " + employee)
         numEmployees = database.numberOfEmployeesInShift(shift_id)
         html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
         html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
@@ -660,10 +662,14 @@ def shiftDetailsCoordinator():
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
         html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
         # can get rid of the second condition once numEmployees fixed?
+
         if numEmployees != 0 and numEmployees == len(employees):
             html += '<strong>Working: </strong>'
             for i in range(numEmployees):
+                html += "<br>"
                 html += employees[i]
+                html += "<button href = /noshow?netid=\"" + employees[i].getNetID() + "&shiftid=" + shift_id
+                html += "\" > no show </button> "
                 if i != numEmployees - 1:
                     html += ", "
             html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
