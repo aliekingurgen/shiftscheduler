@@ -514,6 +514,15 @@ class Database:
                 if taskid == 13:
                     print("Shift not valid.")
                     return False 
+            
+            def convertDay(dayString):
+                if (dayString == 'monday'): return '0'
+                if (dayString == 'tuesday'): return '1'
+                if (dayString == 'wednesday'): return '2'
+                if (dayString == 'thursday'): return '3'
+                if (dayString == 'friday'): return '4'
+                if (dayString == 'saturday'): return '5'
+                if (dayString == 'sunday'): return '6'
 
             def convertDayReverse(dayNumber):
                 if (dayNumber == 0): return 'monday'
@@ -523,10 +532,17 @@ class Database:
                 if (dayNumber == 4): return 'friday'
                 if (dayNumber == 5): return 'saturday'
                 if (dayNumber == 6): return 'sunday'
+            
+            # check if this regular shift is already assigned to netid
+            checkString = convertDay(dotw) + '-' + str(taskid)
+            netidRegShifts = self.regularShifts(netid)
+            if checkString in netidRegShifts:
+                print("RegularShift is already assigned")
+                return False
 
             cur = self._conn.cursor()
 
-            # remove from regular shifts
+            # add to regular shifts
             QUERY_STRING = 'INSERT INTO regular_shifts(netid, task_id, dotw) VALUES (%s, %s, %s)'
             cur.execute(QUERY_STRING, (netid, taskid, dotw))
             self._conn.commit()
@@ -539,7 +555,7 @@ class Database:
             shiftsToAdd = []
             while row is not None:
                 shift = row[0]
-                day = datetime.date.fromisoformat(row[1]).weekday()
+                day = datetime.date.fromisoformat(str(row[1])).weekday()
                 if (convertDayReverse(day) == dotw) and (shift not in shiftsToAdd):
                     shiftsToAdd.append(shift)
                 row = cur.fetchone()
@@ -549,7 +565,7 @@ class Database:
                 QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
                 cur.execute(QUERY_STRING, (shiftid, netid))
                 self._conn.commit()
-                print('Added regular shifts to shift_assign')
+                print('Added regular shift to shift_assign: ' + str(shiftid))
 
             cur.close()
             return True
@@ -565,6 +581,15 @@ class Database:
 
     def removeRegularShift(self, netid, taskid, dotw):
         try:
+            def convertDayReverse(dayNumber):
+                if (dayNumber == 0): return 'monday'
+                if (dayNumber == 1): return 'tuesday'
+                if (dayNumber == 2): return 'wednesday'
+                if (dayNumber == 3): return 'thursday'
+                if (dayNumber == 4): return 'friday'
+                if (dayNumber == 5): return 'saturday'
+                if (dayNumber == 6): return 'sunday'
+
             # create a cursor
             cur = self._conn.cursor()
 
@@ -573,6 +598,7 @@ class Database:
             cur.execute(QUERY_STRING, (netid, taskid, dotw,))
             print('general kenobi')
 
+            # check that shiftid exists
             row = cur.fetchone()
             if row is None:
                 print('Regular shift does not exist.')
@@ -584,6 +610,26 @@ class Database:
             cur.execute(QUERY_STRING, (netid, taskid, dotw))
             self._conn.commit()
             print('Removed regular shift: ' + str(taskid) + ' on ' + str(dotw) + ' from '  + str(netid))
+
+            # find shift ids with given taskid and dotw
+            QUERY_STRING = 'SELECT shift_id, date FROM shift_info WHERE task_id=%s'
+            cur.execute(QUERY_STRING, (taskid,))
+            row = cur.fetchone()
+            shiftsToRemove = []
+            while row is not None:
+                shift = row[0]
+                day = datetime.date.fromisoformat(str(row[1])).weekday()
+                if (convertDayReverse(day) == dotw) and (shift not in shiftsToRemove):
+                    shiftsToRemove.append(shift)
+                row = cur.fetchone()
+            
+            # remove all the shifts in shiftsToRemove for netid from shift_assign table
+            for shiftid in shiftsToRemove:
+                QUERY_STRING = 'DELETE FROM shift_assign where shift_id=%s AND netid=%s'
+                cur.execute(QUERY_STRING, (shiftid, netid))
+                self._conn.commit()
+                print('Remove regular shift from shift_assign: ' + str(shiftid))
+
             cur.close()
             return True
         
