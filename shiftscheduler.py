@@ -651,9 +651,8 @@ def shiftDetailsCoordinator():
         html = '<strong> Error: No data to display</strong>'
     else:
         shift_id = shift.getShiftID()
-        employees = database.employeesInShift(shift_id)
-        for employee in employees:
-            print("employees " + employee)
+        employees = database.employeeObjectsInShift(shift_id)
+
         numEmployees = database.numberOfEmployeesInShift(shift_id)
         html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
         html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
@@ -667,11 +666,12 @@ def shiftDetailsCoordinator():
             html += '<strong>Working: </strong>'
             for i in range(numEmployees):
                 html += "<br>"
-                html += employees[i]
-                html += "<button href = /noshow?netid=\"" + employees[i].getNetID() + "&shiftid=" + shift_id
+                html += employees[i].getFirstName() + " " + employees[i].getLastName()
+                html += "<button  class=\"btn btn-secondary\" href = /noshow?netid=\"" + employees[i].getNetID() + "&shiftid=" + shift_id
                 html += "\" > no show </button> "
-                if i != numEmployees - 1:
-                    html += ", "
+                html += "&nbsp&nbsp&nbsp"
+                # if i != numEmployees - 1:
+                #     html += ", "
             html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
 
     database.disconnect()
