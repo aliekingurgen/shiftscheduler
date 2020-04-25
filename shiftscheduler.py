@@ -675,12 +675,19 @@ def shiftDetailsCoordinator():
                 html += "<span id = \"noshow"  + employees[i].getNetID() + "\" >"
                 html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = \"" + employees[i].getNetID() + "\" "
                 html += "href = \"/noShow?netid=" + employees[i].getNetID() + "&shiftid=" + shift_id
-                html += "\" > no show </button> "
+                html += "\" > mark no show </button> "
 
                 html += " </span>"
-            html += '<br><strong>Current Number Working: </strong>' + str(len(employees)) + '<br>'
-
-
+        noShows = database.noShowsInShift(shift_id)
+        for noShow in noShows:
+            html += "<br>"
+            html += noShow.getFirstName() + " " + noShow.getLastName()
+            html += "&nbsp&nbsp&nbsp"
+            html += "<span id = \"noshow" + noShow.getNetID() + "\" >"
+            html += "<button  class=\"btn btn-danger btn-sm\" netid = \"" + noShow.getNetID() + "\" "
+            html += " > no show </button> "
+            html += " </span>"
+        html += '<br><strong>Current Number Working: </strong>' + str(len(employees)) + '<br>'
     print(html)
     database.disconnect()
     response = make_response(html)
@@ -716,8 +723,45 @@ def noShow():
     if successful:
         html += "<button  class=\"btn btn-danger btn-sm noShow\"> no show </button> "
     else:
-        html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
-        html += "\" > no show </button> "
+        html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" > mark no show </button> "
+        html += "<p> try again </p>"
+
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+@app.route('/walkOn', methods=['GET'])
+def walkOn():
+    print(" WALK ON HERE")
+    netid = request.args.get('netid')
+    if netid is None:
+        netid = ''
+
+    shift_id = request.args.get('shiftid')
+    if shift_id is None:
+        shift_id = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+    print("shiftid: " + shift_id)
+    print("netid" + netid)
+    successful = database.addNoShow(shift_id, netid)
+    database.disconnect()
+    html = ""
+    if successful:
+        html += "<button  class=\"btn btn-danger btn-sm noShow\"> no show </button> "
+    else:
+        html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" > mark no show </button> "
         html += "<p> try again </p>"
 
     response = make_response(html)
