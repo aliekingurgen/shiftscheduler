@@ -75,7 +75,6 @@ def index():
 
     # netid = request.cookies.get('netid')
     netid = CASClient().authenticate().strip()
-    print("netid2: " + netid)
     if netid is None:
         netid = ''
 
@@ -399,7 +398,7 @@ def myShifts():
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
-    
+
     mon = request.args.get('mon')
     if mon is None:
         mon = ''
@@ -618,14 +617,14 @@ def shiftDetails():
 @app.route('/shiftdetailsco', methods=['GET'])
 def shiftDetailsCoordinator():
     # date = "2020-03-23"
-    netid = request.cookies.get('netid')
-    if netid is None:
-        netid = ''
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
 
     # errorMsg = request.args.get('errorMsg')
     # if errorMsg is None:
     #     errorMsg = ''
-    #
+
     date = request.args.get('date')
     if date is None:
         date = ''
@@ -640,7 +639,7 @@ def shiftDetailsCoordinator():
     except Exception as e:
         errorMsg = e
 
-    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+    if not database.isCoordinator(my_netid):
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
@@ -652,7 +651,6 @@ def shiftDetailsCoordinator():
     else:
         shift_id = shift.getShiftID()
         employees = database.employeeObjectsInShift(shift_id)
-
 
         for employee in employees:
             print(employee.getNetID())
@@ -678,7 +676,7 @@ def shiftDetailsCoordinator():
                 html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = \"" + employees[i].getNetID() + "\" "
                 html += "href = \"/noShow?netid=" + employees[i].getNetID() + "&shiftid=" + shift_id
                 html += "\" > mark no show </button> "
-                html += " </span>"
+                html += " </span><br>"
         noShows = database.noShowsInShift(shift_id)
         for noShow in noShows:
             html += "<br>"
@@ -687,7 +685,7 @@ def shiftDetailsCoordinator():
             html += "<span id = \"noshow" + noShow.getNetID() + "\" >"
             html += "<button  class=\"btn btn-danger btn-sm\" netid = \"" + noShow.getNetID() + "\" "
             html += " > no show </button> "
-            html += " </span>"
+            html += " </span><br>"
 
         walkOns = database.walkOnsInShift(shift_id)
 
@@ -702,13 +700,16 @@ def shiftDetailsCoordinator():
 
     database.disconnect()
     response = make_response(html)
-    response.set_cookie('netid', netid)
+    response.set_cookie('netid', my_netid)
     return response
 
 # -----------------------------------------------------------------------
 @app.route('/noShow', methods=['GET'])
 def noShow():
-    print("NO SHOW HERE")
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
+
     netid = request.args.get('netid')
     if netid is None:
         netid = ''
@@ -723,7 +724,7 @@ def noShow():
     except Exception as e:
         errorMsg = e
 
-    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+    if not database.isCoordinator(my_netid):
         database.disconnect()
         return redirect(url_for('noPermissions'))
     print("shiftid: " + shift_id)
@@ -739,13 +740,17 @@ def noShow():
         html += "<p> try again </p>"
 
     response = make_response(html)
-    response.set_cookie('netid', netid)
+    response.set_cookie('netid', my_netid)
     return response
 
 #-----------------------------------------------------------------------
 @app.route('/walkOn', methods=['GET'])
 def walkOn():
     print(" WALK ON HERE")
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
+
     netid = request.args.get('netid').strip()
     if netid is None:
         netid = ''
@@ -764,9 +769,9 @@ def walkOn():
     except Exception as e:
         errorMsg = e
 
-    # if not database.isCoordinator(netid) and not database.isEmployee(netid):
-    #     database.disconnect()
-    #     return redirect(url_for('noPermissions'))
+    if not database.isCoordinator(my_netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
 
 
     shift = database.shiftDetails(date, task_id)
@@ -777,12 +782,12 @@ def walkOn():
     html = ""
     if successful:
         employeeObj = database.getEmployeeObject(netid)
-        html += employeeObj.getFirstName() + " " + employeeObj.getLastName()
+        html += "<br>" + employeeObj.getFirstName() + " " + employeeObj.getLastName()
     else:
-        html += "walkOn Request Failed"
+        html += "<br>walkOn Request Failed"
     database.disconnect()
     response = make_response(html)
-    # response.set_cookie('netid', netid)
+    response.set_cookie('netid', my_netid)
     return response
 
 #-----------------------------------------------------------------------
