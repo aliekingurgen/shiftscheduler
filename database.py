@@ -1050,6 +1050,17 @@ class Database:
                     netid = row[0]
                     if netid not in employeeNetids:
                         employeeNetids.append(netid)
+            
+            # Subtract employees that are added through walk on
+            QUERY_STRING = 'SELECT netid FROM walkons WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+            
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    netidRemove = row[0]
+                    if netidRemove in employeeNetids:
+                        employeeNetids.remove(netidRemove)
 
             # Get all employee full names working in the shift
             employeeFullNames = []
@@ -1100,8 +1111,19 @@ class Database:
                     netid = row[0]
                     if netid not in employeeNetids:
                         employeeNetids.append(netid)
+            
+            # Subtract employees that are added through walk on
+            QUERY_STRING = 'SELECT netid FROM walkons WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
 
-            # Get all employee full names working in the shift
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    netidRemove = row[0]
+                    if netidRemove in employeeNetids:
+                        employeeNetids.remove(netidRemove)
+
+            # Get all employee objects working in the shift
             employeeObjects = []
             for netid in employeeNetids:
                 QUERY_STRING = 'SELECT * FROM employees WHERE netid = %s'
