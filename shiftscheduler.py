@@ -675,12 +675,19 @@ def shiftDetailsCoordinator():
                 html += "<span id = \"noshow"  + employees[i].getNetID() + "\" >"
                 html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = \"" + employees[i].getNetID() + "\" "
                 html += "href = \"/noShow?netid=" + employees[i].getNetID() + "&shiftid=" + shift_id
-                html += "\" > no show </button> "
+                html += "\" > mark no show </button> "
 
                 html += " </span>"
-            html += '<br><strong>Current Number Working: </strong>' + str(len(employees)) + '<br>'
-
-
+        noShows = database.noShowsInShift(shift_id)
+        for noShow in noShows:
+            html += "<br>"
+            html += noShow.getFirstName() + " " + noShow.getLastName()
+            html += "&nbsp&nbsp&nbsp"
+            html += "<span id = \"noshow" + noShow.getNetID() + "\" >"
+            html += "<button  class=\"btn btn-danger btn-sm\" netid = \"" + noShow.getNetID() + "\" "
+            html += " > no show </button> "
+            html += " </span>"
+        html += '<br><strong>Current Number Working: </strong>' + str(len(employees)) + '<br>'
     print(html)
     database.disconnect()
     response = make_response(html)
@@ -716,8 +723,8 @@ def noShow():
     if successful:
         html += "<button  class=\"btn btn-danger btn-sm noShow\"> no show </button> "
     else:
-        html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
-        html += "\" > no show </button> "
+        html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" > mark no show </button> "
         html += "<p> try again </p>"
 
     response = make_response(html)
