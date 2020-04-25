@@ -732,6 +732,43 @@ def noShow():
     return response
 
 #-----------------------------------------------------------------------
+@app.route('/walkOn', methods=['GET'])
+def walkOn():
+    print(" WALK ON HERE")
+    netid = request.args.get('netid')
+    if netid is None:
+        netid = ''
+
+    shift_id = request.args.get('shiftid')
+    if shift_id is None:
+        shift_id = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+    print("shiftid: " + shift_id)
+    print("netid" + netid)
+    successful = database.addNoShow(shift_id, netid)
+    database.disconnect()
+    html = ""
+    if successful:
+        html += "<button  class=\"btn btn-danger btn-sm noShow\"> no show </button> "
+    else:
+        html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" > mark no show </button> "
+        html += "<p> try again </p>"
+
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
 
 def idToDay(shiftStr):
     day = int(shiftStr[0])

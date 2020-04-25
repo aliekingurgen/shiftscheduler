@@ -369,16 +369,17 @@
 			</div>
 			<div class="modal-body" id="otherShiftBody">
 				<p id="otherShiftText"></p>
+				<p id = "walkOnText"></p>
 			</div>
 			<div class="modal-footer">
 				<form>
-				  <label class="sr-only" for="inlineFormInputGroup">Username</label>
+				  <label class="sr-only" for="walkOn">Username</label>
      			  <div class="input-group">
 					<div class="input-group-prepend">
 				  		<div class="input-group-text">@</div>
 					</div>
-					<input type="text" class="form-control" id="inlineFormInputGroup" placeholder="netid">
-			  		<button type="button" class="btn btn-secondary">Add WalkOn</button>
+					<input type="text" class="form-control" id="walkOn" placeholder="netid">
+			  		<button type="button" class="btn btn-secondary" id = walkOnSubmit>Add WalkOn</button>
 				  </div>
 				</form>
 			</div>
@@ -503,13 +504,18 @@ function getModalData(mon) {
     if (modalId == '#otherShift') {
       $('#otherShiftText').load(dataURL,function() {
         $('#otherShift').modal('show');
-         $(".noShow").on("click", function(){
+        $(".noShow").on("click", function(){
         	console.log("ITS HERE CMON");
 			var url = $(this).attr("href");
 			var noShowNetID = $(this).attr("netid").trim();
 			var noShowArea = '\"#noshow'  + noShowNetID + '\"';
 			$(this).parent("span").load(url);
-	  });
+	 	 });
+		$("#walkOnSubmit").on("click", function(){
+			var walkOnNetId = $("#walkOn").val();
+			var walkOnUrl =
+			$("#walkOnText").load(walkOnUrl);
+		});
       });
     }
   });
