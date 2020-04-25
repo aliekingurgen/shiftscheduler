@@ -1447,6 +1447,36 @@ class Database:
             cur.close()
             print(error)
             return False
+    
+    #-----------------------------------------------------------------------
+
+    def getEmployeeObject(self, netid):
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if netid exists
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return False
+ 
+            # Construct employee object
+            QUERY_STRING = 'SELECT * FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+            row = cur.fetchone()
+            if row is not None:
+                employeeObj = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
+            cur.close()
+            return employeeObj
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
 
     #-----------------------------------------------------------------------
 
@@ -1659,10 +1689,14 @@ if __name__ == '__main__':
     noShows = database.noShowsInShift(407)
     for employee in noShows:
         print(employee.getNetID())
-    '''
+    
     # Test walkOnsinShift ***** WORKS
     noShows = database.walkOnsInShift(440)
     for employee in noShows:
         print(employee.getNetID())
+    '''
+    # Test getEmployeeObject ***** WORKS
+    empObj = database.getEmployeeObject('agurgen')
+    print(empObj.getFirstName())
 
     database.disconnect()
