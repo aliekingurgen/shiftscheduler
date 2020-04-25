@@ -555,9 +555,11 @@ class Database:
             shiftsToAdd = []
             while row is not None:
                 shift = row[0]
-                day = datetime.date.fromisoformat(str(row[1])).weekday()
-                if (convertDayReverse(day) == dotw) and (shift not in shiftsToAdd):
-                    shiftsToAdd.append(shift)
+                date = datetime.date.fromisoformat(str(row[1]))
+                if date >= datetime.date.today():
+                    day = date.weekday()
+                    if (convertDayReverse(day) == dotw) and (shift not in shiftsToAdd):
+                        shiftsToAdd.append(shift)
                 row = cur.fetchone()
             
             # assign all the shifts in shiftsToAdd to netid in shift_assign table
@@ -618,9 +620,11 @@ class Database:
             shiftsToRemove = []
             while row is not None:
                 shift = row[0]
-                day = datetime.date.fromisoformat(str(row[1])).weekday()
-                if (convertDayReverse(day) == dotw) and (shift not in shiftsToRemove):
-                    shiftsToRemove.append(shift)
+                date = datetime.date.fromisoformat(str(row[1]))
+                day = date.weekday()
+                if date >= datetime.date.today():
+                    if (convertDayReverse(day) == dotw) and (shift not in shiftsToRemove):
+                        shiftsToRemove.append(shift)
                 row = cur.fetchone()
             
             # remove all the shifts in shiftsToRemove for netid from shift_assign table
@@ -1547,11 +1551,11 @@ if __name__ == '__main__':
 
     # Test getShiftHours ***** WORKS
     print(str(database.getShiftHours(2)))
-    '''
+    
     # Test employeeObjectsInShift
     employees = database.employeeObjectsInShift(400)
     for employee in employees:
         print(employee.getNetID())
-    
+    '''
 
     database.disconnect()
