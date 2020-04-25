@@ -381,8 +381,6 @@ class Database:
                     regShifts.append(regShift)
                     # print("A: " + str(regShift))
                 row = cur.fetchone()
-            
-            # get netid's one time shifts
 
             # get netid's all subbed in shifts
             QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
@@ -514,6 +512,15 @@ class Database:
                 if taskid == 13:
                     print("Shift not valid.")
                     return False 
+            
+            def convertDay(dayString):
+                if (dayString == 'monday'): return '0'
+                if (dayString == 'tuesday'): return '1'
+                if (dayString == 'wednesday'): return '2'
+                if (dayString == 'thursday'): return '3'
+                if (dayString == 'friday'): return '4'
+                if (dayString == 'saturday'): return '5'
+                if (dayString == 'sunday'): return '6'
 
             def convertDayReverse(dayNumber):
                 if (dayNumber == 0): return 'monday'
@@ -523,10 +530,17 @@ class Database:
                 if (dayNumber == 4): return 'friday'
                 if (dayNumber == 5): return 'saturday'
                 if (dayNumber == 6): return 'sunday'
+            
+            # check if this regular shift is already assigned to netid
+            checkString = convertDay(dotw) + '-' + str(taskid)
+            netidRegShifts = self.regularShifts(netid)
+            if checkString in netidRegShifts:
+                print("RegularShift is already assigned")
+                return False
 
             cur = self._conn.cursor()
 
-            # remove from regular shifts
+            # add to regular shifts
             QUERY_STRING = 'INSERT INTO regular_shifts(netid, task_id, dotw) VALUES (%s, %s, %s)'
             cur.execute(QUERY_STRING, (netid, taskid, dotw))
             self._conn.commit()
@@ -539,9 +553,11 @@ class Database:
             shiftsToAdd = []
             while row is not None:
                 shift = row[0]
-                day = datetime.date.fromisoformat(row[1]).weekday()
-                if (convertDayReverse(day) == dotw) and (shift not in shiftsToAdd):
-                    shiftsToAdd.append(shift)
+                date = datetime.date.fromisoformat(str(row[1]))
+                if date >= datetime.date.today():
+                    day = date.weekday()
+                    if (convertDayReverse(day) == dotw) and (shift not in shiftsToAdd):
+                        shiftsToAdd.append(shift)
                 row = cur.fetchone()
             
             # assign all the shifts in shiftsToAdd to netid in shift_assign table
@@ -549,7 +565,7 @@ class Database:
                 QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
                 cur.execute(QUERY_STRING, (shiftid, netid))
                 self._conn.commit()
-                print('Added regular shifts to shift_assign')
+                print('Added regular shift to shift_assign: ' + str(shiftid))
 
             cur.close()
             return True
@@ -565,6 +581,15 @@ class Database:
 
     def removeRegularShift(self, netid, taskid, dotw):
         try:
+            def convertDayReverse(dayNumber):
+                if (dayNumber == 0): return 'monday'
+                if (dayNumber == 1): return 'tuesday'
+                if (dayNumber == 2): return 'wednesday'
+                if (dayNumber == 3): return 'thursday'
+                if (dayNumber == 4): return 'friday'
+                if (dayNumber == 5): return 'saturday'
+                if (dayNumber == 6): return 'sunday'
+
             # create a cursor
             cur = self._conn.cursor()
 
@@ -573,6 +598,7 @@ class Database:
             cur.execute(QUERY_STRING, (netid, taskid, dotw,))
             print('general kenobi')
 
+            # check that shiftid exists
             row = cur.fetchone()
             if row is None:
                 print('Regular shift does not exist.')
@@ -584,6 +610,28 @@ class Database:
             cur.execute(QUERY_STRING, (netid, taskid, dotw))
             self._conn.commit()
             print('Removed regular shift: ' + str(taskid) + ' on ' + str(dotw) + ' from '  + str(netid))
+
+            # find shift ids with given taskid and dotw
+            QUERY_STRING = 'SELECT shift_id, date FROM shift_info WHERE task_id=%s'
+            cur.execute(QUERY_STRING, (taskid,))
+            row = cur.fetchone()
+            shiftsToRemove = []
+            while row is not None:
+                shift = row[0]
+                date = datetime.date.fromisoformat(str(row[1]))
+                day = date.weekday()
+                if date >= datetime.date.today():
+                    if (convertDayReverse(day) == dotw) and (shift not in shiftsToRemove):
+                        shiftsToRemove.append(shift)
+                row = cur.fetchone()
+            
+            # remove all the shifts in shiftsToRemove for netid from shift_assign table
+            for shiftid in shiftsToRemove:
+                QUERY_STRING = 'DELETE FROM shift_assign where shift_id=%s AND netid=%s'
+                cur.execute(QUERY_STRING, (shiftid, netid))
+                self._conn.commit()
+                print('Remove regular shift from shift_assign: ' + str(shiftid))
+
             cur.close()
             return True
         
@@ -1302,6 +1350,58 @@ class Database:
         
     #-----------------------------------------------------------------------
 
+    def noShowsInShift(self, shiftid):
+        try:
+            # create a cursor
+            cur = self._conn.cursor()
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+            
+            # Get all employee netids in the noshows table
+            QUERY_STRING = 'SELECT netid FROM noshows WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            employeeNetids = []
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    netid = row[0]
+                    if netid not in employeeNetids:
+                        employeeNetids.append(netid)
+
+            # Get all employee full names working in the shift
+            employeeObjects = []
+            for netid in employeeNetids:
+                QUERY_STRING = 'SELECT * FROM employees WHERE netid = %s'
+                cur.execute(QUERY_STRING, (netid,))
+
+                row = cur.fetchone()
+                if row is not None:
+                    employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
+                    if employee not in employeeObjects:
+                        employeeObjects.append(employee)
+
+            cur.close()
+            employeeLObjectsSorted = sorted(employeeObjects, key=lambda x: x._first_name)
+            return employeeLObjectsSorted
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            print(error)
+            return False
+
+
+    #-----------------------------------------------------------------------
+
+
     def getShiftHours(self, taskid):
 
         if (taskid > 13 or taskid < 1):
@@ -1501,11 +1601,15 @@ if __name__ == '__main__':
 
     # Test getShiftHours ***** WORKS
     print(str(database.getShiftHours(2)))
-    '''
+    
     # Test employeeObjectsInShift
     employees = database.employeeObjectsInShift(400)
     for employee in employees:
         print(employee.getNetID())
-    
+    '''
+    # Test noShowsinShift ***** WORKS
+    noShows = database.noShowsInShift(407)
+    for employee in noShows:
+        print(employee.getNetID())
 
     database.disconnect()
