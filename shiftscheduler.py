@@ -699,7 +699,7 @@ def shiftDetailsCoordinator():
             html += "<br>"
             html += walkOn.getFirstName() + " " + walkOn.getLastName()
 
-    print(html)
+
     database.disconnect()
     response = make_response(html)
     response.set_cookie('netid', netid)
@@ -746,7 +746,7 @@ def noShow():
 @app.route('/walkOn', methods=['GET'])
 def walkOn():
     print(" WALK ON HERE")
-    netid = request.args.get('netid')
+    netid = request.args.get('netid').strip()
     if netid is None:
         netid = ''
 
@@ -758,8 +758,6 @@ def walkOn():
     if task_id is None:
         task_id = ''
 
-
-
     try:
         database = Database()
         database.connect()
@@ -769,22 +767,22 @@ def walkOn():
     # if not database.isCoordinator(netid) and not database.isEmployee(netid):
     #     database.disconnect()
     #     return redirect(url_for('noPermissions'))
-    print("date: " + date)
-    print("task_id" + task_id)
+
 
     shift = database.shiftDetails(date, task_id)
     shift_id = shift.getShiftID()
 
     successful = database.addWalkOn(shift_id, netid)
-    database.disconnect()
+
     html = ""
     if successful:
-        html += netid
+        employeeObj = database.getEmployeeObject(netid)
+        html += employeeObj.getFirstName() + " " + employeeObj.getLastName()
     else:
         html += "walkOn Request Failed"
-
+    database.disconnect()
     response = make_response(html)
-    response.set_cookie('netid', netid)
+    # response.set_cookie('netid', netid)
     return response
 
 #-----------------------------------------------------------------------
