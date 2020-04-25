@@ -1286,6 +1286,15 @@ class Database:
                 cur.close()
                 return False
 
+            # Check if netid is already on walkon table for this shift
+            QUERY_STRING = 'SELECT * FROM walkons where shift_id=%s AND netid=%s'
+            cur.execute(QUERY_STRING, (shiftid, netid))
+            row = cur.fetchone()
+            if row is not None:
+                print('Netid is already added as a walk-on for this shift')
+                cur.close()
+                return False
+
             # Insert walkon into walkons table
             QUERY_STRING = 'INSERT INTO walkons(netid, shift_id) VALUES (%s, %s)'
             cur.execute(QUERY_STRING, (netid, shiftid))
@@ -1338,6 +1347,15 @@ class Database:
             row = cur.fetchone()
             if row is None:
                 print('Shift does not exist.')
+                cur.close()
+                return False
+            
+            # Check if netid is already on walkon table for this shift
+            QUERY_STRING = 'SELECT * FROM noshows where shift_id=%s AND netid=%s'
+            cur.execute(QUERY_STRING, (shiftid, netid))
+            row = cur.fetchone()
+            if row is not None:
+                print('Netid is already added as a no-show for this shift')
                 cur.close()
                 return False
 
@@ -1718,7 +1736,7 @@ if __name__ == '__main__':
         print(employee.getNetID())
     '''
     # Test getEmployeeObject ***** WORKS
-    empObj = database.getEmployeeObject('agurgen')
+    empObj = database.getEmployeeObject('trt2')
     print(empObj.getFirstName())
 
     database.disconnect()
