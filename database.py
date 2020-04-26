@@ -1596,8 +1596,8 @@ class Database:
                 cur.close()
                 return False
             
+            # get dates
             if dateStart == -1 and dateEnd == -1:
-                # get dates
                 today = datetime.date.today()
 
                 QUERY_STRING = 'SELECT cur_pay_period_start FROM payperiod'
@@ -1610,11 +1610,19 @@ class Database:
                     return False
 
                 curPayPeriodStart = datetime.date.fromisoformat(str(row[0]))
+                print(curPayPeriodStart.isoformat())
                 if curPayPeriodStart.weekday() != 0:
                     print('Payperiod end date is not a monday.')
                     cur.close()
                     return False
                 
+                while today > (curPayPeriodStart + datetime.timedelta(weeks=2)):
+                    curPayPeriodStart += datetime.timedelta(weeks=2)
+                    QUERY_STRING = 'UPDATE payperiod SET cur_pay_period_start = %s'
+                    cur.execute(QUERY_STRING, (curPayPeriodStart.isoformat(),))
+                    self._conn.commit()
+                    print("Updated current pay period start date: " + curPayPeriodStart.isoformat())
+
                 start = curPayPeriodStart
                 end = today
             else:

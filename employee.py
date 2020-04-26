@@ -26,7 +26,6 @@ class Employee:
                 '<strong>Email:</strong> ' + str(self._email) + ' <br> ' + \
                 '<strong>Manager:</strong> ' + str(self._manager) + ' <br> ' + \
                 '<strong>Hours:</strong> ' + str(self._hours) + ' <br> ' + \
-                '<strong>Total Hours:</strong> ' + str(self._total_hours) + ' <br> ' + \
                 '<strong>Sub-Ins:</strong> ' + str(self._subins) + ' <br> ' + \
                 '<strong>Sub-Outs:</strong> ' + str(self._subouts) + ' <br> ' + \
                 '<strong>Walk-Ons:</strong> ' + str(self._walkons) + ' <br> ' + \
