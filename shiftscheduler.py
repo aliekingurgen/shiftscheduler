@@ -1028,14 +1028,19 @@ def allHours():
     try:
         database = Database()
         database.connect()
-        hours = database.hoursForAllEmployees(startDate, endDate)
+        employees = database.hoursForAllEmployees(startDate, endDate)
         database.disconnect()
     except Exception as e:
         errorMsg = e
+    employee = employees[0]
+    html = "<table class = \" table table-striped \" style=\"overflow-y:scroll;height:200px;\"  >"
+    html += "<tr>"
+    html += "<td>" + employee.getFirstName() + "</td>"+ "<td>" + employee.getLastName() + "</td>"
+    html += "</tr></table>"
+    #
+        # print(html)
 
-    print(hours)
-
-    return jsonify(hours)
+    return html
 
     # response = make_response('')
     # return location.reload()

@@ -522,6 +522,7 @@ function getModalData(mon) {
 
     if (modalId == '#otherShift') {
       $('#otherShiftText').load(dataURL,function() {
+        // $("#walkOnText").text('');
         $('#otherShift').modal('show');
         $(".noShow").on("click", function(){
           var url = $(this).attr("href");
@@ -545,12 +546,14 @@ function getModalData(mon) {
             success: function(data){
               if (data == "failed") {
                 $("#walkOnText").html("<br><br>walkOn Request Failed. Please reload and try again.");
+                  $("#walkOn").val('');
               }
               else {
                 console.log(data)
                 curr = $('#otherShiftText').html() + data;
                 // console.log(curr);
                 $('#otherShiftText').html(curr);
+                  $("#walkOn").val('');
               }
             }
           });

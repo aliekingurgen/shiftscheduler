@@ -112,6 +112,7 @@
 					<input type="date" id="endDate" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
 				</div>
 				<button type="button" id="submit" class="btn btn-secondary">Update All Employee Hours for Selected Period</button>
+				<span id = "loading">    </span>
 			</div>
 			<div class="col-6">
 				<div id="hours" style="text-align:left">
@@ -120,9 +121,13 @@
 					"Update All Employee Hours for Selected Period" button, it will take
 					about one minute for all hours to be updated.
 				</div>
+			</div>
 		</div>
 	</div>
 
+	<div id = "report" class = "container" >
+		<span id = "reportArea"> </span>
+	</div>
 	<!-- <div class="container">
 	<div class="row">
 	<div class='col-sm-6'>
@@ -238,6 +243,7 @@
 
 function getDates() {
 	$('#submit').on('click', function() {
+		$("#loading").text("Loading...");
 		console.log($('#startDate').val());
 		console.log($('#endDate').val());
 		url = '/allhours?startDate=' + $('#startDate').val() + '&endDate=' + $('#endDate').val();
@@ -246,8 +252,8 @@ function getDates() {
 						type: "GET",
 						url: url,
 						success: function(data) {
-							console.log(data);
-							// hours.attr('html', data);
+							$("#loading").text("Report Generated");
+							$("#reportArea").html(data);
 						}
 					}
 				);
