@@ -10,30 +10,33 @@ from flask_mail import Mail, Message
 from sys import argv
 
 app = Flask(__name__)
-mail = Mail(app)
-app.config.from_object(__name__)
-app.config.from_envvar('MINITWIT_SETTINGS', silent=True)
-app.config.update(
-    DEBUG = True,
-    # Flask-Mail Configuration
-    MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 587,
-    MAIL_USE_TLS = True,
-    MAIL_USE_SSL = False,
-    MAIL_USERNAME = 'shiftschedulerprinceton@gmail.com',
-    MAIL_PASSWORD = 'Dondero22',
-    DEFAULT_MAIL_SENDER = 'shiftschedulerprinceton@gmail.com'
-    )
 
-# setup Mail
-mail = Mail(app)
 
 @app.route('/testmail')
 def mail_it():
+    mail = Mail(app)
+    app.config.from_object(__name__)
+    app.config.from_envvar('MINITWIT_SETTINGS', silent=True)
+    app.config.update(
+        DEBUG=True,
+        # Flask-Mail Configuration
+        MAIL_SERVER='smtp.gmail.com',
+        MAIL_PORT=587,
+        MAIL_USE_TLS=True,
+        MAIL_USE_SSL=False,
+        MAIL_USERNAME='shiftschedulerprinceton@gmail.com',
+        MAIL_PASSWORD='Dondero22',
+        DEFAULT_MAIL_SENDER='shiftschedulerprinceton@gmail.com'
+    )
+
+    # setup Mail
+    mail = Mail(app)
+
     """handles our message notification"""
+    print("hello email")
     msg = Message("Hello",
-                  sender=("Shift Scheduler", "shiftschedulerprinceton@gmail.com"),recipients=["cz10@princeton.edu"])
-    msg.body = "Test!"
+                  sender=("Shift Scheduler", "shiftschedulerprinceton@gmail.com"),recipients=["begumor@gmail.com"])
+    msg.body = "A shift has been subbed out of!"
     mail.send(msg)
     return "I sent an email!"
 

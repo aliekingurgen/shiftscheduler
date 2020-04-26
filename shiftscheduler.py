@@ -7,6 +7,7 @@
 
 from sys import argv
 from database import Database
+from sendemail import mail_it
 from time import localtime, asctime, strftime
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template, jsonify
@@ -415,6 +416,8 @@ def subOut():
     database.disconnect()
     if successful:
         html = "Sub-Out successful!"
+        print("email being sent")
+        mail_it()
     else:
         html = "Sub-Out not successful. Please try again."
     response = make_response(html)
