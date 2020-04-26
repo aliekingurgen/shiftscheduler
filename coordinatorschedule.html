@@ -380,15 +380,15 @@
             <span id = "walkOnText" class="text-danger"></span>
           </div>
           <div class="modal-footer">
-            <form>
+            <form id="walkOnForm" onsubmit="return false;">
               <label class="sr-only" for="walkOn">Username</label>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <div class="input-group-text">@</div>
                 </div>
-                <input type="text" class="form-control" id="walkOn" placeholder="netid">
+                <input type="text" class="form-control" id="walkOnInput" placeholder="netid">
                 &nbsp&nbsp
-                <button type="button" class="btn btn-secondary" id = walkOnSubmit>Add WalkOn</button>
+                <button type="button" class="btn btn-secondary" id ="walkOnSubmit">Add WalkOn</button>
               </div>
             </form>
           </div>
@@ -409,32 +409,39 @@
 </footer>
 
 <script>
+
 function getDates() {
   let mon = $('#monday').text().trim();
   console.log(mon);
+  // has today's date
   let current = new Date();
-  let today = new Date();
-  console.log("today: " + today)
-  let dotw = today.getDay();
+  console.log("today: " + current)
+  let dotw = current.getDay();
+
+  // if (dotw == 0) {
+  //   dotw = 7;
+  // }
+  console.log("dotw: " + dotw);
   if (dotw == 0) {
-    dotw = 7
+    dotw = 7;
   }
   offset = current.getTimezoneOffset();
-  console.log("dotw: " + dotw)
+  console.log("offset: " + offset);
   let monISO = new Date();
-  // + 1 depending on timezone? idk not sure
-  if (offset >= 0) {
-    monISO.setDate(today.getDate() - dotw);
-  }
-  else {
-    monISO.setDate(today.getDate() - dotw + 1);
-  }
+  monISO.setDate(current.getDate() - dotw + 1);
+  // + 1 depending on timezone? idk not sure SOMETHING'S STILL WEIRD HERE
+  // if ( >= 0) {
+  //   monISO.setDate(today.getDate() - dotw);
+  // }
+  // else {
+  //   monISO.setDate(today.getDate() - dotw + 1);
+  // }
 
   monISO = monISO.toISOString().substring(0, 10)
-  console.log(monISO);
-
+  console.log("monISO: " + monISO);
+  console.log("mon:" + mon);
   if (mon == 'today' || mon == monISO) {
-    var dayStr = null;
+    var dayStr = null
     if(dotw  == 1) dayStr = '.mon';
     else if(dotw  == 2) dayStr = '.tue';
     else if(dotw  == 3) dayStr = '.wed';
@@ -445,8 +452,9 @@ function getDates() {
 
     var classStr =  dayStr +  " table-warning";
     $(dayStr).attr("class" , classStr);
-    mon = today.getDate() - dotw + 1;
+    mon = current.getDate() - dotw + 1;
     current.setDate(mon);
+    console.log(mon);
   }
   else {
     // console.log(current);
@@ -505,7 +513,7 @@ function getSubColors(mon) {
 
 function getModalData(mon) {
   $('[data-toggle="modal"]').on('click',function() {
-    $("#walkOn").val('');
+    $("#walkOnInput").val('');
     $("#walkOnText").val('');
     var dataURL = "/shiftdetailsco";
     var taskId = $(this).attr('taskid');
@@ -522,7 +530,7 @@ function getModalData(mon) {
 
     if (modalId == '#otherShift') {
       $('#otherShiftText').load(dataURL,function() {
-        // $("#walkOnText").text('');
+        console.log('here');
         $('#otherShift').modal('show');
         $(".noShow").on("click", function(){
           var url = $(this).attr("href");
@@ -530,9 +538,52 @@ function getModalData(mon) {
           var noShowArea = '\"#noshow'  + noShowNetID + '\"';
           $(this).parent("span").load(url);
         });
-        $("#walkOnSubmit").on("click", function(){
-          var walkOnNetId = $("#walkOn").val();
+
+        $("#walkOnSubmit").on("click", function() {
+          var walkOnNetId = $("#walkOnInput").val();
           var walkOnUrl = "/walkOn?"
+          $("#walkOnText").text('');
+          walkOnUrl += "date=" + iso;
+          walkOnUrl += "&taskid=" + taskId;
+          walkOnUrl += "&netid=" + walkOnNetId;
+          // var currText = $("#walkOnText").text();
+          // console.log(currText);
+          console.log($('#otherShiftText').html());
+          // $('#otherShiftText').html() += 'hello';
+          $.ajax({
+            url: walkOnUrl,
+            type: 'GET',
+            success: function(data){
+              if (data == "failed") {
+                $("#walkOnText").html("<br><br>walkOn Request Failed. Please try again.");
+                $("#walkOnInput").val('');
+              }
+              else {
+                console.log(data)
+                curr = $('#otherShiftText').html() + data;
+                // console.log(curr);
+                $('#otherShiftText').html(curr);
+                $("#walkOn").val('');
+              }
+            }
+          });
+          // $("#walkOnText").load(walkOnUrl);
+          // console.log(currText);
+          // $("#walkOnText").text(currText + '<br>' + 'netid');
+          // console.log($("#walkOn").text());
+          $("#walkOnInput").val('');
+          $('#otherShift').on('hide.bs.modal',function() {
+            console.log('closed');
+            window.location.reload();
+          });
+        });
+      // $("#walkOnForm").on("submit", submit());
+      $("#walkOnInput").on("keydown", function (e) {
+        console.log('input');
+        if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+          var walkOnNetId = $("#walkOnInput").val();
+          var walkOnUrl = "/walkOn?"
+          $("#walkOnText").text('');
           walkOnUrl += "date=" + iso;
           walkOnUrl += "&taskid=" + taskId;
           walkOnUrl += "&netid=" + walkOnNetId;
@@ -546,14 +597,14 @@ function getModalData(mon) {
             success: function(data){
               if (data == "failed") {
                 $("#walkOnText").html("<br><br>walkOn Request Failed. Please reload and try again.");
-                  $("#walkOn").val('');
+                $("#walkOnInput").val('');
               }
               else {
                 console.log(data)
                 curr = $('#otherShiftText').html() + data;
                 // console.log(curr);
                 $('#otherShiftText').html(curr);
-                  $("#walkOn").val('');
+                $("#walkOn").val('');
               }
             }
           });
@@ -561,15 +612,20 @@ function getModalData(mon) {
           // console.log(currText);
           // $("#walkOnText").text(currText + '<br>' + 'netid');
           // console.log($("#walkOn").text());
-          $("#walkOn").val('');
+          $("#walkOnInput").val('');
           $('#otherShift').on('hide.bs.modal',function() {
             console.log('closed');
             window.location.reload();
           });
-        });
+        }
       });
-    }
-  });
+      // function submit
+      // $("#walkOnSubmit").on("click", function(){
+      //
+      // });
+    });
+  }
+});
 }
 
 function format(mon) {
@@ -597,20 +653,6 @@ function lastWeek(mon) {
     newMon.setDate(newMon.getDate() - 7);
     console.log(newMon);
     window.location = "?monday=" + format(newMon)
-    // var url = "/calendar?monday=" + format(newMon);
-    // console.log(url);
-    // $('#calendar').load(url);
-
-    // if (request != null) {
-    // 	request.abort();
-    // }
-    // request = $.ajax(
-    // 	{
-    // 		type: "GET",
-    // 		url: url,
-    // 		success: setup
-    // 	}
-    // );
   });
 }
 
@@ -620,21 +662,7 @@ function nextWeek(mon) {
     let newMon = new Date(mon);
     newMon.setDate(newMon.getDate() + 7);
     console.log(newMon);
-    window.location = "?monday=" + format(newMon)
-    // var url = "/calendar?monday=" + format(newMon);
-    // console.log(url);
-    // $('#calendar').load(url);
-
-    // if (request != null) {
-    // 	request.abort();
-    // }
-    // request = $.ajax(
-    // 	{
-    // 		type: "GET",
-    // 		url: url,
-    // 		success: setup
-    // 	}
-    // );
+    window.location = "?monday=" + format(newMon);
   });
 }
 
@@ -644,8 +672,6 @@ function setup() {
   monFormat = format(mon);
   getModalData(mon);
   getSubColors(monFormat);
-  // subOut();
-  // subIn();
   lastWeek(mon);
   nextWeek(mon);
 }

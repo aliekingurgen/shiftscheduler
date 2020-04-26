@@ -87,7 +87,10 @@ def index():
 
     if not database.isCoordinator(netid):
         database.disconnect()
-        return redirect(url_for('noPermissions'))
+        if not database.isEmployee(netid):
+            return redirect(url_for('noPermissions'))
+        else:
+            return redirect(url_for('employee'))
 
     database.disconnect()
 
@@ -619,9 +622,9 @@ def shiftDetails():
 
     shift = database.shiftDetails(date, task_id)
 
-
     if shift is None:
         html = '<strong> Error: No data to display</strong>'
+
     else:
         shift_id = shift.getShiftID()
         employees = database.employeesInShift(shift_id)
@@ -633,13 +636,25 @@ def shiftDetails():
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
         html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
         # can get rid of the second condition once numEmployees fixed?
-        if numEmployees != 0 and numEmployees == len(employees):
+        print(employees)
+        print(numEmployees)
+        if len(employees) != 0:
             html += '<strong>Working: </strong>'
-            for i in range(numEmployees):
+            for i in range(len(employees)):
                 html += employees[i]
-                if i != numEmployees - 1:
+                if i != len(employees) - 1:
                     html += ", "
-            html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
+            # html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
+        walkOns = database.walkOnsInShift(shift_id)
+
+        workingNo = len(employees) + len(walkOns)
+        html += '<br><strong>Current Number Working: </strong>' + str(workingNo) + '<br>'
+
+        html += "<strong> Walk-Ons: </strong>"
+        for walkOn in walkOns:
+            html += "<br>"
+            html += walkOn.getFirstName() + " " + walkOn.getLastName()
+
 
     database.disconnect()
     response = make_response(html)
@@ -697,7 +712,8 @@ def shiftDetailsCoordinator():
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
         html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
         # can get rid of the second condition once numEmployees fixed?
-
+        print(employees)
+        print(numEmployees)
         # if numEmployees != 0 and numEmployees == len(employees):
         if len(employees) != 0:
             print("here")

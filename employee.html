@@ -430,28 +430,34 @@
 <script>
 function getDates() {
 	let mon = $('#monday').text().trim();
-	// console.log(mon);
-	let current = new Date();
-	let today = new Date();
-	// console.log("today: " + today)
-	let dotw = today.getDay();
-	if (dotw == 0) {
-		dotw = 7
-	}
-	offset = current.getTimezoneOffset();
-	// console.log("dotw: " + dotw)
-	let monISO = new Date();
-	// + 1 depending on timezone? idk not sure
-	if (offset >= 0) {
-		monISO.setDate(today.getDate() - dotw);
-	}
-	else {
-		monISO.setDate(today.getDate() - dotw + 1);
-	}
+  console.log(mon);
+  // has today's date
+  let current = new Date();
+  console.log("today: " + current)
+  let dotw = current.getDay();
 
-	monISO = monISO.toISOString().substring(0, 10)
-	// console.log(monISO);
+  // if (dotw == 0) {
+  //   dotw = 7;
+  // }
+  console.log("dotw: " + dotw);
+  if (dotw == 0) {
+    dotw = 7;
+  }
+  offset = current.getTimezoneOffset();
+  console.log("offset: " + offset);
+  let monISO = new Date();
+  monISO.setDate(current.getDate() - dotw + 1);
+  // + 1 depending on timezone? idk not sure SOMETHING'S STILL WEIRD HERE
+  // if ( >= 0) {
+  //   monISO.setDate(today.getDate() - dotw);
+  // }
+  // else {
+  //   monISO.setDate(today.getDate() - dotw + 1);
+  // }
 
+  monISO = monISO.toISOString().substring(0, 10)
+  console.log("monISO: " + monISO);
+  console.log("mon:" + mon);
 	if (mon == 'today' || mon == monISO) {
 		var dayStr = null;
 		if(dotw  == 1) dayStr = '.mon';
@@ -465,7 +471,7 @@ function getDates() {
 		var classStr =  dayStr +  " table-warning";
 		$(dayStr).attr("class" , classStr);
 
-		mon = today.getDate() - dotw +1 ;
+		mon = current.getDate() - dotw +1 ;
 		current.setDate(mon);
 	}
 	else {
