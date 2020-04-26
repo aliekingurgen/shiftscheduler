@@ -112,12 +112,15 @@
 					<input type="date" id="endDate" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
 				</div>
 				<button type="button" id="submit" class="btn btn-secondary">Update All Employee Hours for Selected Period</button>
-				<span id = "loading">    </span>
+				<br>
+				<div id = "loading"></div>
 			</div>
 			<div class="col-6">
 				<div id="hours" style="text-align:left">
 					Selecting a period on the left will update all employee hours to
-					show their hours within the given period.
+					show their hours within the given period on their profiles. It
+					will also generate a report below of all employees and their
+					hours in the given period.
 				</div>
 			</div>
 		</div>
@@ -153,116 +156,37 @@
 
 <script>
 
-// let request = null;
-// let netid = null;
-//
-// function addRegularShifts() {
-//
-// 	$('#insertShift').on('click', function(){
-// 		var day = $('#daySelect').val();
-// 		var task = $('#taskSelect').val();
-// 		var string = $('#toBeAdded').html();
-// 		// console.log(string);
-// 		string += '<option class="selectThis">' + day + ' ' + task + '</option>';
-// 		// console.log(string);
-// 		$('#toBeAdded').html(string);
-// 		// console.log(day);
-// 		// console.log(task);
-// 	});
-//
-// 	$('#insertAllShifts').on('click', function() {
-// 		// var string = $('#toBeAdded').html();
-// 		var shifts = '';
-//
-// 		$("option").each(function() {
-// 			if ($(this).attr("class") == 'selectThis') {
-// 				var shiftName = $(this).val();
-//
-// 				var split = shiftName.split(' ');
-//
-// 				var day = split[0];
-// 				var task  = '';
-// 				for(var i = 1; i < split.length ; i++){
-// 					task += split[i];
-// 				}
-// 				shifts += day.toLowerCase() +"-" + convertTaskId(task)  + "_"
-// 			}
-// 		});
-// 		shifts = encodeURIComponent(shifts);
-// 		console.log(netid);
-// 		let url = "/assign?netid=" + netid + "&shifts=" + shifts;
-//
-// 		// console.log(shifts);
-// 		if (request != null) {
-// 			request.abort();
-// 		}
-// 		reloadUrl =  "/manageshifts?employee=" + netid;
-// 		request = $.ajax(
-// 			{
-// 				type: "GET",
-// 				url: url,
-// 				success: window.location = reloadUrl,
-// 			}
-// 		);
-// 	});
-// }
-//
-// function convertTaskId(str){
-// 	if (str == 'DinnerManager') taskid = 1;
-// 	else  if (str ==  'DinnerFirstShift') taskid = 2;
-// 	else if (str == "DinnerSecondShift" ) taskid = 3;
-// 	else if (str == 'DinnerDishManager' ) taskid = 4;
-// 	else if (str == 'DinnerFirstDish' ) taskid = 5;
-// 	else if (str ==  'DinnerSecondDish') taskid = 6;
-// 	else if ( str ==  'BrunchManager') taskid = 7;
-// 	else if (str ==  'BrunchFirstShift') taskid = 8;
-// 	else if(str ==  'BrunchSecondShift') taskid = 9;
-// 	else if(str ==  'BrunchDishManager') taskid = 10;
-// 	else if(str ==  'BrunchFirstDish') taskid = 11;
-// 	else if(str == 'BrunchSecondDish') taskid = 12;
-// 	else if( str ==  'CJLSwipe') taskid = 13;
-// 	return taskid;
-// }
-//
-// function employeeDetails() {
-// 	var employee = $('#employeeDetails').attr('employee');
-// 	console.log(employee);
-// 	$('#employeeDetails').load('/employeeShiftDetails?netid=' + employee);
-// 	if (employee != '') {
-// 		$('#assignShiftForm').attr('style', "visibility:visible");
-// 	}
-// 	$('.employeeItem').on('click',function() {
-// 		url = $(this).attr('link');
-// 		$('#employeeDetails').load(url);
-// 		$('#assignShiftForm').attr('style', "visibility:visible");
-// 		netid = $(this).attr('netid');
-// 		console.log(netid);
-// 	});
-// }
-
 function getDates() {
 	$('#submit').on('click', function() {
 		$("#loading").text("Loading...");
-		console.log($('#startDate').val());
-		console.log($('#endDate').val());
-		url = '/allhours?startDate=' + $('#startDate').val() + '&endDate=' + $('#endDate').val();
-		request = $.ajax(
-					{
-						type: "GET",
-						url: url,
-						success: function(data) {
-							$("#loading").text("Report Generated");
-							$("#reportArea").html(data);
-						}
+		startDate = $('#startDate').val();
+		endDate = $('#endDate').val();
+		console.log(startDate);
+		console.log(endDate);
+		if (startDate == '') {
+			$("#loading").text("Please enter a start date.");
+		}
+		else if (endDate == '') {
+			$("#loading").text("Please enter an end date.");
+		}
+		else {
+			url = '/allhours?startDate=' + startDate + '&endDate=' + endDate
+			request = $.ajax(
+				{
+					type: "GET",
+					url: url,
+					success: function(data) {
+						$("#loading").text("Report Generated");
+						$("#reportArea").html(data);
 					}
-				);
+				}
+			);
+		}
 	});
 }
 
 function setup() {
 	getDates();
-	// employeeDetails();
-	// addRegularShifts();
 }
 
 $('document').ready(setup);

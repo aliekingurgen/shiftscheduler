@@ -920,7 +920,15 @@ def employeeShiftDetails():
     if employee is None:
         employee = '<strong> Error: No data to display</strong>'
     else:
-        html = str(employee) + "<br>"
+        html = '<strong>NetID:</strong> ' + employee.getNetID() + ' <br> ' + \
+                '<strong>Name:</strong> ' + employee.getFirstName() + ' ' + employee.getLastName() + ' <br> ' + \
+                '<strong>Email:</strong> ' + employee.getEmail()+ ' <br> ' + \
+                '<strong>Position:</strong> ' + employee.getPosition() + ' <br> ' + \
+                '<strong>Sub-Ins:</strong> ' + employee.getSubIns() + ' <br> ' + \
+                '<strong>Sub-Outs:</strong> ' + employee.getSubOuts() + ' <br> ' + \
+                '<strong>Walk-Ons:</strong> ' + employee.getWalkOns() + ' <br> ' + \
+                '<strong>No-Shows:</strong> ' + employee.getNoShows() + ' <br> '
+        # html = str(employee) + "<br>"
 
         html += "<ul class = \" list-group list-group-flush \" style=\"overflow-y:scroll;height:200px;font-size:13px;\" >"
         for shift in regularShifts:
@@ -968,8 +976,15 @@ def employeeDetails():
     if employee is None:
         employee = '<strong> Error: No data to display</strong>'
     else:
-        # html = "<h3>Employee Details:</h3>" + str(employee) + "<br>"
-        html = str(employee) + "<br>"
+        html = '<strong>NetID:</strong> ' + employee.getNetID() + ' <br> ' + \
+                '<strong>Name:</strong> ' + employee.getFirstName() + ' ' + employee.getLastName() + ' <br> ' + \
+                '<strong>Email:</strong> ' + employee.getEmail()+ ' <br> ' + \
+                '<strong>Position:</strong> ' + employee.getPosition() + ' <br> ' + \
+                '<strong>Sub-Ins:</strong> ' + employee.getSubIns() + ' <br> ' + \
+                '<strong>Sub-Outs:</strong> ' + employee.getSubOuts() + ' <br> ' + \
+                '<strong>Walk-Ons:</strong> ' + employee.getWalkOns() + ' <br> ' + \
+                '<strong>No-Shows:</strong> ' + employee.getNoShows() + ' <br> '
+        # html = str(employee) + "<br>"
 
     response = make_response(html)
     response.set_cookie('netid', my_netid)
@@ -1059,11 +1074,10 @@ def allHours():
     html += "<th> Hours </th>"
     html += "<th> SubIn </th>"
     html += "<th> SubOut </th>"
-    html += "<th> WalkOn </th>"
-    html += "<th> NoShow </th>"
+    html += "<th> WalkOns </th>"
+    html += "<th> NoShows </th>"
     html  += "</tr>"
     for employee in  employees:
-
         html += "<tr>"
         html += "<td>" + employee.getFirstName() + "</td>"+ "<td>" + employee.getLastName() + "</td>"
         html += "<td>" + employee.getHours() + "</td>"
