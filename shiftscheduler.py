@@ -1032,14 +1032,28 @@ def allHours():
         database.disconnect()
     except Exception as e:
         errorMsg = e
-    employee = employees[0]
-    html = "<table class = \" table table-striped \" style=\"overflow-y:scroll;height:200px;\"  >"
-    html += "<tr>"
-    html += "<td>" + employee.getFirstName() + "</td>"+ "<td>" + employee.getLastName() + "</td>"
-    html += "</tr></table>"
-    #
-        # print(html)
 
+    html = "<table class = \" table table-striped \" style=\"overflow-y:scroll;height:300px;\"  >"
+    html += "<tr>"
+    html += "<th> First Name </th>"
+    html += "<th> Last Name </th>"
+    html += "<th> Hours </th>"
+    html += "<th> SubIn </th>"
+    html += "<th> SubOut </th>"
+    html += "<th> WalkOn </th>"
+    html += "<th> NoShow </th>"
+    html  += "</tr>"
+    for employee in  employees:
+
+        html += "<tr>"
+        html += "<td>" + employee.getFirstName() + "</td>"+ "<td>" + employee.getLastName() + "</td>"
+        html += "<td>" + employee.getHours() + "</td>"
+        html += "<td>" + employee.getSubIns() + "</td>" + "<td>" + employee.getSubOuts() + "</td>"
+        html += "<td>" + employee.getWalkOns() + "</td>" + "<td>" + employee.getNoShows() + "</td>"
+        html += "</tr>"
+        #
+        # print(html)
+    html += "</table>"
     return html
 
     # response = make_response('')
