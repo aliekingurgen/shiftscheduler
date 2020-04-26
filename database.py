@@ -1665,12 +1665,97 @@ class Database:
 
     #-----------------------------------------------------------------------
 
+    def _hoursEmployeeNew(self, netid, dateStart, dateEnd):
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+
+            # Check if netid exists
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return False
+            
+            # get dates
+            if dateStart == -1 and dateEnd == -1:
+                today = datetime.date.today()
+
+                QUERY_STRING = 'SELECT cur_pay_period_start FROM payperiod'
+                cur.execute(QUERY_STRING)
+                row = cur.fetchone()
+
+                if row is None:
+                    print('Payperiod missing in database.')
+                    cur.close()
+                    return False
+
+                curPayPeriodStart = datetime.date.fromisoformat(str(row[0]))
+                print(curPayPeriodStart.isoformat())
+                if curPayPeriodStart.weekday() != 0:
+                    print('Payperiod end date is not a monday.')
+                    cur.close()
+                    return False
+                
+                while today > (curPayPeriodStart + datetime.timedelta(weeks=2)):
+                    curPayPeriodStart += datetime.timedelta(weeks=2)
+                    QUERY_STRING = 'UPDATE payperiod SET cur_pay_period_start = %s'
+                    cur.execute(QUERY_STRING, (curPayPeriodStart.isoformat(),))
+                    self._conn.commit()
+                    print("Updated current pay period start date: " + curPayPeriodStart.isoformat())
+
+                start = curPayPeriodStart
+                end = today
+            else:
+                start = datetime.date.fromisoformat(dateStart)
+                end = datetime.date.fromisoformat(dateEnd)
+            
+            
+            # Get all the shifts between start and end dates
+            QUERY_STRING = 'SELECT shift_id FROM shift_assign WHERE netid=%s' + \
+                            'INTERSECT SELECT shift_id FROM shift_info WHERE shift_info.date >= %s AND shift_info.date < %s'
+            cur.execute(QUERY_STRING, (netid, start.isoformat(), end.isoformat()))
+
+            workedShifts = []
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    workedShift = self.shiftFromID(row[0])
+                    if workedShift not in workedShifts:
+                        workedShifts.append(workedShift)
+
+            # Calculate accumulated hours for all the shifts
+            hours = 0
+            for shift in workedShifts:
+                hours += self.getShiftHours(shift.getShiftID())
+
+            #  Set employee's hours attr to that number
+            QUERY_STRING = 'UPDATE employees SET hours = %s WHERE netid = %s'
+            cur.execute(QUERY_STRING, (hours, netid))
+            self._conn.commit()
+            print("Hours updated for employee: " + netid)
+            return True
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('Hour update rolled back.')
+            cur.close()
+            print(error)
+            return False
+
+    #-----------------------------------------------------------------------
+
     def hoursForAllEmployees(self, dateStart, dateEnd):
         try:
             allEmployees = self.getAllEmployees()
 
             for employee in allEmployees:
-                self._hoursEmployee(employee.getNetID(), dateStart, dateEnd)
+                self._hoursEmployeeNew(employee.getNetID(), dateStart, dateEnd)
+            
+            return allEmployees
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -1680,7 +1765,7 @@ class Database:
 
     def hoursForEmployee(self, netid):
         try:
-            self._hoursEmployee(netid, -1, -1)
+            self._hoursEmployeeNew(netid, -1, -1)
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
