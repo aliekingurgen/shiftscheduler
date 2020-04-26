@@ -288,6 +288,8 @@ def profile():
         return redirect(url_for('noPermissions'))
 
     employee = database.employeeDetails(netid)
+    hours = database.hoursForEmployee(netid)
+
     database.disconnect()
 
     name = employee.getFirstName() + ' ' + employee.getLastName()
@@ -296,7 +298,35 @@ def profile():
     html = render_template('profile.html',
                            netid=netid,
                            name=name,
-                           position=position)
+                           position=position,
+                           hours=hours)
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
+@app.route('/managehours', methods=['GET'])
+def manageHours():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
+    database.disconnect()
+
+    html = render_template('managehours.html',
+        netid = netid)
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -779,12 +809,11 @@ def walkOn():
 
     successful = database.addWalkOn(shift_id, netid)
 
-    html = ""
     if successful:
         employeeObj = database.getEmployeeObject(netid)
-        html += "<br>" + employeeObj.getFirstName() + " " + employeeObj.getLastName()
+        html = "<br>" + employeeObj.getFirstName() + " " + employeeObj.getLastName()
     else:
-        html += "<br>walkOn Request Failed"
+        html = "failed"
     database.disconnect()
     response = make_response(html)
     response.set_cookie('netid', my_netid)
@@ -929,7 +958,15 @@ def employeeDetails():
 #-----------------------------------------------------------------------
 @app.route('/unassign', methods=['GET'])
 def unassignShift():
-    print("HERE")
+
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
+
+    if not database.isCoordinator(my_netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     netid = request.args.get('netid')
     taskid = request.args.get("taskid")
     dow = request.args.get("day")
@@ -950,7 +987,15 @@ def unassignShift():
 #-----------------------------------------------------------------------
 @app.route('/assign', methods=['GET'])
 def assignShift():
-    print("HERE")
+
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
+
+    if not database.isCoordinator(my_netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
     netid = request.args.get('netid')
     data = request.args.get("shifts")
     shifts = data.split('_')
@@ -971,6 +1016,28 @@ def assignShift():
 
     response = make_response('')
     return location.reload()
+
+#-----------------------------------------------------------------------
+@app.route('/allhours', methods=['GET'])
+def allHours():
+
+    startDate = request.args.get("startDate")
+    endDate = request.args.get("endDate")
+
+    try:
+        database = Database()
+        database.connect()
+        hours = database.hoursForAllEmployees(startDate, endDate)
+        database.disconnect()
+    except Exception as e:
+        errorMsg = e
+
+    print(hours)
+
+    return jsonify(hours)
+
+    # response = make_response('')
+    # return location.reload()
 
 #-----------------------------------------------------------------------
 

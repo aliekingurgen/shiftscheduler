@@ -64,25 +64,33 @@
   </div>
 </nav>
 
-<div role="alert" style = "font-size: 20px">
-  <br>
-  Welcome, {{netid}}! Select your role below.
-  <br>
-  <br>
-</div>
 <main role="main">
   <div class="container">
-    <a href="/employee" role="button" type="button" class="btn btn-outline-info btn-lg btn-lg">Employee</a>
-    <a href="/coordinatorschedule" role="button" type="button" class="btn btn-outline-secondary btn-lg btn-lg">Coordinator</a>
-  </div>
-</main>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="row">
+      <div class=" mx-auto col-6">
+        <div class="card bg-light" style = "font-size: 20px">
+          <br>
+          Welcome, {{netid}}! Select your role below.
+          <br>
+          <div class="card-body">
+            <a href="/employee" role="button" type="button" class="btn btn-outline-info btn-lg btn-lg">Employee</a>
+            <a href="/coordinatorschedule" role="button" type="button" class="btn btn-outline-secondary btn-lg btn-lg">Coordinator</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 
 
-<footer class="footer">
-  <div class="container">
-    <span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
-  </div>
-</footer>
+  <footer class="footer">
+    <div class="container">
+      <span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
+    </div>
+  </footer>
 
 </body>
 </html>

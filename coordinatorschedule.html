@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShiftScheduler - Coordinator</title>
   <!-- JQuery -->
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
@@ -83,318 +84,324 @@
       <li class="nav-item">
         <a class="nav-link" href="/manageshifts">Manage Shifts</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/managehours">Manage Hours</a>
+      </li>
     </ul>
   </div>
 </nav>
 
 <main role="main">
-	<div class="container">
-		<br>
-    <div class="container">
-		<button type="button" id="lastWeekButton" class="btn btn-outline-dark btn-sm" aria-label="Last Week" style="position: relative;
-		left: 600px;display:inline-block;">
-		<span class="fa fa-chevron-left" aria-hidden="true"></span>
-	</button>
-	<button type="button" id="nextWeekButton" class="btn btn-outline-dark btn-sm" aria-label="Next Week" style="position: relative;
-	left: 620px;display:inline-block;">
-	<span class="fa fa-chevron-right" aria-hidden="true"></span>
-</button>
-<h1 style="font-size: 20px; display:inline-block">Weekly Calendar</h1>
-<br>
-<br>
-</div>
-<div id="calendar">
-<table class="table" align="center" cellpadding="5" cellspacing="2">
-	<thead>
-<tr>
-			<!-- <th> </th> -->
-			<th class = "mon">Monday Dinner</th>
-			<th class = "tue" >Tuesday Dinner</th>
-			<th class = "wed" >Wednesday Dinner</th>
-			<th class = "thu" >Thursday Dinner</th>
-			<th class = "fri" >Friday &nbsp Dinner&nbsp </th>
-			<th class = "sat" >Saturday Brunch</th>
-			<th class = "sat">Saturday Dinner</th>
-			<th class = "sun" >Sunday Brunch</th>
-			<th class = "sun">Sunday Dinner</th>
-		</tr>
-		<tr>
-			<!-- <th> </th> -->
-			<td class = "mon" id="monDate"></td>
-			<td class = "tue" id="tuesDate"></td>
-			<td class = "wed" id ="wedDate"></td>
-			<td class = "thu" id ="thursDate"></td>
-			<td class = "fri" id="friDate"></td>
-			<td class = "sat" id="satDate"></td>
-			<td class = "sat" id="satDate2"></td>
-			<td class = "sun" id="sunDate"></td>
-			<td class = "sun" id = "sunDate2"></td>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<!-- <th>Shifts</th> -->
-			<!--Monday Dinner-->
-			<td id="monDinner" day ="0">
-				<div class="list-group">
-					<a href="#" id="0-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dinner Manager</a>
-					<a href="#" id="0-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dinner</a>
-					<a href="#" id="0-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dinner</a>
-				</div>
-			</td>
-			<!--Tuesday Dinner-->
-			<td id="tuesDinner" day ="1">
-				<div class="list-group">
-					<a href="#" id="1-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dinner Manager</a>
-					<a href="#" id="1-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dinner</a>
-					<a href="#" id="1-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dinner</a>
-				</div>
-			</td>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <br>
+        <button type="button" id="lastWeekButton" class="btn btn-outline-dark btn-sm" aria-label="Last Week" style="position: absolute;right: 90px;display:inline-block;">
+          <span class="fa fa-chevron-left" aria-hidden="true"></span>
+        </button>
+        <button type="button" id="nextWeekButton" class="btn btn-outline-dark btn-sm" aria-label="Next Week" style="position: absolute;right: 40px;display:inline-block;">
+          <span class="fa fa-chevron-right" aria-hidden="true"></span>
+        </button>
+        <h1 style="font-size: 20px; display:inline-block"><u>Weekly Calendar</u></h1>
+        <br>
+        <br>
+      </div>
+    </div>
+    <div class="row">
+      <div class="mx-auto col-12 table-responsive-xl" style="overflow-y:">
+        <table class="table" cellpadding="5" cellspacing="2" style="font-size:14px">
+          <thead>
+            <tr>
+              <!-- <th> </th> -->
+              <th class = "mon">Monday Dinner</th>
+              <th class = "tue" >Tuesday Dinner</th>
+              <th class = "wed" >Wednesday Dinner</th>
+              <th class = "thu" >Thursday Dinner</th>
+              <th class = "fri" >Friday &nbsp Dinner&nbsp </th>
+              <th class = "sat" >Saturday Brunch</th>
+              <th class = "sat">Saturday Dinner</th>
+              <th class = "sun" >Sunday Brunch</th>
+              <th class = "sun">Sunday Dinner</th>
+            </tr>
+            <tr>
+              <!-- <th> </th> -->
+              <td class = "mon" id="monDate"></td>
+              <td class = "tue" id="tuesDate"></td>
+              <td class = "wed" id ="wedDate"></td>
+              <td class = "thu" id ="thursDate"></td>
+              <td class = "fri" id="friDate"></td>
+              <td class = "sat" id="satDate"></td>
+              <td class = "sat" id="satDate2"></td>
+              <td class = "sun" id="sunDate"></td>
+              <td class = "sun" id = "sunDate2"></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <!-- <th>Shifts</th> -->
+              <!--Monday Dinner-->
+              <td id="monDinner" class="mon" day ="0">
+                <div class="list-group">
+                  <a href="#" id="0-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dinner Manager</a>
+                  <a href="#" id="0-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dinner</a>
+                  <a href="#" id="0-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dinner</a>
+                </div>
+              </td>
+              <!--Tuesday Dinner-->
+              <td id="tuesDinner" class="tue" day ="1">
+                <div class="list-group">
+                  <a href="#" id="1-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dinner Manager</a>
+                  <a href="#" id="1-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dinner</a>
+                  <a href="#" id="1-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dinner</a>
+                </div>
+              </td>
 
-			<!--Wednesday Dinner-->
-			<td id="wedDinner" day ="2">
-				<div class="list-group">
-					<a href="#" id="2-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dinner Manager</a>
-					<a href="#" id="2-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dinner</a>
-					<a href="#" id="2-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dinner</a>
-				</div>
-			</td>
-			<!--Thursday Dinner-->
-			<td id="thurDinner" day ="3">
-				<div class="list-group">
-					<a href="#" id="3-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dinner Manager</a>
-					<a href="#" id="3-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dinner</a>
-					<a href="#" id="3-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dinner</a>
-				</div>
-			</td>
-			<!--Friday Dinner-->
-			<td id="friDinner" day ="4">
-				<div class="list-group">
-					<a href="#" id="4-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dinner Manager</a>
-					<a href="#" id="4-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dinner</a>
-					<a href="#" id="4-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dinner</a>
-				</div>
-			</td>
+              <!--Wednesday Dinner-->
+              <td id="wedDinner" class="wed" day ="2">
+                <div class="list-group">
+                  <a href="#" id="2-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dinner Manager</a>
+                  <a href="#" id="2-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dinner</a>
+                  <a href="#" id="2-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dinner</a>
+                </div>
+              </td>
+              <!--Thursday Dinner-->
+              <td id="thurDinner" class="thu" day ="3">
+                <div class="list-group">
+                  <a href="#" id="3-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dinner Manager</a>
+                  <a href="#" id="3-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dinner</a>
+                  <a href="#" id="3-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dinner</a>
+                </div>
+              </td>
+              <!--Friday Dinner-->
+              <td id="friDinner" class="fri" day ="4">
+                <div class="list-group">
+                  <a href="#" id="4-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dinner Manager</a>
+                  <a href="#" id="4-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dinner</a>
+                  <a href="#" id="4-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dinner</a>
+                </div>
+              </td>
 
-			<td id="satBrunch" day ="5" >
-				<div class="list-group">
-					<!--					<div class="list-group" style = "width: 75px; font-size:12px" >-->
-					<a href="#" id="5-7" taskid = 7 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift" > Brunch Manager</a>
-					<a href="#" id="5-8" taskid = 8 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Brunch</a>
-					<a href="#" id="5-9" taskid = 9 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Brunch</a>
-				</div>
-			</td>
-
-
-			<!--Saturday Dinner-->
-			<td id="satDinner" day ="5">
-				<div class="list-group">
-					<a href="#" id="5-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift"> Dinner Manager</a>
-					<a href="#" id="5-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dinner</a>
-					<a href="#" id="5-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dinner</a>
-				</div>
-			</td>
-
-			<!--Sunday Brunch-->
-			<td id="sunBrunch" day ="6">
-				<div class="list-group" >
-					<a href="#" id="6-7" taskid = 7 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift" > Brunch Manager</a>
-					<a href="#" id="6-8" taskid = 8 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift" >First Brunch</a>
-					<a href="#" id="6-9" taskid = 9 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Brunch</a>
-				</div>
-			</td>
-
-			<!--Sunday Dinner-->
-			<td id="sunDinner"  day ="6">
-				<div class="list-group" >
-					<a href="#" id="6-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">  Dinner Manager</a>
-					<a href="#" id="6-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dinner</a>
-					<a href="#" id="6-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dinner</a>
-				</div>
-			</td>
-		</tr>
-
-		<tr>
-			<!--Monday Dinner-->
-			<td id="monDish" day ="0">
-				<div class="list-group">
-					<a href="#" id="0-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dish Manager</a>
-					<a href="#" id="0-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dish</a>
-					<a href="#" id="0-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
-			<!--Tuesday Dinner-->
-			<td id="tuesDish" day ="1">
-				<div class="list-group">
-					<a href="#" id="1-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dish Manager</a>
-					<a href="#" id="1-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dish</a>
-					<a href="#" id="1-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
-
-			<!--Wednesday Dinner-->
-			<td id="wedDish" day ="2">
-				<div class="list-group">
-					<a href="#" id="2-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dish Manager</a>
-					<a href="#" id="2-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dish</a>
-					<a href="#" id="2-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
-			<!--Thursday Dinner-->
-			<td id="thurDish" day ="3">
-				<div class="list-group">
-					<a href="#" id="3-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dish Manager</a>
-					<a href="#" id="3-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dish</a>
-					<a href="#" id="3-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
-			<!--Friday Dinner-->
-			<td id="friDish" day ="4">
-				<div class="list-group">
-					<a href="#" id="4-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Dish Manager</a>
-					<a href="#" id="4-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dish</a>
-					<a href="#" id="4-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
-
-			<!--Saturday Brunch-->
-			<td id="satBrunchDish" day ="5" >
-				<div class="list-group">
-					<!--					<div class="list-group" style = "width: 75px; font-size:12px" >-->
-					<a href="#" id="5-10" taskid = 10 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift" > Dish Manager</a>
-					<a href="#" id="5-11" taskid = 11 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dish</a>
-					<a href="#" id="5-12" taskid = 12 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
+              <!--Saturday Brunch-->
+              <td id="satBrunch" class = "sat" day ="5" >
+                <div class="list-group">
+                  <!--					<div class="list-group" style = "width: 75px; font-size:12px" >-->
+                  <a href="#" id="5-7" taskid = 7 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift" > Brunch Manager</a>
+                  <a href="#" id="5-8" taskid = 8 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Brunch</a>
+                  <a href="#" id="5-9" taskid = 9 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Brunch</a>
+                </div>
+              </td>
 
 
-			<!--Saturday Dinner-->
-			<td id="satDinnerDish" day ="5">
-				<div class="list-group">
-					<a href="#" id="5-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift"> Dish Manager</a>
-					<a href="#" id="5-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dish</a>
-					<a href="#" id="5-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
+              <!--Saturday Dinner-->
+              <td class = "sat" id="satDinner" day ="5">
+                <div class="list-group">
+                  <a href="#" id="5-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift"> Dinner Manager</a>
+                  <a href="#" id="5-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dinner</a>
+                  <a href="#" id="5-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dinner</a>
+                </div>
+              </td>
 
-			<!--Sunday Brunch-->
-			<td id="sunBrunchDish" day ="6">
-				<div class="list-group" >
-					<a href="#" id="6-10" taskid = 10 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift" > Dish Manager</a>
-					<a href="#" id="6-11" taskid = 11 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift" >First Dish</a>
-					<a href="#" id="6-12" taskid = 12 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
+              <!--Sunday Brunch-->
+              <td id="sunBrunch" class="sun" day ="6">
+                <div class="list-group" >
+                  <a href="#" id="6-7" taskid = 7 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift" > Brunch Manager</a>
+                  <a href="#" id="6-8" taskid = 8 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift" >First Brunch</a>
+                  <a href="#" id="6-9" taskid = 9 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Brunch</a>
+                </div>
+              </td>
 
-			<!--Sunday Dinner-->
-			<td id="sunDinnerDish"  day ="6">
-				<div class="list-group" >
-					<a href="#" id="6-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">  Dish Manager</a>
-					<a href="#" id="6-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">First Dish</a>
-					<a href="#" id="6-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
-					data-target="#otherShift">Second Dish</a>
-				</div>
-			</td>
-		</tr>
+              <!--Sunday Dinner Dish-->
+              <td id="sunDinner" class="sun" day ="6">
+                <div class="list-group" >
+                  <a href="#" id="6-1" taskid = 1 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">  Dinner Manager</a>
+                  <a href="#" id="6-2" taskid = 2 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dinner</a>
+                  <a href="#" id="6-3" taskid = 3 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dinner</a>
+                </div>
+              </td>
+            </tr>
 
-	</tbody>
-</table>
-</div>
+            <tr>
+              <!--Monday Dinner Dish-->
+              <td id="monDish" class="mon" day ="0">
+                <div class="list-group">
+                  <a href="#" id="0-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dish Manager</a>
+                  <a href="#" id="0-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dish</a>
+                  <a href="#" id="0-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
+              <!--Tuesday Dinner Dish-->
+              <td id="tuesDish" class="tue" day ="1">
+                <div class="list-group">
+                  <a href="#" id="1-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dish Manager</a>
+                  <a href="#" id="1-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dish</a>
+                  <a href="#" id="1-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
 
-<br>
-<br>
-<br>
-<br>
-<!-- Modal with close button -->
-<div class="modal fade" id="otherShift" tabindex="-1" role="dialog" aria-labelledby="otherShiftLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="otherShiftLabel">Shift Details</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body" id="otherShiftBody">
-				<span id="otherShiftText"></span>
-				<span id = "walkOnText"></span>
-			</div>
-			<div class="modal-footer">
-				<form>
-				  <label class="sr-only" for="walkOn">Username</label>
-     			  <div class="input-group">
-					<div class="input-group-prepend">
-				  		<div class="input-group-text">@</div>
-					</div>
-					<input type="text" class="form-control" id="walkOn" placeholder="netid">
-          &nbsp&nbsp
-			  		<button type="button" class="btn btn-secondary" id = walkOnSubmit>Add WalkOn</button>
-				  </div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+              <!--Wednesday Dinner Dish-->
+              <td id="wedDish" class="wed" day ="2">
+                <div class="list-group">
+                  <a href="#" id="2-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dish Manager</a>
+                  <a href="#" id="2-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dish</a>
+                  <a href="#" id="2-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
+              <!--Thursday Dinner Dish-->
+              <td id="thurDish" class="thu" day ="3">
+                <div class="list-group">
+                  <a href="#" id="3-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dish Manager</a>
+                  <a href="#" id="3-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dish</a>
+                  <a href="#" id="3-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
+              <!--Friday Dinner Dish-->
+              <td id="friDish" class="fri" day ="4">
+                <div class="list-group">
+                  <a href="#" id="4-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Dish Manager</a>
+                  <a href="#" id="4-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dish</a>
+                  <a href="#" id="4-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
 
-	</div>
+              <!--Saturday Brunch Dish-->
+              <td id="satBrunchDish" class = "sat" day ="5" >
+                <div class="list-group">
+                  <!--					<div class="list-group" style = "width: 75px; font-size:12px" >-->
+                  <a href="#" id="5-10" taskid = 10 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift" > Dish Manager</a>
+                  <a href="#" id="5-11" taskid = 11 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dish</a>
+                  <a href="#" id="5-12" taskid = 12 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
+
+
+              <!--Saturday Dinner Dish-->
+              <td id="satDinnerDish" class = "sat" day ="5">
+                <div class="list-group">
+                  <a href="#" id="5-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift"> Dish Manager</a>
+                  <a href="#" id="5-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dish</a>
+                  <a href="#" id="5-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
+
+              <!--Sunday Brunch Dish-->
+              <td id="sunBrunchDish" class="sun" day ="6">
+                <div class="list-group" >
+                  <a href="#" id="6-10" taskid = 10 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift" > Dish Manager</a>
+                  <a href="#" id="6-11" taskid = 11 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift" >First Dish</a>
+                  <a href="#" id="6-12" taskid = 12 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
+
+              <!--Sunday Dinner Dish-->
+              <td id="sunDinnerDish" class="sun" day ="6">
+                <div class="list-group" >
+                  <a href="#" id="6-4" taskid = 4 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">  Dish Manager</a>
+                  <a href="#" id="6-5" taskid = 5 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">First Dish</a>
+                  <a href="#" id="6-6" taskid = 6 class="list-group-item list-group-item-action list-group-item-light text-dark" data-container="body" data-toggle="modal"
+                  data-target="#otherShift">Second Dish</a>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row"></div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <!-- Modal with close button -->
+    <div class="modal fade" id="otherShift" tabindex="-1" role="dialog" aria-labelledby="otherShiftLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="otherShiftLabel">Shift Details</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="otherShiftBody">
+            <span id="otherShiftText"></span>
+            <span id = "walkOnText" class="text-danger"></span>
+          </div>
+          <div class="modal-footer">
+            <form>
+              <label class="sr-only" for="walkOn">Username</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">@</div>
+                </div>
+                <input type="text" class="form-control" id="walkOn" placeholder="netid">
+                &nbsp&nbsp
+                <button type="button" class="btn btn-secondary" id = walkOnSubmit>Add WalkOn</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </main>
 
 <input type="hidden" id="myShifts">
 <input type="hidden" id="needsSubShifts">
-<div id="monday">{{monday}}</div>
+<div id="monday" style="visibility:hidden">{{monday}}</div>
 
 
 <footer class="footer">
@@ -404,63 +411,74 @@
 <script>
 function getDates() {
   let mon = $('#monday').text().trim();
-	console.log(mon);
-	let current = new Date();
+  console.log(mon);
+  let current = new Date();
+  let today = new Date();
+  console.log("today: " + today)
+  let dotw = today.getDay();
+  if (dotw == 0) {
+    dotw = 7
+  }
+  offset = current.getTimezoneOffset();
+  console.log("dotw: " + dotw)
+  let monISO = new Date();
+  // + 1 depending on timezone? idk not sure
+  if (offset >= 0) {
+    monISO.setDate(today.getDate() - dotw);
+  }
+  else {
+    monISO.setDate(today.getDate() - dotw + 1);
+  }
 
-  if (mon == 'today') {
-  		console.log("HERE");
-		let today = new Date();
-		console.log("today: " + today)
-		let dotw = today.getDay();
-		if (dotw == 0) {
-			dotw = 7
-		}
-		var dayStr = null;
-		if(dotw  == 1) dayStr = '.mon';
-		else if(dotw  == 2) dayStr = '.tue';
-		else if(dotw  == 3) dayStr = '.wed';
-		else if(dotw  == 4) dayStr = '.thu';
-		else if(dotw  == 5) dayStr = '.fri';
-		else if(dotw  == 6) dayStr = '.sat';
-		else if(dotw  == 7) dayStr = '.sun';
+  monISO = monISO.toISOString().substring(0, 10)
+  console.log(monISO);
 
-		var classStr =  dayStr +  " table-warning";
-		$(dayStr).attr("class" , classStr);
-		mon = today.getDate() - dotw +1 ;
-		current.setDate(mon);
-	}
-	else {
-		// console.log(current);
-		// console.log('mon: ' + mon);
-		offset = current.getTimezoneOffset();
-		// console.log('offset: ' + offset);
-		current = new Date(mon);
-		// console.log('current: ' + current);
-		if (offset >= 0) {
-			current.setDate(current.getDate() + 1);
-		}
-		// console.log('start: ' + current);
-	}
-	let week = [];
-	console.log(current);
-	for (var i = 0; i < 7; i++) {
-		week.push(new Date(current));
-		current.setDate(current.getDate()+1);
-	}
-	console.log(week[0]);
-	$('#monDate').html(week[0].toLocaleDateString());
-	$('#tuesDate').html(week[1].toLocaleDateString());
-	$('#wedDate').html(week[2].toLocaleDateString());
-	$('#thursDate').html(week[3].toLocaleDateString());
-	$('#friDate').html(week[4].toLocaleDateString());
-	$('#satDate').html(week[5].toLocaleDateString());
-	$('#satDate2').html(week[5].toLocaleDateString());
-	$('#sunDate').html(week[6].toLocaleDateString());
-	$('#sunDate2').html(week[6].toLocaleDateString());
+  if (mon == 'today' || mon == monISO) {
+    var dayStr = null;
+    if(dotw  == 1) dayStr = '.mon';
+    else if(dotw  == 2) dayStr = '.tue';
+    else if(dotw  == 3) dayStr = '.wed';
+    else if(dotw  == 4) dayStr = '.thu';
+    else if(dotw  == 5) dayStr = '.fri';
+    else if(dotw  == 6) dayStr = '.sat';
+    else if(dotw  == 7) dayStr = '.sun';
 
-	return week[0];
-	// var test = new Date(2020, 3, 13);
-	// return test;
+    var classStr =  dayStr +  " table-warning";
+    $(dayStr).attr("class" , classStr);
+    mon = today.getDate() - dotw + 1;
+    current.setDate(mon);
+  }
+  else {
+    // console.log(current);
+    // console.log('mon: ' + mon);
+    // console.log('offset: ' + offset);
+    current = new Date(mon);
+    // console.log('current: ' + current);
+    if (offset >= 0) {
+      current.setDate(current.getDate() + 1);
+    }
+    // console.log('start: ' + current);
+  }
+  let week = [];
+  // console.log(current);
+  for (var i = 0; i < 7; i++) {
+    week.push(new Date(current));
+    current.setDate(current.getDate()+1);
+  }
+  // console.log(week[0]);
+  $('#monDate').html(week[0].toLocaleDateString());
+  $('#tuesDate').html(week[1].toLocaleDateString());
+  $('#wedDate').html(week[2].toLocaleDateString());
+  $('#thursDate').html(week[3].toLocaleDateString());
+  $('#friDate').html(week[4].toLocaleDateString());
+  $('#satDate').html(week[5].toLocaleDateString());
+  $('#satDate2').html(week[5].toLocaleDateString());
+  $('#sunDate').html(week[6].toLocaleDateString());
+  $('#sunDate2').html(week[6].toLocaleDateString());
+
+  return week[0];
+  // var test = new Date(2020, 3, 13);
+  // return test;
 }
 
 function getSubColors(mon) {
@@ -506,109 +524,125 @@ function getModalData(mon) {
       $('#otherShiftText').load(dataURL,function() {
         $('#otherShift').modal('show');
         $(".noShow").on("click", function(){
-        	console.log("ITS HERE CMON");
-			var url = $(this).attr("href");
-			var noShowNetID = $(this).attr("netid").trim();
-			var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-			$(this).parent("span").load(url);
-	 	 });
-		$("#walkOnSubmit").on("click", function(){
-			var walkOnNetId = $("#walkOn").val();
-			var walkOnUrl = "/walkOn?"
-			walkOnUrl += "date=" + iso;
-    		walkOnUrl += "&taskid=" + taskId;
-    		walkOnUrl += "&netid=" + walkOnNetId;
-      // var currText = $("#walkOnText").text();
-      // console.log(currText);
-			$("#walkOnText").load(walkOnUrl);
-      // console.log(currText);
-      // $("#walkOnText").text(currText + '<br>' + 'netid');
-      // console.log($("#walkOn").text());
-      $("#walkOn").val('');
-      $('#otherShift').on('hide.bs.modal',function() {
-        console.log('closed');
-        window.location.reload();
-      });
-		});
+          var url = $(this).attr("href");
+          var noShowNetID = $(this).attr("netid").trim();
+          var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+          $(this).parent("span").load(url);
+        });
+        $("#walkOnSubmit").on("click", function(){
+          var walkOnNetId = $("#walkOn").val();
+          var walkOnUrl = "/walkOn?"
+          walkOnUrl += "date=" + iso;
+          walkOnUrl += "&taskid=" + taskId;
+          walkOnUrl += "&netid=" + walkOnNetId;
+          // var currText = $("#walkOnText").text();
+          // console.log(currText);
+          console.log($('#otherShiftText').html());
+          // $('#otherShiftText').html() += 'hello';
+          $.ajax({
+            url: walkOnUrl,
+            type: 'GET',
+            success: function(data){
+              if (data == "failed") {
+                $("#walkOnText").html("<br><br>walkOn Request Failed. Please reload and try again.");
+              }
+              else {
+                console.log(data)
+                curr = $('#otherShiftText').html() + data;
+                // console.log(curr);
+                $('#otherShiftText').html(curr);
+              }
+            }
+          });
+          // $("#walkOnText").load(walkOnUrl);
+          // console.log(currText);
+          // $("#walkOnText").text(currText + '<br>' + 'netid');
+          // console.log($("#walkOn").text());
+          $("#walkOn").val('');
+          $('#otherShift').on('hide.bs.modal',function() {
+            console.log('closed');
+            window.location.reload();
+          });
+        });
       });
     }
   });
 }
 
 function format(mon) {
-	monFormat = mon.getFullYear() + '-';
-	if (mon.getMonth() < 10 ) {
-		monFormat += "0" + (mon.getMonth()+1) + '-';
-	} else {
-		monFormat += mon.getMonth() + '-' ;
-	}
+  monFormat = mon.getFullYear() + '-';
+  if (mon.getMonth() < 10 ) {
+    monFormat += "0" + (mon.getMonth()+1) + '-';
+  } else {
+    monFormat += mon.getMonth() + '-' ;
+  }
 
-	if(mon.getDate() < 10 ){
-		monFormat += "0" + (mon.getDate());
-	} else {
-		monFormat += mon.getDate();
-	}
-	return monFormat;
+  if(mon.getDate() < 10 ){
+    monFormat += "0" + (mon.getDate());
+  } else {
+    monFormat += mon.getDate();
+  }
+  return monFormat;
 }
 
 // let request = null;
 
 function lastWeek(mon) {
-	$('#lastWeekButton').on('click',function() {
-		console.log(mon);
-		let newMon = new Date(mon);
-		newMon.setDate(newMon.getDate() - 7);
-		console.log(newMon);
-		window.location = "?monday=" + format(newMon)
-		// var url = "/calendar?monday=" + format(newMon);
-		// console.log(url);
-		// $('#calendar').load(url);
+  $('#lastWeekButton').on('click',function() {
+    console.log(mon);
+    let newMon = new Date(mon);
+    newMon.setDate(newMon.getDate() - 7);
+    console.log(newMon);
+    window.location = "?monday=" + format(newMon)
+    // var url = "/calendar?monday=" + format(newMon);
+    // console.log(url);
+    // $('#calendar').load(url);
 
-		// if (request != null) {
-		// 	request.abort();
-		// }
-		// request = $.ajax(
-		// 	{
-		// 		type: "GET",
-		// 		url: url,
-		// 		success: setup
-		// 	}
-		// );
-	});
+    // if (request != null) {
+    // 	request.abort();
+    // }
+    // request = $.ajax(
+    // 	{
+    // 		type: "GET",
+    // 		url: url,
+    // 		success: setup
+    // 	}
+    // );
+  });
 }
 
 function nextWeek(mon) {
-	$('#nextWeekButton').on('click',function() {
-		console.log(mon);
-		let newMon = new Date(mon);
-		newMon.setDate(newMon.getDate() + 7);
-		console.log(newMon);
-		window.location = "?monday=" + format(newMon)
-		// var url = "/calendar?monday=" + format(newMon);
-		// console.log(url);
-		// $('#calendar').load(url);
+  $('#nextWeekButton').on('click',function() {
+    console.log(mon);
+    let newMon = new Date(mon);
+    newMon.setDate(newMon.getDate() + 7);
+    console.log(newMon);
+    window.location = "?monday=" + format(newMon)
+    // var url = "/calendar?monday=" + format(newMon);
+    // console.log(url);
+    // $('#calendar').load(url);
 
-		// if (request != null) {
-		// 	request.abort();
-		// }
-		// request = $.ajax(
-		// 	{
-		// 		type: "GET",
-		// 		url: url,
-		// 		success: setup
-		// 	}
-		// );
-	});
+    // if (request != null) {
+    // 	request.abort();
+    // }
+    // request = $.ajax(
+    // 	{
+    // 		type: "GET",
+    // 		url: url,
+    // 		success: setup
+    // 	}
+    // );
+  });
 }
 
 function setup() {
-	mon = getDates();
-	console.log(mon);
-	monFormat = format(mon);
-	getModalData(mon);
-	getSubColors(monFormat);
-	// subOut();
-	// subIn();
+  mon = getDates();
+  console.log(mon);
+  monFormat = format(mon);
+  getModalData(mon);
+  getSubColors(monFormat);
+  // subOut();
+  // subIn();
   lastWeek(mon);
   nextWeek(mon);
 }
