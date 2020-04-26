@@ -1670,6 +1670,7 @@ class Database:
             #create a cursor
             cur = self._conn.cursor()
 
+            ''' Removed for efficiency
             # Check if netid exists
             QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
             cur.execute(QUERY_STRING, (netid,))
@@ -1679,7 +1680,8 @@ class Database:
                 print('Employee does not exist.')
                 cur.close()
                 return False
-            
+            '''
+
             # get dates
             if dateStart == -1 and dateEnd == -1:
                 today = datetime.date.today()
