@@ -1026,16 +1026,15 @@ def assignShift():
     if my_netid is None:
         my_netid = ''
 
-    if not database.isCoordinator(my_netid):
-        database.disconnect()
-        return redirect(url_for('noPermissions'))
-
     netid = request.args.get('netid')
     data = request.args.get("shifts")
     shifts = data.split('_')
     try:
         database = Database()
         database.connect()
+        if not database.isCoordinator(my_netid):
+            database.disconnect()
+            return redirect(url_for('noPermissions'))
         for shift in shifts:
             if shift != '':
                 info = shift.split("-")
