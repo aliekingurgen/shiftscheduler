@@ -998,10 +998,6 @@ def unassignShift():
     if my_netid is None:
         my_netid = ''
 
-    if not database.isCoordinator(my_netid):
-        database.disconnect()
-        return redirect(url_for('noPermissions'))
-
     netid = request.args.get('netid')
     taskid = request.args.get("taskid")
     dow = request.args.get("day")
@@ -1011,6 +1007,9 @@ def unassignShift():
     try:
         database = Database()
         database.connect()
+        if not database.isCoordinator(my_netid):
+            database.disconnect()
+            return redirect(url_for('noPermissions'))
         database.removeRegularShift(netid, taskid, dow)
         database.disconnect()
     except Exception as e:
