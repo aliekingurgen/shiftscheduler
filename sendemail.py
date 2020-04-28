@@ -8,25 +8,26 @@
 from flask import Flask
 from flask_mail import Mail, Message
 from sys import argv
+import smtplib
 
 app = Flask(__name__)
-
+app.config.from_object(__name__)
 
 @app.route('/testmail')
 def mail_it():
     mail = Mail(app)
-    app.config.from_object(__name__)
-    app.config.from_envvar('MINITWIT_SETTINGS', silent=True)
+
+    # app.config.from_envvar('MINITWIT_SETTINGS', silent=True)
     app.config.update(
         DEBUG=True,
         # Flask-Mail Configuration
-        MAIL_SERVER='smtp.princeton.edu',
+        MAIL_SERVER='smtp.outlook.com',
         MAIL_PORT=587,
         MAIL_USE_TLS=True,
         MAIL_USE_SSL=False,
-        MAIL_USERNAME='shifscheduler@princeton.edu',
+        MAIL_USERNAME='shiftscheduler@princeton.edu',
         MAIL_PASSWORD='2020Shiftscheduler!',
-        DEFAULT_MAIL_SENDER='shiftscheduler@princeton.edu'
+        DEFAULT_MAIL_SENDER='shiftscheduler@princeton.edu',
     )
 
     # setup Mail
@@ -35,7 +36,7 @@ def mail_it():
     """handles our message notification"""
     print("hello email")
     msg = Message("Hello",
-                  sender=("Shift Scheduler", "shiftscheduler@princeton.edu"),recipients=["ortaoglu@princeton.edu"])
+                  sender=("Shift Scheduler", "shiftscheduler@princeton.edu"),recipients=["ortaoglu@princeton.edu","agurgen@princeton.edu"])
     msg.body = "A shift has been subbed out of!"
     mail.send(msg)
     return "I sent an email!"
