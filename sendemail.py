@@ -20,13 +20,13 @@ def mail_it():
     app.config.update(
         DEBUG=True,
         # Flask-Mail Configuration
-        MAIL_SERVER='smtp.gmail.com',
+        MAIL_SERVER='smtp.princeton.edu',
         MAIL_PORT=587,
         MAIL_USE_TLS=True,
         MAIL_USE_SSL=False,
-        MAIL_USERNAME='shiftschedulerprinceton@gmail.com',
-        MAIL_PASSWORD='Dondero22',
-        DEFAULT_MAIL_SENDER='shiftschedulerprinceton@gmail.com'
+        MAIL_USERNAME='shifscheduler@princeton.edu',
+        MAIL_PASSWORD='2020Shiftscheduler!',
+        DEFAULT_MAIL_SENDER='shiftscheduler@princeton.edu'
     )
 
     # setup Mail
@@ -35,7 +35,7 @@ def mail_it():
     """handles our message notification"""
     print("hello email")
     msg = Message("Hello",
-                  sender=("Shift Scheduler", "shiftschedulerprinceton@gmail.com"),recipients=["begumor@gmail.com"])
+                  sender=("Shift Scheduler", "shiftscheduler@princeton.edu"),recipients=["ortaoglu@princeton.edu"])
     msg.body = "A shift has been subbed out of!"
     mail.send(msg)
     return "I sent an email!"
