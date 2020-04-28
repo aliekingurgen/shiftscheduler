@@ -53,7 +53,7 @@
 			<ul class="navbar-nav">
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-					aria-haspopup="true" aria-expanded="false"> {{netid}} </a>
+					aria-haspopup="true" aria-expanded="false">{{netid}}</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="/profile">Profile</a>
 						<a class="dropdown-item" href="/logout">Log Out</a>
@@ -65,177 +65,230 @@
 </nav>
 
 <nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
-  <!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon" ></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarText">
-    <ul class="navbar-nav mr-auto">
-      <!--      <li class="nav-item active">-->
-      <!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
-      <!--      </li>-->
-      <li class="nav-item">
-        <a class="nav-link" href="/coordinatorschedule">Shift Schedule</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="/manageemployees">Manage Employees</a>
-      </li>
+	<!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon" ></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarText">
+		<ul class="navbar-nav mr-auto">
+			<!--      <li class="nav-item active">-->
+			<!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
+			<!--      </li>-->
 			<li class="nav-item">
-        <a class="nav-link" href="/manageshifts">Manage Shifts</a>
-      </li>
-			<li class="nav-item">
-				<a class="nav-link" href="/managehours">Manage Hours</a>
+				<a class="nav-link" href="/coordinatorschedule" style="font-size:18px">Calendar</a>
 			</li>
-    </ul>
-  </div>
+			<li class="nav-item">
+				<a class="nav-link active" href="/manageemployees" style="font-size:18px">Employees</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/manageshifts" style="font-size:18px">Regular Shifts</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/managehours" style="font-size:18px">Hours</a>
+			</li>
+		</ul>
+	</div>
 </nav>
 
 <main role="main">
-  <br>
-  <!--    <div class="container">This page is currently not supported. Return to the <a class="text-info" href="/">home page</a>.-->
+	<br>
+	<!--    <div class="container">This page is currently not supported. Return to the <a class="text-info" href="/">home page</a>.-->
 </div>
 <div class="container">
-  <div class="row">
-    <div class="container col-md-4">
-      <h3 >All Current Employees:</h3>
+	<div class="row">
+		<div class="container col-md-4">
+			<h3 >All Current Employees:</h3>
 			<br>
 
-      <div style="overflow-y:scroll;height:400px;">
+			<div style="overflow-y:scroll;height:400px;">
 				<table class="table">
 					{%for employee in employees %}
 					{% set url = "/employeeDetails?netid=" + employee.getNetID()%}
 					<tr><td><a href="#" link={{url}} class="text-info employeeItem">
 						{{employee.getFirstName()}} {{employee.getLastName()}}</a></td></tr>
-					{% endfor %}
-				</table>
-      </div>
+						{% endfor %}
+					</table>
+				</div>
 
-    </div>
+			</div>
 
-		<div class="container col-md-4">
-			<h3>Employee Details:</h3><br>
-			<p id="employeeDetails">Click an employee on the left to see his/her profile.</p>
+			<div class="container col-md-4">
+				<h3>Employee Details:</h3><br>
+				<p id="employeeDetails">Click an employee on the left to see his/her profile.</p>
+			</div>
+
+			<div class="container col-md-4 order-md-1">
+				<h3>Add a New Employee:</h3>
+				<br>
+				<form class="needs-validation" novalidate>
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="firstName">First name</label>
+							<input type="text" class="form-control" id="firstName" placeholder="" value="" required="required">
+							<div class="invalid-feedback">
+								Valid first name is required.
+							</div>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="lastName">Last name</label>
+							<input type="text" class="form-control" id="lastName" placeholder="" value="" required="required">
+							<div class="invalid-feedback">
+								Valid last name is required.
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="add-employee">Net ID </label>
+							<input type="text" class="form-control" id="add-employee" placeholder="" required="required">
+							<div class="invalid-feedback">
+								Net ID is not valid.
+							</div>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="add-employee">Manager? (Y/N)</label>
+							<div class="btn-group btn-group-toggle" data-toggle="buttons">
+								<label class="btn btn-secondary">
+									<input type="radio" name="options" id="yes"> Yes
+								</label>
+								<label class="btn btn-secondary">
+									<input type="radio" name="options" id="no"> No
+								</label>
+							</div>
+							<!-- <input type="text" class="form-control" id="manager" placeholder="" required="required"> -->
+							<div class="invalid-feedback">
+								Must enter Y or N.
+							</div>
+						</div>
+					</div>
+					<br>
+					<button class="btn btn-outline-secondary" type="button" id="add-button">Add</button>
+					<br>
+					<br>
+					<div id="add-text"></div>
+				</form>
+				<br>
+				<h3>Remove an Existing Employee:</h3>
+				<form class="needs-validation" id="remove-form"novalidate>
+					<div class="col-md">
+						<label for="remove-employee">Net ID </label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="remove-employee" placeholder="" required="required">
+							<div class="invalid-feedback">
+								Employee name is not valid.
+							</div>
+
+						</div>
+					</div>
+					<br>
+					<button class="btn btn-outline-secondary" type="button" id="remove-button">Remove</button>
+					<br>
+					<br>
+					<div id="remove-text"></div>
+				</form>
+			</div>
 		</div>
-
-    <div class="container col-md-4 order-md-1">
-      <h3>Add a New Employee:</h3>
-      <br>
-      <form class="needs-validation" novalidate>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="firstName">First name</label>
-            <input type="text" class="form-control" id="firstName" placeholder="" value="" required="required">
-            <div class="invalid-feedback">
-              Valid first name is required.
-            </div>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="lastName">Last name</label>
-            <input type="text" class="form-control" id="lastName" placeholder="" value="" required="required">
-            <div class="invalid-feedback">
-              Valid last name is required.
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="add-employee">Net ID </label>
-            <input type="text" class="form-control" id="add-employee" placeholder="" required="required">
-            <div class="invalid-feedback">
-              Net ID is not valid.
-            </div>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="add-employee">Manager? (Y/N)</label>
-            <input type="text" class="form-control" id="manager" placeholder="" required="required">
-            <div class="invalid-feedback">
-              Must enter Y or N.
-            </div>
-          </div>
-        </div>
-        <br>
-        <button class="btn btn-outline-secondary" type="button" id="add-button">Add</button>
-        <br>
-        <br>
-        <div id="add-text"></div>
-      </form>
-      <br>
-      <h3>Remove an Existing Employee:</h3>
-      <form class="needs-validation" id="remove-form"novalidate>
-        <div class="col-md">
-          <label for="remove-employee">Net ID </label>
-          <div class="input-group">
-            <input type="text" class="form-control" id="remove-employee" placeholder="" required="required">
-            <div class="invalid-feedback">
-              Employee name is not valid.
-            </div>
-
-          </div>
-        </div>
-        <br>
-        <button class="btn btn-outline-secondary" type="button" id="remove-button">Remove</button>
-        <br>
-        <br>
-        <div id="remove-text"></div>
-      </form>
-    </div>
-  </div>
-</div>
-    <br>
-     <br>
-     <br>
+	</div>
+	<br>
+	<br>
+	<br>
 </main>
 
 <footer class="footer">
-  <div class="container">
-    <span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
-  </div>
+	<div class="container">
+		<span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
+	</div>
 </footer>
 
 <script>
 function insertEmployee() {
-  $('#add-button').on('click',function() {
-    var netid = $('#add-employee').val();
-    var firstname = $('#firstName').val();
-    var lastname = $('#lastName').val();
-    var manager = $('#manager').val();
-    var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstname
-    url +=  "&lastname=" + lastname + "&manager=" + manager;
-    // console.log(url);
-    $('#add-text').load(url);
+	$('#add-button').on('click',function() {
+		var firstname = $('#firstName').val();
+		if (firstname == '') {
+			$('#add-text').text('Please enter a first name.');
+			return;
+		}
+		var lastname = $('#lastName').val();
+		if (lastname == '') {
+			$('#add-text').text('Please enter a last name.');
+			return;
+		}
+		var netid = $('#add-employee').val();
+		if (netid == '') {
+			$('#add-text').text('Please enter a net ID.');
+			return;
+		}
+
+		if ($('#yes').is(":checked")) {
+			var manager = 'Y';
+		}
+		else if ($('#no').is(":checked")) {
+			var manager = 'N';
+		}
+		else {
+			$('#add-text').text('Please indicate Yes/No for Manager.');
+			return;
+		}
+		var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstname
+		url +=  "&lastname=" + lastname + "&manager=" + manager;
+		$('#add-text').load(url);
 		setTimeout(function(){
 			window.location.reload()
 		},1000);
-    // $('#add-employee').val('');
-    // $('#firstName').val('');
-    // $('#lastName').val('');
-    // $('#manager').val('');
-  });
+
+		// $('#add-employee').val('');
+		// $('#firstName').val('');
+		// $('#lastName').val('');
+		// $('#manager').val('');
+	});
 }
 
 function removeEmployee() {
-  $('#remove-button').on('click',function() {
-    var netid = $('#remove-employee').val();
-    var url = "/removeEmployee?employeenetid=" + netid;
-    // console.log(url);
-    $('#remove-text').load(url);
-		setTimeout(function(){
-			window.location.reload()
-		},1000);
-  });
+	$('#remove-button').on('click',function() {
+		alert('clicked');
+		var netid = $('#remove-employee').val();
+		if ($('#remove-employee').val()== '') {
+			// console.log('empty');
+			$('#remove-text').text('Please enter a net ID.');
+		}
+		// $('#remove-employee').val('')
+		else if ($('#navbarDropdown').text().trim() == netid) {
+			$('#remove-text').text('You cannot remove yourself!');
+		}
+		else {
+			var url = "/removeEmployee?employeenetid=" + netid;
+			// console.log(url);
+			$('#remove-text').load(url, function(responseTxt, statusTxt, xhr){
+				if(responseTxt == (netid + ' was successfully removed!')) {
+					console.log('success');
+					setTimeout(function(){
+						window.location.reload()
+					},1000);
+				}
+			});
+			// console.log($('#remove-text').html());
+			// console.log(netid + ' was successfully removed!');
+			// if ($('#remove-text').text() == (netid + ' was successfully removed!')) {
+			// 	console.log('success');
+			// 	setTimeout(function(){
+			// 		window.location.reload()
+			// 	},1000);
+			// }
+		}
+	});
 }
 
 function employeeDetails() {
 	$('.employeeItem').on('click',function() {
 		url = $(this).attr('link');
 		$('#employeeDetails').load(url);
-  });
+	});
 }
 
 function setup() {
-  insertEmployee();
-  removeEmployee();
+	insertEmployee();
+	removeEmployee();
 	employeeDetails();
 }
 

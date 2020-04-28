@@ -76,16 +76,16 @@
 			<!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
 			<!--      </li>-->
 			<li class="nav-item">
-				<a class="nav-link" href="/coordinatorschedule">Shift Schedule</a>
+				<a class="nav-link" href="/coordinatorschedule" style="font-size:18px">Calendar</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="/manageemployees">Manage Employees</a>
+				<a class="nav-link" href="/manageemployees" style="font-size:18px">Employees</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link active" href="/manageshifts">Manage Shifts</a>
+				<a class="nav-link active" href="/manageshifts" style="font-size:18px">Regular Shifts</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="/managehours">Manage Hours</a>
+				<a class="nav-link" href="/managehours" style="font-size:18px">Hours</a>
 			</li>
 		</ul>
 	</div>
@@ -118,61 +118,64 @@
 				<h3>Unassign Regular Shifts:</h3><br>
 				<p id="employeeDetails" employee="{{employee}}">Click an employee on the
 					left to unassign/assign regular shifts.</p>
-			</div>
+				</div>
 
-			<div id = "assignShift" class="container col-md-4 order-md-1">
-				<h3>Assign Regular Shifts:</h3><br>
-				<form id="assignShiftForm" style = "visibility:hidden" >
-					<div class="form-group">
-						<label for="daySelect">Select a Day</label>
-						<select class="form-control" id="daySelect">
-							<option>Monday</option>
-							<option>Tuesday</option>
-							<option>Wednesday</option>
-							<option>Thursday</option>
-							<option>Friday</option>
-							<option>Saturday</option>
-							<option>Sunday</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<label for="taskSelect">Select a Task</label>
-						<select class="form-control" id="taskSelect">
-							<option>Dinner Manager</option>
-							<option>Dinner First Shift</option>
-							<option>Dinner Second Shift</option>
-							<option>Dinner Dish Manager</option>
-							<option>Dinner First Dish</option>
-							<option>Dinner Second Dish</option>
-							<option>Brunch Manager</option>
-							<option>Brunch First Shift</option>
-							<option>Brunch Second Shift</option>
-							<option>Brunch Dish Manager</option>
-							<option>Brunch First Dish</option>
-							<option>Brunch Second Dish</option>
-							<option>CJL Swipe</option>
-						</select>
-					</div>
-					<div class="form-group">
-						<button id="insertShift" type="button"
-						class="btn btn-secondary">Add Regular Shift</button>
-					</div>
-					<div class="form-group">
+				<div id = "assignShift" class="container col-md-4 order-md-1">
+					<h3>Assign Regular Shifts:</h3><br>
+					<form id="assignShiftForm" style = "visibility:hidden" >
+						<div class="form-group">
+							<label for="daySelect">Select a Day</label>
+							<select class="form-control" id="daySelect">
+								<option>Monday</option>
+								<option>Tuesday</option>
+								<option>Wednesday</option>
+								<option>Thursday</option>
+								<option>Friday</option>
+								<option>Saturday</option>
+								<option>Sunday</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="taskSelect">Select a Task</label>
+							<select class="form-control" id="taskSelect">
+								<option>Dinner Manager</option>
+								<option>Dinner First Shift</option>
+								<option>Dinner Second Shift</option>
+								<option>Dinner Dish Manager</option>
+								<option>Dinner First Dish</option>
+								<option>Dinner Second Dish</option>
+								<option>Brunch Manager</option>
+								<option>Brunch First Shift</option>
+								<option>Brunch Second Shift</option>
+								<option>Brunch Dish Manager</option>
+								<option>Brunch First Dish</option>
+								<option>Brunch Second Dish</option>
+								<option>CJL Swipe</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<button id="insertShift" type="button"
+							class="btn btn-secondary">Add Regular Shift</button>
+							<br>
+							<br>
+							<div id="assign-text"></div>
+						</div>
+						<!-- <div class="form-group">
 						<label for="toBeAdded">Regular Shifts to be Added</label>
 						<select multiple class="form-control" id="toBeAdded" size="6">
-						</select>
-					</div>
-					<div class="form-group">
-						<button id="insertAllShifts" type="button"
-						class="btn btn-secondary">Assign Selected Employee All Above Regular Shifts</button>
-					</div>
-				</form>
-			</div>
-		</div>
+					</select>
+				</div>
+				<div class="form-group">
+				<button id="insertAllShifts" type="button"
+				class="btn btn-secondary">Assign Selected Employee All Above Regular Shifts</button>
+			</div> -->
+		</form>
 	</div>
-	<br>
-	<br>
-	<br>
+</div>
+</div>
+<br>
+<br>
+<br>
 </main>
 
 <footer class="footer">
@@ -185,44 +188,70 @@
 
 <script>
 
-	let request = null;
-	let netid = null;
+let request = null;
+let netid = null;
+
+function convertTaskId(str){
+	taskid = 0;
+	if (str == 'DinnerManager') taskid = 1;
+	else  if (str ==  'DinnerFirstShift') taskid = 2;
+	else if (str == "DinnerSecondShift" ) taskid = 3;
+	else if (str == 'DinnerDishManager' ) taskid = 4;
+	else if (str == 'DinnerFirstDish' ) taskid = 5;
+	else if (str ==  'DinnerSecondDish') taskid = 6;
+	else if ( str ==  'BrunchManager') taskid = 7;
+	else if (str ==  'BrunchFirstShift') taskid = 8;
+	else if(str ==  'BrunchSecondShift') taskid = 9;
+	else if(str ==  'BrunchDishManager') taskid = 10;
+	else if(str ==  'BrunchFirstDish') taskid = 11;
+	else if(str == 'BrunchSecondDish') taskid = 12;
+	else if( str ==  'CJLSwipe') taskid = 13;
+	return taskid;
+}
 
 function addRegularShifts() {
 
-	$('#insertShift').on('click', function(){
+	// $('#insertShift').on('click', function(){
+	// 	var day = $('#daySelect').val();
+	// 	var task = $('#taskSelect').val();
+	// 	var string = $('#toBeAdded').html();
+	// 	// console.log(string);
+	// 	string += '<option class="selectThis">' + day + ' ' + task + '</option>';
+	// 	// console.log(string);
+	// 	$('#toBeAdded').html(string);
+	// 	// console.log(day);
+	// 	// console.log(task);
+	// });
+
+	$('#insertShift').on('click', function() {
 		var day = $('#daySelect').val();
 		var task = $('#taskSelect').val();
-		var string = $('#toBeAdded').html();
-		// console.log(string);
-		string += '<option class="selectThis">' + day + ' ' + task + '</option>';
-		// console.log(string);
-		$('#toBeAdded').html(string);
-		// console.log(day);
-		// console.log(task);
-	});
-
-	$('#insertAllShifts').on('click', function() {
-		// var string = $('#toBeAdded').html();
-		var shifts = '';
-
-		$("option").each(function() {
-			if ($(this).attr("class") == 'selectThis') {
-				var shiftName = $(this).val();
-
-				var split = shiftName.split(' ');
-
-				var day = split[0];
-				var task  = '';
-				for(var i = 1; i < split.length ; i++){
-					task += split[i];
-				}
-				shifts += day.toLowerCase() +"-" + convertTaskId(task)  + "_"
-			}
-		});
-		shifts = encodeURIComponent(shifts);
+		console.log(task.split(' ').join(''));
+		var shift = day.toLowerCase() +"-" + convertTaskId(task.split(' ').join(''));
+		console.log(shift);
 		console.log(netid);
-		let url = "/assign?netid=" + netid + "&shifts=" + shifts;
+		let url = "/assign?netid=" + netid + "&shift=" + shift;
+		console.log(url);
+
+		// var string = $('#toBeAdded').html();
+		// var shifts = '';
+		// $("option").each(function() {
+		// 	if ($(this).attr("class") == 'selectThis') {
+		// 		var shiftName = $(this).val();
+		//
+		// 		var split = shiftName.split(' ');
+		//
+		// 		var day = split[0];
+		// 		var task  = '';
+		// 		for(var i = 1; i < split.length ; i++){
+		// 			task += split[i];
+		// 		}
+		// 		shifts += day.toLowerCase() +"-" + convertTaskId(task)  + "_"
+		// 	}
+		// });
+		// shifts = encodeURIComponent(shifts);
+		// console.log(netid);
+		// let url = "/assign?netid=" + netid + "&shifts=" + shifts;
 
 		// console.log(shifts);
 		if (request != null) {
@@ -233,52 +262,47 @@ function addRegularShifts() {
 			{
 				type: "GET",
 				url: url,
-				success: window.location = reloadUrl,
+				success: function (result) {
+					if (result == 'Shift was successfully added!') {
+						$('#assign-text').html('Shift was successfully added!');
+						setTimeout(function(){
+							window.location = reloadUrl;
+						},1000);
+					}
+					else {
+						$('#assign-text').html('Request failed. Please try again.');
+					}
+				}
 			}
 		);
-		});
+	});
+}
+
+function employeeDetails() {
+	var employee = $('#employeeDetails').attr('employee');
+	console.log(employee);
+	if (employee != '') {
+		$('#employeeDetails').load('/employeeShiftDetails?netid=' + employee);
+		$('#assignShiftForm').attr('style', "visibility:visible");
+		netid = employee;
+		console.log(netid);
 	}
+	$('.employeeItem').on('click',function() {
+		url = $(this).attr('link');
+		$('#employeeDetails').load(url);
+		$('#assignShiftForm').attr('style', "visibility:visible");
+		netid = $(this).attr('netid');
+		console.log(netid);
+	});
+}
 
-	function convertTaskId(str){
-	    if (str == 'DinnerManager') taskid = 1;
-		else  if (str ==  'DinnerFirstShift') taskid = 2;
-		else if (str == "DinnerSecondShift" ) taskid = 3;
-		else if (str == 'DinnerDishManager' ) taskid = 4;
-		else if (str == 'DinnerFirstDish' ) taskid = 5;
-		else if (str ==  'DinnerSecondDish') taskid = 6;
-		else if ( str ==  'BrunchManager') taskid = 7;
-  		else if (str ==  'BrunchFirstShift') taskid = 8;
-  		else if(str ==  'BrunchSecondShift') taskid = 9;
-  		else if(str ==  'BrunchDishManager') taskid = 10;
-  		else if(str ==  'BrunchFirstDish') taskid = 11;
-  		else if(str == 'BrunchSecondDish') taskid = 12;
-		else if( str ==  'CJLSwipe') taskid = 13;
-		return taskid;
-	}
+function setup() {
+	employeeDetails();
+	addRegularShifts();
+}
 
-	function employeeDetails() {
-		var employee = $('#employeeDetails').attr('employee');
-		console.log(employee);
-		if (employee != '') {
-			$('#employeeDetails').load('/employeeShiftDetails?netid=' + employee);
-			$('#assignShiftForm').attr('style', "visibility:visible");
-		}
-		$('.employeeItem').on('click',function() {
-			url = $(this).attr('link');
-			$('#employeeDetails').load(url);
-			$('#assignShiftForm').attr('style', "visibility:visible");
-			netid = $(this).attr('netid');
-			console.log(netid);
-		});
-	}
+$('document').ready(setup);
+</script>
 
-	function setup() {
-		employeeDetails();
-		addRegularShifts();
-	}
-
-	$('document').ready(setup);
-	</script>
-
-	</body>
-	</html>
+</body>
+</html>

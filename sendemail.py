@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 @app.route('/testmail')
-def mail_it():
+def mail_it(date, shiftStr):
     mail = Mail(app)
 
     # app.config.from_envvar('MINITWIT_SETTINGS', silent=True)
@@ -34,10 +34,15 @@ def mail_it():
     mail = Mail(app)
 
     """handles our message notification"""
-    print("hello email")
-    msg = Message("Hello",
-                  sender=("Shift Scheduler", "shiftscheduler@princeton.edu"),recipients=["ortaoglu@princeton.edu","agurgen@princeton.edu"])
-    msg.body = "A shift has been subbed out of!"
+    # print("hello email")
+    msg = Message("[ShiftScheduler] " + date + " Sub Request",
+                  sender=("Shift Scheduler", "shiftscheduler@princeton.edu"),
+                  recipients=["ortaoglu@princeton.edu","agurgen@princeton.edu", "cz10@princeton.edu", "trt2@princeton.edu"])
+    # msg.body = "A sub was requested for" + shiftStr
+    msg.html = "<h3> Sub Request: " + shiftStr + "</h3>"
+    msg.html += "<div>Please visit your <a href=shiftscheduler.herokuapp.com/employee>calendar</a>"
+    msg.html += " to fulfill this request.</div><br>"
+    msg.html += "<div>Thanks!<br>The ShiftScheduler Team</div>"
     mail.send(msg)
     return "I sent an email!"
 

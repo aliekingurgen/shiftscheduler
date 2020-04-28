@@ -388,6 +388,25 @@ def subIn():
     response.set_cookie('netid', netid)
     return response
 
+# -----------------------------------------------------------------------
+
+def taskidToStr(taskid):
+    str = ''
+    if (taskid == 1): str += 'Dinner Manager'
+    elif (taskid == 2): str +=  'Dinner First Shift'
+    elif (taskid == 3): str +=  'Dinner Second Shift'
+    elif (taskid == 4): str +=  'Dinner Dish Manager'
+    elif (taskid == 5): str +=  'Dinner First Dish'
+    elif (taskid == 6): str +=  'Dinner Second Dish'
+    elif (taskid == 7): str +=  'Brunch Manager'
+    elif (taskid == 8): str +=  'Brunch First Shift'
+    elif (taskid == 9): str +=  'Brunch Second Shift'
+    elif (taskid == 10): str +=  'Brunch Dish Manager'
+    elif (taskid == 11): str +=  'Brunch First Dish'
+    elif (taskid == 12): str += 'Brunch Second Dish'
+    elif (taskid == 13): str +=  'CJL Swipe'
+    return str
+
 #-----------------------------------------------------------------------
 
 @app.route('/subOut', methods=['GET'])
@@ -397,9 +416,9 @@ def subOut():
     if netid is None:
         netid = ''
 
-    date = request.args.get('date')
-    if date is None:
-        date = ''
+    shiftDate = request.args.get('date')
+    if shiftDate is None:
+        shiftDate = ''
 
     task_id = request.args.get('taskid')
     if task_id is None:
@@ -415,14 +434,24 @@ def subOut():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-    successful = database.subOut(netid, date, task_id)
+    successful = database.subOut(netid, shiftDate, task_id)
     database.disconnect()
+
     if successful:
         html = "Sub-Out successful!"
         print("email being sent")
-        mail_it()
+        # print(task_id)
+        # print(taskidToStr(int(task_id)))
+        dateObject = date.fromisoformat(shiftDate)
+        print(shiftDate)
+        dateFormatted = dateObject.strftime("%m/%d")
+        print(dateFormatted)
+        shiftStr = dateFormatted + ' ' + taskidToStr(int(task_id))
+        # print(shiftStr)
+        mail_it(dateFormatted, shiftStr)
     else:
         html = "Sub-Out not successful. Please try again."
+
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
@@ -602,9 +631,9 @@ def shiftDetails():
     # if errorMsg is None:
     #     errorMsg = ''
     #
-    date = request.args.get('date')
-    if date is None:
-        date = ''
+    shiftDate = request.args.get('date')
+    if shiftDate is None:
+        shiftDate = ''
 
     task_id = request.args.get('taskid')
     if task_id is None:
@@ -620,7 +649,7 @@ def shiftDetails():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-    shift = database.shiftDetails(date, task_id)
+    shift = database.shiftDetails(shiftDate, task_id)
 
     if shift is None:
         html = '<strong> Error: No data to display</strong>'
@@ -629,32 +658,34 @@ def shiftDetails():
         shift_id = shift.getShiftID()
         employees = database.employeesInShift(shift_id)
         numEmployees = database.numberOfEmployeesInShift(shift_id)
-        html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
-        html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
+        dateObject = date.fromisoformat(shiftDate)
+        dateFormatted = dateObject.strftime("%m/%d")
+        html = '<strong>Date: </strong>' + dateFormatted + '<br>'
+        # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
-        html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
+        html += '<strong>End: </strong>' + str(shift.getEnd()[0:5])
         # can get rid of the second condition once numEmployees fixed?
         print(employees)
         print(numEmployees)
         if len(employees) != 0:
-            html += '<strong>Working: </strong>'
+            html += '<br><strong>Working: </strong><br>'
             for i in range(len(employees)):
                 html += employees[i]
                 if i != len(employees) - 1:
-                    html += ", "
+                    html += "<br>"
             # html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
         walkOns = database.walkOnsInShift(shift_id)
 
         workingNo = len(employees) + len(walkOns)
         html += '<br><strong>Current Number Working: </strong>' + str(workingNo) + '<br>'
 
-        html += "<strong> Walk-Ons: </strong>"
-        for walkOn in walkOns:
-            html += "<br>"
-            html += walkOn.getFirstName() + " " + walkOn.getLastName()
-
+        if len(walkOns) != 0:
+            html += "<strong> Walk-Ons: </strong>"
+            for walkOn in walkOns:
+                html += "<br>"
+                html += walkOn.getFirstName() + " " + walkOn.getLastName()
 
     database.disconnect()
     response = make_response(html)
@@ -860,6 +891,7 @@ def idToDay(shiftStr):
         str = 'sunday'
     return str
 # -----------------------------------------------------------------------
+
 def idToStr(shiftStr):
     day = int(shiftStr[0])
     str = ''
@@ -914,11 +946,14 @@ def employeeShiftDetails():
         database.disconnect()
         return redirect(url_for('noPermissions'))
     employee = database.employeeDetails(netid)
+    print('employee: ' + employee)
 
     regularShifts = database.regularShifts(netid)
     database.disconnect()
     if employee is None:
-        employee = '<strong> Error: No data to display</strong>'
+        html = '<strong> Error: No data to display</strong>'
+    elif employee == 'Employee does not exist.':
+        html = '<strong> Error: Employee does not exist</strong>'
     else:
         html = '<strong>NetID:</strong> ' + employee.getNetID() + ' <br> ' + \
                 '<strong>Name:</strong> ' + employee.getFirstName() + ' ' + employee.getLastName() + ' <br> ' + \
@@ -1027,28 +1062,36 @@ def assignShift():
         my_netid = ''
 
     netid = request.args.get('netid')
-    data = request.args.get("shifts")
-    shifts = data.split('_')
+    shift = request.args.get("shift")
+    # shifts = data.split('_')
+    result = False
     try:
         database = Database()
         database.connect()
         if not database.isCoordinator(my_netid):
             database.disconnect()
             return redirect(url_for('noPermissions'))
-        for shift in shifts:
-            if shift != '':
-                info = shift.split("-")
-                day = info[0]
-                taskid = info[1]
-                print(day)
-                print(taskid)
-                result = database.addRegularShift(netid, int(taskid), day)
+        info = shift.split("-")
+        day = info[0]
+        taskid = info[1]
+        result = database.addRegularShift(netid, int(taskid), day)
+        # for shift in shifts:
+        #     if shift != '':
+        #         info = shift.split("-")
+        #         day = info[0]
+        #         taskid = info[1]
+        #         print(day)
+        #         print(taskid)
+        #         result = database.addRegularShift(netid, int(taskid), day)
         database.disconnect()
     except Exception as e:
         errorMsg = e
 
     response = make_response('')
-    return location.reload()
+    if result:
+        return 'Shift was successfully added!'
+    else:
+        return 'Request failed. Please try again.'
 
 #-----------------------------------------------------------------------
 @app.route('/allhours', methods=['GET'])
