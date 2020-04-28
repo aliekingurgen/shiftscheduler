@@ -773,10 +773,11 @@ def shiftDetailsCoordinator():
         workingNo = len(employees) + len(walkOns)
         html += '<br><strong>Current Number Working: </strong>' + str(workingNo) + '<br>'
 
-        html += "<strong> Walk-Ons: </strong>"
-        for walkOn in walkOns:
-            html += "<br>"
-            html += walkOn.getFirstName() + " " + walkOn.getLastName()
+        if len(walkOns) != 0:
+            html += "<strong> Walk-Ons: </strong>"
+            for walkOn in walkOns:
+                html += "<br>"
+                html += walkOn.getFirstName() + " " + walkOn.getLastName()
 
 
     database.disconnect()
@@ -946,7 +947,7 @@ def employeeShiftDetails():
         database.disconnect()
         return redirect(url_for('noPermissions'))
     employee = database.employeeDetails(netid)
-    print('employee: ' + employee)
+    # print('employee: ' + employee)
 
     regularShifts = database.regularShifts(netid)
     database.disconnect()
