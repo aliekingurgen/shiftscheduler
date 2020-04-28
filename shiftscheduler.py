@@ -737,18 +737,18 @@ def shiftDetailsCoordinator():
 
         numEmployees = database.numberOfEmployeesInShift(shift_id)
         html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
-        html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
+        # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
-        html += '<strong>End: </strong>' + str(shift.getEnd()[0:5]) + '<br>'
+        html += '<strong>End: </strong>' + str(shift.getEnd()[0:5])
         # can get rid of the second condition once numEmployees fixed?
         print(employees)
         print(numEmployees)
         # if numEmployees != 0 and numEmployees == len(employees):
         if len(employees) != 0:
             print("here")
-            html += '<strong>Working: </strong>'
+            html += '<br><strong>Working: </strong><br>'
             for i in range(len(employees)):
                 html += "<br>"
                 html += employees[i].getFirstName() + " " + employees[i].getLastName()
