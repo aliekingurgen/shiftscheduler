@@ -157,6 +157,7 @@
 function getDates() {
 	$('#submit').on('click', function() {
 		$("#loading").text("Loading...");
+		$("#reportArea").html('');
 		startDate = $('#startDate').val();
 		endDate = $('#endDate').val();
 		console.log(startDate);
