@@ -1769,6 +1769,8 @@ class Database:
         try:
             self._hoursEmployeeNew(netid, -1, -1)
 
+            return True
+
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             return False
