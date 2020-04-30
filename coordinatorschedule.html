@@ -522,6 +522,14 @@ function getModalData(mon) {
     date.setFullYear(mon.getFullYear(), mon.getMonth(), mon.getDate());
     date.setDate(date.getDate() + parseInt(dotw));
     var iso = date.toISOString().substring(0, 10);
+    console.log('modal toggled, iso= ' + iso);
+
+    var walkOnUrl = "/walkOn?"
+    // $("#walkOnText").text('');
+    walkOnUrl += "date=" + iso;
+    console.log(iso);
+    walkOnUrl += "&taskid=" + taskId;
+    console.log(taskId);
 
     // console.log(iso);
     dataURL += "?date=" + iso;
@@ -532,19 +540,26 @@ function getModalData(mon) {
       $('#otherShiftText').load(dataURL,function() {
         console.log('here');
         $('#otherShift').modal('show');
+
         $(".noShow").on("click", function(){
+          console.log('clicked');
           var url = $(this).attr("href");
+          console.log(url);
           var noShowNetID = $(this).attr("netid").trim();
+          console.log(noShowNetID);
           var noShowArea = '\"#noshow'  + noShowNetID + '\"';
           $(this).parent("span").load(url);
         });
 
         $("#walkOnSubmit").on("click", function() {
           var walkOnNetId = $("#walkOnInput").val();
-          var walkOnUrl = "/walkOn?"
+          // var walkOnUrl = "/walkOn?"
           $("#walkOnText").text('');
-          walkOnUrl += "date=" + iso;
-          walkOnUrl += "&taskid=" + taskId;
+          // walkOnUrl += "date=" + iso;
+          // console.log(iso);
+          // walkOnUrl += "&taskid=" + taskId;
+          // console.log(taskId);
+          console.log(walkOnUrl);
           walkOnUrl += "&netid=" + walkOnNetId;
           // var currText = $("#walkOnText").text();
           // console.log(currText);
@@ -577,9 +592,9 @@ function getModalData(mon) {
             window.location.reload();
           });
         });
-      // $("#walkOnForm").on("submit", submit());
+
       $("#walkOnInput").on("keydown", function (e) {
-        console.log('input');
+        // console.log('input');
         if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
           var walkOnNetId = $("#walkOnInput").val();
           var walkOnUrl = "/walkOn?"
@@ -619,13 +634,17 @@ function getModalData(mon) {
           });
         }
       });
-      // function submit
-      // $("#walkOnSubmit").on("click", function(){
-      //
-      // });
     });
   }
 });
+$('#otherShift').on('hide.bs.modal',function() {
+  // console.log('closed normally');
+  $('#walkOnSubmit').off('click');
+  // window.location.reload();
+});
+// $('#otherShift').on('shown.bs.modal', function (e) {
+//   console.log('hello');
+// });
 }
 
 function format(mon) {

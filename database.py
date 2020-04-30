@@ -1758,6 +1758,7 @@ class Database:
                 if not self._hoursEmployeeNew(employee.getNetID(), dateStart, dateEnd):
                     return False
 
+            allEmployees = self.getAllEmployees()
             return allEmployees
 
         except (Exception, psycopg2.DatabaseError) as error:

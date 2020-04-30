@@ -810,6 +810,7 @@ def noShow():
     if not database.isCoordinator(my_netid):
         database.disconnect()
         return redirect(url_for('noPermissions'))
+        
     print("shiftid: " + shift_id)
     print("netid" + netid)
     successful = database.addNoShow(shift_id, netid)
@@ -1109,7 +1110,6 @@ def allHours():
         if not employees:
             database.disconnect()
             return '<strong>Error. Please try again.</strong>'
-        employees = database.getAllEmployees()
         database.disconnect()
     except Exception as e:
         errorMsg = e
