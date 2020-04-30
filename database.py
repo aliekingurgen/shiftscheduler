@@ -179,7 +179,14 @@ class Database:
             shiftId = row[0]
             otherNetid = row[1]
 
-            if not self.assignShift(netid, shiftId):
+            assign = self.assignShift(netid, shiftId)
+            if assign == "conflict":
+                cur.close()
+                return assign
+            elif assign == "already_assigned":
+                cur.close()
+                return assign
+            elif not assign:
                 print("Shift assignment failed.")
                 cur.close()
                 return False
@@ -510,14 +517,14 @@ class Database:
     def addRegularShift(self, netid, taskid, dotw):
         try:
             if dotw == 'monday' or dotw == 'tuesday' or dotw == 'wednesday' or dotw == 'thursday' or dotw == 'friday':
-                if taskid == 8 or taskid == 9 or taskid == 10 or taskid == 11  or taskid == 12:
+                if taskid == 7 or taskid == 8 or taskid == 9 or taskid == 10 or taskid == 11  or taskid == 12:
                     print("Shift not valid.")
-                    return False
+                    return "not_valid"
 
             if dotw != 'friday':
                 if taskid == 13:
                     print("Shift not valid.")
-                    return False
+                    return "not_valid"
 
             def convertDay(dayString):
                 if (dayString == 'monday'): return '0'
@@ -536,7 +543,7 @@ class Database:
                 if (dayNumber == 4): return 'friday'
                 if (dayNumber == 5): return 'saturday'
                 if (dayNumber == 6): return 'sunday'
-            
+
             cur = self._conn.cursor()
 
             # check if this regular shift is already assigned to netid
@@ -547,7 +554,7 @@ class Database:
                 cur.close()
                 return "already_assigned"
 
-            # Check if there is a conflict    
+            # Check if there is a conflict
             for regShift in netidRegShifts:
                 regShiftDay = regShift.split("-")[0]
                 if regShiftDay == convertDay(dotw):
@@ -954,8 +961,8 @@ class Database:
             if row is not None:
                 print('Employee is already assigned to this shift.')
                 cur.close()
-                return False
-            
+                return "already_assigned"
+
             # Check if there is a conflicting shift
             shiftObj = self.shiftFromID(shiftid)
             QUERY_STRING = 'SELECT shift_id FROM shift_assign WHERE netid=%s' + \
@@ -970,11 +977,11 @@ class Database:
                     taskId = int(self.shiftFromID(row[0]).getTaskID())
                     if taskId not in taskIds:
                         taskIds.append(taskId)
-            
+
             if self._checkTaskConflicts(int(shiftObj.getTaskID()), taskIds):
                 print('There is a conflict with another shift.')
                 cur.close()
-                return False
+                return "conflict"
 
             # Insert into shift_assign
             QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
@@ -996,7 +1003,7 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     #should eventually move most of this to the database side, CJL not included, returns true if there are conflicts and false if no conflicts
@@ -1978,7 +1985,7 @@ if __name__ == '__main__':
 
     # Test hoursForAllEmployees ***** WORKS
     database.hoursForAllEmployees('2020-04-20', '2020-04-25')
-    
+
     # Test _checkTaskConflicts ***** WORKS
     print(database._checkTaskConflicts(1, [2, 3]))
     print(database._checkTaskConflicts(2, [3]))

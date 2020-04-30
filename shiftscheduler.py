@@ -381,7 +381,11 @@ def subIn():
 
     successful = database.subIn(netid, date, task_id)
     database.disconnect()
-    if successful:
+    if successful == "conflict":
+        html = "Sub-In not successful. You already have a shift at this time."
+    elif successful == "already_assigned":
+        html += "Sub-In not successful. You are already assigned to this shift."
+    elif successful:
         html = "Sub-In successful!"
     else:
         html = "Sub-In not successful. Please try again."
@@ -829,7 +833,7 @@ def noShow():
     return response
 
 #-----------------------------------------------------------------------
-@app.route('/walkOn', methods=['GET'])
+@app.route('/walkOn', methods=['POST'])
 def walkOn():
     print(" WALK ON HERE")
     my_netid = request.cookies.get('netid')
@@ -1091,13 +1095,16 @@ def assignShift():
     except Exception as e:
         errorMsg = e
 
+
     response = make_response('')
-    if result:
-        return 'Shift was successfully added!'
-    elif result == 'already_assigned':
+    if result == 'already_assigned':
         return 'Shift is already assigned.'
     elif result == 'conflict':
         return 'Request conflicts with another assigned shift.'
+    elif result == 'not_valid':
+        return 'Not a valid shift.'
+    elif result == True:
+        return 'Shift was successfully added!'
     else:
         return 'Request failed. Please try again.'
 

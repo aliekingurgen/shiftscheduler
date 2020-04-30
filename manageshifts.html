@@ -257,6 +257,7 @@ function addRegularShifts() {
 		if (request != null) {
 			request.abort();
 		}
+		$('#assign-text').html('');
 		reloadUrl =  "/manageshifts?employee=" + netid;
 		request = $.ajax(
 			{
@@ -270,7 +271,7 @@ function addRegularShifts() {
 						},1000);
 					}
 					else {
-						$('#assign-text').html('Request failed. Please try again.');
+						$('#assign-text').html(result);
 					}
 				}
 			}
