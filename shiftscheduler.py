@@ -757,7 +757,7 @@ def shiftDetailsCoordinator():
                 html += "<span id = \"noshow"  + employees[i].getNetID() + "\" >"
                 html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = \"" + employees[i].getNetID() + "\" "
                 html += "href = \"/noShow?netid=" + employees[i].getNetID() + "&shiftid=" + shift_id
-                html += "\" > mark no show </button> "
+                html += "\" id = \"" + employees[i].getNetID() + "button\">mark no show</button> "
                 html += " </span><br>"
         noShows = database.noShowsInShift(shift_id)
         for noShow in noShows:
@@ -810,7 +810,7 @@ def noShow():
     if not database.isCoordinator(my_netid):
         database.disconnect()
         return redirect(url_for('noPermissions'))
-        
+
     print("shiftid: " + shift_id)
     print("netid" + netid)
     successful = database.addNoShow(shift_id, netid)
@@ -820,8 +820,9 @@ def noShow():
         html += "<button  class=\"btn btn-danger btn-sm noShow\"> no show </button> "
     else:
         html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
-        html += "\" > mark no show </button> "
+        html += "\" id = \"" + netid + "button\">mark no show</button> "
         html += "<p> try again </p>"
+        print(html)
 
     response = make_response(html)
     response.set_cookie('netid', my_netid)
@@ -1093,6 +1094,10 @@ def assignShift():
     response = make_response('')
     if result:
         return 'Shift was successfully added!'
+    elif result == 'already_assigned':
+        return 'Shift is already assigned.'
+    elif result == 'conflict':
+        return 'Request conflicts with another assigned shift.'
     else:
         return 'Request failed. Please try again.'
 

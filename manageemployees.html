@@ -182,6 +182,7 @@
 						</div>
 					</div>
 					<br>
+					<!-- <button class="btn btn-outline-secondary" data-toggle="modal" data-target=".bd-example-modal-sm" type="button" id="remove-button">Remove</button> -->
 					<button class="btn btn-outline-secondary" type="button" id="remove-button">Remove</button>
 					<br>
 					<br>
@@ -193,6 +194,20 @@
 	<br>
 	<br>
 	<br>
+	<!-- Are You Sure? Modal -->
+	<div id ="modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="areYouSureModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+			<div class="modal-body">
+        <div id="modal-text"></div>
+      </div>
+      <div class="modal-footer">
+				<button type="button" class="btn btn-secondary btn-sm" id="yes-button">Yes</button>
+				<button type="button" class="btn btn-secondary btn-sm" id="no-button">No</button>
+      </div>
+    </div>
+  </div>
+</div>
 </main>
 
 <footer class="footer">
@@ -245,37 +260,40 @@ function insertEmployee() {
 }
 
 function removeEmployee() {
+	$('#no-button').on('click',function() {
+		$('#modal').modal('hide');
+	});
+
 	$('#remove-button').on('click',function() {
-		alert('clicked');
 		var netid = $('#remove-employee').val();
 		if ($('#remove-employee').val()== '') {
 			// console.log('empty');
 			$('#remove-text').text('Please enter a net ID.');
 		}
-		// $('#remove-employee').val('')
 		else if ($('#navbarDropdown').text().trim() == netid) {
 			$('#remove-text').text('You cannot remove yourself!');
 		}
 		else {
-			var url = "/removeEmployee?employeenetid=" + netid;
-			// console.log(url);
-			$('#remove-text').load(url, function(responseTxt, statusTxt, xhr){
-				if(responseTxt == (netid + ' was successfully removed!')) {
-					console.log('success');
-					setTimeout(function(){
-						window.location.reload()
-					},1000);
-				}
-			});
-			// console.log($('#remove-text').html());
-			// console.log(netid + ' was successfully removed!');
-			// if ($('#remove-text').text() == (netid + ' was successfully removed!')) {
-			// 	console.log('success');
-			// 	setTimeout(function(){
-			// 		window.location.reload()
-			// 	},1000);
-			// }
+			$('#remove-text').text('');
+			$('#modal-text').html('Are you sure that you want to remove <strong>' + netid + '</strong> as an employee? This action cannot be undone.');
+			$('#modal').modal('show');
 		}
+	});
+
+	$('#yes-button').on('click',function() {
+		// alert('clicked');
+		$('#modal').modal('hide');
+		var netid = $('#remove-employee').val();
+		var url = "/removeEmployee?employeenetid=" + netid;
+		// console.log(url);
+		$('#remove-text').load(url, function(responseTxt, statusTxt, xhr){
+			if(responseTxt == (netid + ' was successfully removed!')) {
+				console.log('success');
+				setTimeout(function(){
+					window.location.reload()
+				},1000);
+			}
+		});
 	});
 }
 

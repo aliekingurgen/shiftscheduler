@@ -395,6 +395,20 @@
         </div>
       </div>
     </div>
+    <!-- Are You Sure? Modal -->
+  	<div id ="areYouSureModalNoShow" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="areYouSureModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+  			<div class="modal-body">
+          <div id="noshow-modal-text"></div>
+        </div>
+        <div class="modal-footer">
+  				<button type="button" class="btn btn-secondary btn-sm" id="yes-button-noshow">Yes</button>
+  				<button type="button" class="btn btn-secondary btn-sm" id="no-button-noshow">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   </div>
 </main>
@@ -542,14 +556,35 @@ function getModalData(mon) {
         $('#otherShift').modal('show');
 
         $(".noShow").on("click", function(){
+          var netid = $(this).attr("netid").trim();
+          console.log($(this).parent("span").attr('html'));
+          var id = $(this).attr("id");
+          console.log(netid);
+          console.log(id);
           console.log('clicked');
-          var url = $(this).attr("href");
+          $('#otherShift').modal('hide');
+          $('#areYouSureModalNoShow').modal('show');
+          $('#noshow-modal-text').html('Are you sure that you want to mark <strong>' + netid + '</strong> as a no-show? This action cannot be undone.');
+          $("#yes-button-noshow").attr('netid', netid);
+          $("#yes-button-noshow").attr('id', '#' + id);
+        });
+
+        $("#yes-button-noshow").on("click", function(){
+          $('#areYouSureModalNoShow').modal('hide');
+          $('#otherShift').modal('show');
+          var id = $(this).attr("id");
+          var url = $(id).attr("href");
           console.log(url);
-          var noShowNetID = $(this).attr("netid").trim();
+          var noShowNetID = $(id).attr("netid").trim();
           console.log(noShowNetID);
           var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-          $(this).parent("span").load(url);
+          $(id).parent("span").load(url);
         });
+
+        $('#no-button-noshow').on('click',function() {
+      		$('#areYouSureModalNoShow').modal('hide');
+          $('#otherShift').modal('show');
+      	});
 
         $("#walkOnSubmit").on("click", function() {
           var walkOnNetId = $("#walkOnInput").val();
