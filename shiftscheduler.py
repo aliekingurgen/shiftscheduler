@@ -1106,6 +1106,10 @@ def allHours():
         database = Database()
         database.connect()
         employees = database.hoursForAllEmployees(startDate, endDate)
+        if not employees:
+            database.disconnect()
+            return '<strong>Error. Please try again.</strong>'
+        employees = database.getAllEmployees()
         database.disconnect()
     except Exception as e:
         errorMsg = e
