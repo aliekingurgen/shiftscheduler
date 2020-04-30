@@ -109,7 +109,10 @@ class Database:
             row = cur.fetchone()
             shiftId = row[0]
 
-            self.unassignShift(netid, shiftId)
+            if not self.unassignShift(netid, shiftId):
+                print("Unassignment failed")
+                cur.close()
+                return False
 
             QUERY_STRING = 'SELECT sub_requests.shift_id FROM sub_requests ' + \
                            'WHERE sub_requests.sub_in_netid = %s ' + \
@@ -161,6 +164,7 @@ class Database:
             shiftDate = datetime.date.fromisoformat(dateIn)
             if shiftDate < datetime.datetime.now().date():
                 print('SubOut requested for an old shift.')
+                cur.close()
                 return False
 
             shiftDate = datetime.date.fromisoformat(dateIn)
@@ -175,7 +179,10 @@ class Database:
             shiftId = row[0]
             otherNetid = row[1]
 
-            self.assignShift(netid, shiftId)
+            if not self.assignShift(netid, shiftId):
+                print("Shift assignment failed.")
+                cur.close()
+                return False
 
             if otherNetid == netid:
                 QUERY_STRING = 'DELETE FROM sub_requests WHERE shift_id = %s AND sub_out_netid = %s'
@@ -213,7 +220,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Sub pick-up rolled back.')
-            cur.close()
             print(error)
             return False
 
@@ -530,15 +536,26 @@ class Database:
                 if (dayNumber == 4): return 'friday'
                 if (dayNumber == 5): return 'saturday'
                 if (dayNumber == 6): return 'sunday'
+            
+            cur = self._conn.cursor()
 
             # check if this regular shift is already assigned to netid
             checkString = convertDay(dotw) + '-' + str(taskid)
             netidRegShifts = self.regularShifts(netid)
             if checkString in netidRegShifts:
                 print("RegularShift is already assigned")
-                return False
+                cur.close()
+                return "already_assigned"
 
-            cur = self._conn.cursor()
+            # Check if there is a conflict    
+            for regShift in netidRegShifts:
+                regShiftDay = regShift.split("-")[0]
+                if regShiftDay == convertDay(dotw):
+                    regShiftTask = int(regShift.split("-")[1])
+                    if self._checkTaskConflicts(int(taskid), [regShiftTask]):
+                        print("There is a shift conflict")
+                        cur.close()
+                        return "conflict"
 
             # add to regular shifts
             QUERY_STRING = 'INSERT INTO regular_shifts(netid, task_id, dotw) VALUES (%s, %s, %s)'
@@ -821,7 +838,7 @@ class Database:
                     employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
                     employeeList.append(employee)
             cur.close()
-            employeeListSorted = sorted(employeeList, key=lambda x: x._first_name)
+            employeeListSorted = sorted(employeeList, key=lambda x: x._first_name.lower())
             return employeeListSorted
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
@@ -930,12 +947,32 @@ class Database:
                 cur.close()
                 return False
 
-            # Check if shift-netid par is already in the table
+            # Check if shift-netid pair is already in the table
             QUERY_STRING = 'SELECT * FROM shift_assign WHERE shift_id = %s AND netid = %s'
             cur.execute(QUERY_STRING, (shiftid, netid))
             row = cur.fetchone()
             if row is not None:
                 print('Employee is already assigned to this shift.')
+                cur.close()
+                return False
+            
+            # Check if there is a conflicting shift
+            shiftObj = self.shiftFromID(shiftid)
+            QUERY_STRING = 'SELECT shift_id FROM shift_assign WHERE netid=%s' + \
+                            'INTERSECT SELECT shift_id FROM shift_info WHERE shift_info.date=%s'
+            cur.execute(QUERY_STRING, (netid, shiftObj.getDate()))
+
+            taskIds = []
+            rows = cur.fetchall()
+            if rows is not None:
+                for row in rows:
+                    print(row[0])
+                    taskId = int(self.shiftFromID(row[0]).getTaskID())
+                    if taskId not in taskIds:
+                        taskIds.append(taskId)
+            
+            if self._checkTaskConflicts(int(shiftObj.getTaskID()), taskIds):
+                print('There is a conflict with another shift.')
                 cur.close()
                 return False
 
@@ -959,6 +996,18 @@ class Database:
             cur.close()
             print(error)
             return False
+    
+    #-----------------------------------------------------------------------
+
+    #should eventually move most of this to the database side, CJL not included, returns true if there are conflicts and false if no conflicts
+    def _checkTaskConflicts(self, task, tasks):
+        print(task)
+        print(tasks)
+        conflicts = [[2, 3, 4, 5, 6], [1, 4, 5], [1, 4, 6], [1, 2, 3, 5, 6], [1, 2, 4], [1, 3, 4], [8, 9, 10, 11, 12], [7, 10, 11], [7, 10, 12], [7, 8, 9, 11, 12], [7, 8, 10], [7, 9, 10]]
+        for num in tasks:
+            if (num in conflicts[task - 1]):
+                return True
+        return False
 
     #-----------------------------------------------------------------------
 
@@ -1136,7 +1185,7 @@ class Database:
                         employeeObjects.append(employee)
 
             cur.close()
-            employeeLObjectsSorted = sorted(employeeObjects, key=lambda x: x._first_name)
+            employeeLObjectsSorted = sorted(employeeObjects, key=lambda x: x._first_name.lower())
             return employeeLObjectsSorted
 
         except (Exception, psycopg2.DatabaseError) as error:
@@ -1926,9 +1975,15 @@ if __name__ == '__main__':
 
     database.hoursForEmployee('yap')
     print(database.getTaskHours(1) + database.getTaskHours(3))
-    '''
 
     # Test hoursForAllEmployees ***** WORKS
     database.hoursForAllEmployees('2020-04-20', '2020-04-25')
+    
+    # Test _checkTaskConflicts ***** WORKS
+    print(database._checkTaskConflicts(1, [2, 3]))
+    print(database._checkTaskConflicts(2, [3]))
+    '''
+    # Test assignShift after conflict checking ***** WORKS
+    print(database.assignShift('agurgen', 568))
 
     database.disconnect()
