@@ -66,7 +66,7 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             print(error)
-    
+
     #-----------------------------------------------------------------------
 
     def shiftFromID(self, shiftId):
@@ -152,7 +152,7 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def subIn(self, netid, dateIn, taskId):
@@ -216,7 +216,7 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     # currently returns a list of shift objects
@@ -243,7 +243,7 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             return []
-    
+
     #-----------------------------------------------------------------------
 
     def allSubsForDate(self, date):
@@ -285,7 +285,7 @@ class Database:
                 retSubs.append(retSub)
 
         return retSubs
-    
+
     #-----------------------------------------------------------------------
 
     def myShiftsOld(self, netid):
@@ -314,7 +314,7 @@ class Database:
                 if regShift not in regShifts:
                     regShifts.append(regShift)
                 row = cur.fetchone()
-            
+
             # get netid's one time shifts
 
             # get netid's all subbed in shifts
@@ -349,7 +349,7 @@ class Database:
             print("there is an error")
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def myShifts(self, netid, dateIn):
@@ -396,7 +396,7 @@ class Database:
                         regShifts.append(regShift)
                         # print("B: " + str(regShift))
                 row = cur.fetchone()
-            
+
             # remove netid's subbed out shifts
             QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
                            'FROM sub_requests WHERE sub_out_netid = %s'
@@ -421,7 +421,7 @@ class Database:
             print("there is an error")
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def regularShifts(self, netid):
@@ -459,7 +459,7 @@ class Database:
             print("there is an error")
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def regularShifts(self, netid):
@@ -497,7 +497,7 @@ class Database:
             print("there is an error")
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
 
@@ -507,12 +507,12 @@ class Database:
                 if taskid == 8 or taskid == 9 or taskid == 10 or taskid == 11  or taskid == 12:
                     print("Shift not valid.")
                     return False
-            
+
             if dotw != 'friday':
                 if taskid == 13:
                     print("Shift not valid.")
-                    return False 
-            
+                    return False
+
             def convertDay(dayString):
                 if (dayString == 'monday'): return '0'
                 if (dayString == 'tuesday'): return '1'
@@ -530,7 +530,7 @@ class Database:
                 if (dayNumber == 4): return 'friday'
                 if (dayNumber == 5): return 'saturday'
                 if (dayNumber == 6): return 'sunday'
-            
+
             # check if this regular shift is already assigned to netid
             checkString = convertDay(dotw) + '-' + str(taskid)
             netidRegShifts = self.regularShifts(netid)
@@ -559,7 +559,7 @@ class Database:
                     if (convertDayReverse(day) == dotw) and (shift not in shiftsToAdd):
                         shiftsToAdd.append(shift)
                 row = cur.fetchone()
-            
+
             # assign all the shifts in shiftsToAdd to netid in shift_assign table
             for shiftid in shiftsToAdd:
                 QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
@@ -576,7 +576,7 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def removeRegularShift(self, netid, taskid, dotw):
@@ -604,7 +604,7 @@ class Database:
                 print('Regular shift does not exist.')
                 cur.close()
                 return False
-            
+
             # delete from regular shifts
             QUERY_STRING = 'DELETE FROM regular_shifts WHERE netid = %s AND task_id = %s AND dotw = %s'
             cur.execute(QUERY_STRING, (netid, taskid, dotw))
@@ -624,7 +624,7 @@ class Database:
                     if (convertDayReverse(day) == dotw) and (shift not in shiftsToRemove):
                         shiftsToRemove.append(shift)
                 row = cur.fetchone()
-            
+
             # remove all the shifts in shiftsToRemove for netid from shift_assign table
             for shiftid in shiftsToRemove:
                 QUERY_STRING = 'DELETE FROM shift_assign where shift_id=%s AND netid=%s'
@@ -634,14 +634,14 @@ class Database:
 
             cur.close()
             return True
-        
+
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not remove the regular shift.')
             cur.close()
             print(error)
             return False
-        
+
     #-----------------------------------------------------------------------
 
     def populateShiftInfo(self, dateIn):
@@ -750,16 +750,16 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
-    
+
     def populateForPeriod(self, start, end):
 
         try:
             if datetime.date.fromisoformat(start).weekday() != 0:
                 print("Given date is not a Monday.")
                 return False
-            
+
             dateStart = datetime.date.fromisoformat(start)
             dateEnd = datetime.date.fromisoformat(end)
             cur = self._conn.cursor()
@@ -799,21 +799,21 @@ class Database:
             employee = Employee(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
             cur.close()
             return employee
-        
+
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             print(error)
-    
+
     #-----------------------------------------------------------------------
 
     def getAllEmployees(self):
-        
+
         try:
             #create a cursor
             cur = self._conn.cursor()
             QUERY_STRING = 'SELECT * FROM employees'
             cur.execute(QUERY_STRING, ())
-        
+
             employeeList = []
             rows = cur.fetchall()
             if rows is not None:
@@ -827,9 +827,9 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
-                
+
     def insertEmployee(self, netid, first_name, last_name, manager):
 
         try:
@@ -857,7 +857,7 @@ class Database:
 
             cur.close()
             return True
-        
+
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not add the employee.')
@@ -891,14 +891,14 @@ class Database:
             print('Removed employee: ' + netid)
             cur.close()
             return True
-        
+
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not remove the employee.')
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def assignShift(self, netid, shiftid):
@@ -906,7 +906,7 @@ class Database:
             if (not netid) or (shiftid is None):
                 print('Please enter all required information.')
                 return False
-            
+
             # create a cursor
             cur = self._conn.cursor()
 
@@ -938,7 +938,7 @@ class Database:
                 print('Employee is already assigned to this shift.')
                 cur.close()
                 return False
-            
+
             # Insert into shift_assign
             QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
             cur.execute(QUERY_STRING, (shiftid, netid))
@@ -952,14 +952,14 @@ class Database:
             print('Incremented current people for shift: ' + str(shiftid))
             cur.close()
             return True
-        
+
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not assign the shift to employee.')
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def unassignShift(self, netid, shiftid):
@@ -967,7 +967,7 @@ class Database:
             if (not netid) or (shiftid is None):
                 print('Please enter all required information.')
                 return False
-            
+
             # create a cursor
             cur = self._conn.cursor()
 
@@ -999,7 +999,7 @@ class Database:
                 print('Employee is not assigned to this shift.')
                 cur.close()
                 return False
-            
+
             # Remove from shift_assign
             QUERY_STRING = 'DELETE FROM shift_assign WHERE shift_id = %s AND netid = %s'
             cur.execute(QUERY_STRING, (shiftid, netid))
@@ -1014,7 +1014,7 @@ class Database:
 
             cur.close()
             return True
-        
+
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not unassign the shift to employee.')
@@ -1038,7 +1038,7 @@ class Database:
                 print('Shift does not exist.')
                 cur.close()
                 return False
-            
+
             # Get all employee netids working in the shift
             QUERY_STRING = 'SELECT netid FROM shift_assign WHERE shift_id = %s'
             cur.execute(QUERY_STRING, (shiftid,))
@@ -1050,11 +1050,11 @@ class Database:
                     netid = row[0]
                     if netid not in employeeNetids:
                         employeeNetids.append(netid)
-            
+
             # Subtract employees that are added through walk on
             QUERY_STRING = 'SELECT netid FROM walkons WHERE shift_id = %s'
             cur.execute(QUERY_STRING, (shiftid,))
-            
+
             rows = cur.fetchall()
             if rows is not None:
                 for row in rows:
@@ -1099,7 +1099,7 @@ class Database:
                 print('Shift does not exist.')
                 cur.close()
                 return False
-            
+
             # Get all employee netids working in the shift
             QUERY_STRING = 'SELECT netid FROM shift_assign WHERE shift_id = %s'
             cur.execute(QUERY_STRING, (shiftid,))
@@ -1111,7 +1111,7 @@ class Database:
                     netid = row[0]
                     if netid not in employeeNetids:
                         employeeNetids.append(netid)
-            
+
             # Subtract employees that are added through walk on
             QUERY_STRING = 'SELECT netid FROM walkons WHERE shift_id = %s'
             cur.execute(QUERY_STRING, (shiftid,))
@@ -1145,7 +1145,7 @@ class Database:
             return False
 
     #-----------------------------------------------------------------------
-    
+
     def numberOfEmployeesInShift(self, shiftid):
 
         try:
@@ -1195,7 +1195,7 @@ class Database:
             return False
 
     #-----------------------------------------------------------------------
-    
+
     def isEmployee(self, netid):
         try:
             # create a cursor
@@ -1226,7 +1226,7 @@ class Database:
             cur = self._conn.cursor()
             QUERY_STRING = 'SELECT email FROM employees'
             cur.execute(QUERY_STRING, ())
-        
+
             emailList = []
             rows = cur.fetchall()
             if rows is not None:
@@ -1234,12 +1234,12 @@ class Database:
                     emailList.append(row[0])
             cur.close()
             return emailList
-        
+
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def exportEmployeeData(self):
@@ -1247,7 +1247,7 @@ class Database:
             #create a cursor
             cur = self._conn.cursor()
             QUERY_STRING = 'SELECT * FROM employees'
-            
+
             data = pd.read_sql_query(QUERY_STRING, self._conn)
             writer = pd.ExcelWriter('Dining_Hall_Employees.xlsx')
             data.to_excel(writer, sheet_name='employees')
@@ -1258,7 +1258,7 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def addWalkOn(self, shiftid, netid):
@@ -1315,14 +1315,14 @@ class Database:
             print('Walk-on is committed.')
             cur.close()
             return True
-    
+
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Walk-on rolled back.')
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def addNoShow(self, shiftid, netid):
@@ -1349,7 +1349,7 @@ class Database:
                 print('Shift does not exist.')
                 cur.close()
                 return False
-            
+
             # Check if netid is already on noshow table for this shift
             QUERY_STRING = 'SELECT * FROM noshows where shift_id=%s AND netid=%s'
             cur.execute(QUERY_STRING, (shiftid, netid))
@@ -1380,14 +1380,14 @@ class Database:
             print('No-show is committed.')
             cur.close()
             return True
-    
+
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('No-show rolled back.')
             cur.close()
             print(error)
             return False
-        
+
     #-----------------------------------------------------------------------
 
     def noShowsInShift(self, shiftid):
@@ -1404,7 +1404,7 @@ class Database:
                 print('Shift does not exist.')
                 cur.close()
                 return False
-            
+
             # Get all employee netids in the noshows table
             QUERY_STRING = 'SELECT netid FROM noshows WHERE shift_id = %s'
             cur.execute(QUERY_STRING, (shiftid,))
@@ -1454,7 +1454,7 @@ class Database:
                 print('Shift does not exist.')
                 cur.close()
                 return False
-            
+
             # Get all employee netids in the walkons table
             QUERY_STRING = 'SELECT netid FROM walkons WHERE shift_id = %s'
             cur.execute(QUERY_STRING, (shiftid,))
@@ -1487,7 +1487,7 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def getEmployeeObject(self, netid):
@@ -1503,7 +1503,7 @@ class Database:
                 print('Employee does not exist.')
                 cur.close()
                 return False
- 
+
             # Construct employee object
             QUERY_STRING = 'SELECT * FROM employees WHERE netid = %s'
             cur.execute(QUERY_STRING, (netid,))
@@ -1532,7 +1532,7 @@ class Database:
 
             QUERY_STRING = 'SELECT start_time, end_time FROM task_info WHERE task_id = %s'
             cur.execute(QUERY_STRING, (taskid,))
-            
+
             row = cur.fetchone()
             if row is None:
                 print('Something went wrong.')
@@ -1553,7 +1553,7 @@ class Database:
             cur.close()
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
     def getShiftHours(self, shiftid):
         try:
@@ -1569,7 +1569,7 @@ class Database:
                 print('Shift does not exist.')
                 cur.close()
                 return False
-            
+
             taskid = row[0]
 
             return self.getTaskHours(taskid)
@@ -1595,7 +1595,7 @@ class Database:
                 print('Employee does not exist.')
                 cur.close()
                 return False
-            
+
             # get dates
             if dateStart == -1 and dateEnd == -1:
                 today = datetime.date.today()
@@ -1615,7 +1615,7 @@ class Database:
                     print('Payperiod end date is not a monday.')
                     cur.close()
                     return False
-                
+
                 while today > (curPayPeriodStart + datetime.timedelta(weeks=2)):
                     curPayPeriodStart += datetime.timedelta(weeks=2)
                     QUERY_STRING = 'UPDATE payperiod SET cur_pay_period_start = %s'
@@ -1628,8 +1628,8 @@ class Database:
             else:
                 start = datetime.date.fromisoformat(dateStart)
                 end = datetime.date.fromisoformat(dateEnd)
-            
-            
+
+
             # Get all the shifts between start and end dates
             QUERY_STRING = 'SELECT shift_id FROM shift_assign WHERE netid = %s'
             cur.execute(QUERY_STRING, (netid,))
@@ -1701,7 +1701,7 @@ class Database:
                     print('Payperiod end date is not a monday.')
                     cur.close()
                     return False
-                
+
                 while today > (curPayPeriodStart + datetime.timedelta(weeks=2)):
                     curPayPeriodStart += datetime.timedelta(weeks=2)
                     QUERY_STRING = 'UPDATE payperiod SET cur_pay_period_start = %s'
@@ -1714,8 +1714,8 @@ class Database:
             else:
                 start = datetime.date.fromisoformat(dateStart)
                 end = datetime.date.fromisoformat(dateEnd)
-            
-            
+
+
             # Get all the shifts between start and end dates
             QUERY_STRING = 'SELECT shift_id FROM shift_assign WHERE netid=%s' + \
                             'INTERSECT SELECT shift_id FROM shift_info WHERE shift_info.date >= %s AND shift_info.date < %s'
@@ -1755,14 +1755,15 @@ class Database:
             allEmployees = self.getAllEmployees()
 
             for employee in allEmployees:
-                self._hoursEmployeeNew(employee.getNetID(), dateStart, dateEnd)
-            
+                if not self._hoursEmployeeNew(employee.getNetID(), dateStart, dateEnd):
+                    return False
+
             return allEmployees
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             return False
-    
+
     #-----------------------------------------------------------------------
 
     def hoursForEmployee(self, netid):
@@ -1774,7 +1775,7 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             return False
-        
+
 
 # -----------------------------------------------------------------------
 
@@ -1827,11 +1828,11 @@ if __name__ == '__main__':
     print('Regular shifts for yujl: ')
     for regShift in regShifts:
         print(regShift)
-    
+
     # Test populateShiftInfo ***** WORKS
     date = "2020-04-27"
     boo = database.populateShiftInfo(date)
-    
+
     # Test insertEmployee ***** WORKS
     database.insertEmployee('testguy', 'test', 'guy', 'N')
 
@@ -1851,15 +1852,15 @@ if __name__ == '__main__':
     employee = database.employeeDetails('testguy')
     print(employee.getFirstName() + ' ' + employee.getLastName() + ' ' + employee.getPosition()
           + ' ' + employee.getHours() + ' ' + employee.getTotalHours() + ' ' + employee.getEmail())
-    
+
     # Test getAllEmployees ***** WORKS
     employees = database.getAllEmployees()
     for indEmployee in employees:
         print(str(indEmployee))
-    
+
     # Test removeEmployee ***** WORKS
     database.removeEmployee('testguy')
-    
+
     # Test assignShift ***** WORKS
     database.unassignShift('agurgen', 440)
 
@@ -1875,7 +1876,7 @@ if __name__ == '__main__':
 
     # Test numberOfEmployeesInShift ***** WORKS
     print(database.numberOfEmployeesInShift(494))
-    
+
     # Test getAllEmails ***** WORKS
     print(database.getAllEmails())
 
@@ -1883,7 +1884,7 @@ if __name__ == '__main__':
     start = "2020-05-04"
     end = "2020-05-10"
     print(database.populateForPeriod(start, end))
-    
+
     # Test exportEmployeeData ***** WORKS
     database.exportEmployeeData()
 
@@ -1892,26 +1893,26 @@ if __name__ == '__main__':
 
     # Test addNoShow ***** WORKS
     #database.addNoShow(440, 'agurgen')
-    
+
     # Test employeeObjectsInShift
     employees = database.employeeObjectsInShift(400)
     for employee in employees:
         print(employee.getNetID())
-    
+
     # Test noShowsinShift ***** WORKS
     noShows = database.noShowsInShift(407)
     for employee in noShows:
         print(employee.getNetID())
-    
+
     # Test walkOnsinShift ***** WORKS
     noShows = database.walkOnsInShift(440)
     for employee in noShows:
         print(employee.getNetID())
-    
+
     # Test getEmployeeObject ***** WORKS
     empObj = database.getEmployeeObject('trt2')
     print(empObj.getFirstName())
-    
+
     # Test getTaskHours ***** WORKS
     print(str(database.getTaskHours(1)))
 
@@ -1921,7 +1922,7 @@ if __name__ == '__main__':
     # Test _hoursEmployee and hoursForEmployee ***** WORKS
     database._hoursForEmployee('trt2', -1, -1)
     print(database.getShiftHours(406) + database.getShiftHours(407) + database.getShiftHours(408) + database.getShiftHours(412) + database.getShiftHours(413) + database.getShiftHours(416) + database.getShiftHours(398))
-    
+
     database.hoursForEmployee('yap')
     print(database.getTaskHours(1) + database.getTaskHours(3))
     '''
