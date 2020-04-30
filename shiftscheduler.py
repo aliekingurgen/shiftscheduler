@@ -291,8 +291,8 @@ def profile():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-    employee = database.employeeDetails(netid)
     if (database.hoursForEmployee(netid)):
+        employee = database.employeeDetails(netid)
         hours = employee.getHours()
 
     database.disconnect()
