@@ -86,10 +86,11 @@ def index():
         errorMsg = e
 
     if not database.isCoordinator(netid):
-        database.disconnect()
         if not database.isEmployee(netid):
+            database.disconnect()
             return redirect(url_for('noPermissions'))
         else:
+            database.disconnect()
             return redirect(url_for('employee'))
 
     database.disconnect()
