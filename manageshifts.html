@@ -224,6 +224,7 @@ function addRegularShifts() {
 	// });
 
 	$('#insertShift').on('click', function() {
+		$(this).attr('disabled', true);
 		var day = $('#daySelect').val();
 		var task = $('#taskSelect').val();
 		console.log(task.split(' ').join(''));
@@ -271,6 +272,7 @@ function addRegularShifts() {
 						},1000);
 					}
 					else {
+						$('#insertShift').attr('disabled', false);
 						$('#assign-text').html(result);
 					}
 				}
