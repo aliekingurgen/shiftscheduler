@@ -301,7 +301,7 @@ class Database:
 
     #-----------------------------------------------------------------------
 
-    def myShiftsOld(self, netid):
+    def myShiftsOldOld(self, netid):
         try:
             def convertDay(dayString):
                 if (dayString == 'monday'): return '0'
@@ -365,7 +365,7 @@ class Database:
 
     #-----------------------------------------------------------------------
 
-    def myShifts(self, netid, dateIn):
+    def myShiftsOld(self, netid, dateIn):
         try:
             def convertDay(dayString):
                 if (dayString == 'monday'): return '0'
@@ -437,39 +437,32 @@ class Database:
 
     #-----------------------------------------------------------------------
 
-    def regularShifts(self, netid):
+    def myShifts(self, netid, dateIn):
         try:
-            def convertDay(dayString):
-                if (dayString == 'monday'): return '0'
-                if (dayString == 'tuesday'): return '1'
-                if (dayString == 'wednesday'): return '2'
-                if (dayString == 'thursday'): return '3'
-                if (dayString == 'friday'): return '4'
-                if (dayString == 'saturday'): return '5'
-                if (dayString == 'sunday'): return '6'
+            displayDate = datetime.date.fromisoformat(dateIn)
 
             cur = self._conn.cursor()
 
-            # get netid's all regular shifts
-            QUERY_STRING = 'SELECT regular_shifts.task_id, regular_shifts.dotw ' + \
-                           'FROM regular_shifts ' + \
-                           'WHERE regular_shifts.netid = %s'
-            cur.execute(QUERY_STRING, (netid,))
+            # get netid's shifts from shift_assign
+            QUERY_STRING = 'SELECT shift_id FROM shift_assign WHERE netid=%s' + \
+                            'INTERSECT SELECT shift_id FROM shift_info WHERE shift_info.date >= %s AND shift_info.date < %s'
+            cur.execute(QUERY_STRING, (netid, dateIn, (displayDate + datetime.timedelta(weeks=1)).isoFormat()))
 
             row = cur.fetchone()
-            regShifts = []
+            myShifts = []
             while row is not None:
-                regShift = convertDay(row[1]) + '-' + str(row[0]) # Convention: dayNo-taskId
-                if regShift not in regShifts:
-                    regShifts.append(regShift)
+                myShiftObj = self.shiftFromID(row[0])
+                myShiftStr = str(displayDate.weekday()) + '-' + str(myShiftObj.getTaskID())
+                if myShiftStr not in myShifts:
+                    myShifts.append(myShiftStr)
+                    # print("A: " + str(regShift))
                 row = cur.fetchone()
 
             cur.close()
-            regShifts.sort(key=str.lower)
-            return regShifts
+            return myShifts
 
         except (Exception, psycopg2.DatabaseError) as error:
-            print("there is an error")
+            print("There was an error in myShifts() method")
             print(error)
             return False
 
@@ -586,10 +579,14 @@ class Database:
 
             # assign all the shifts in shiftsToAdd to netid in shift_assign table
             for shiftid in shiftsToAdd:
-                QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
+                QUERY_STRING = 'SELECT * FROM shift_assign WHERE shiftid=%s AND netid=%s'
                 cur.execute(QUERY_STRING, (shiftid, netid))
-                self._conn.commit()
-                print('Added regular shift to shift_assign: ' + str(shiftid))
+                row = cur.fetchone()
+                if row is None:
+                    QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
+                    cur.execute(QUERY_STRING, (shiftid, netid))
+                    self._conn.commit()
+                    print('Added regular shift to shift_assign: ' + str(shiftid))
 
             cur.close()
             return True
