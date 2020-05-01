@@ -263,7 +263,6 @@ function insertEmployee() {
 		var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstNameLink;
 		url +=  "&lastname=" + lastNameLink + "&manager=" + manager;
 		$('#add-text').load(url);
-			$(this).attr('disabled', false);
 			 setTimeout(function(){
 			window.location.reload()
 		},1000);
