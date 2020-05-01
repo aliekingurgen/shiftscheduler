@@ -219,8 +219,10 @@
 <script>
 function insertEmployee() {
 	$('#add-button').on('click',function() {
+		$(this).attr('disabled', true);
 		var firstname = $('#firstName').val();
 		if (firstname == '') {
+			$(this).attr('disabled', false);
 			$('#add-text').text('Please enter a first name.');
 			return;
 		}
@@ -228,6 +230,7 @@ function insertEmployee() {
 		console.log(firstNameLink);
 		var lastname = $('#lastName').val();
 		if (lastname == '') {
+			$(this).attr('disabled', false);
 			$('#add-text').text('Please enter a last name.');
 			return;
 		}
@@ -235,11 +238,13 @@ function insertEmployee() {
 
 		var netid = $('#add-employee').val();
 		if (netid == '') {
+			$(this).attr('disabled', false);
 			$('#add-text').text('Please enter a net ID.');
 			return;
 		}
 		var netidWord = netid.split(" ");
 		if(netidWord.length != 1){
+			$(this).attr('disabled', false);
 			$('#add-text').text('Please enter a valid net ID.');
 			return;
 		}
@@ -251,12 +256,14 @@ function insertEmployee() {
 			var manager = 'N';
 		}
 		else {
+			$(this).attr('disabled', false);
 			$('#add-text').text('Please indicate Yes/No for Manager.');
 			return;
 		}
 		var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstNameLink;
 		url +=  "&lastname=" + lastNameLink + "&manager=" + manager;
 		$('#add-text').load(url);
+			$(this).attr('disabled', false);
 			 setTimeout(function(){
 			window.location.reload()
 		},1000);
