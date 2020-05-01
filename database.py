@@ -259,6 +259,38 @@ class Database:
 
     #-----------------------------------------------------------------------
 
+    # currently returns a list of shift objects
+    def allSubNeededForEmployee(self, netid):
+        try:
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'SELECT sub_requests.shift_id FROM sub_requests ' + \
+                           'WHERE sub_requests.sub_in_netid = %s'
+            cur.execute(QUERY_STRING, ('needed',))
+
+            rows = cur.fetchall()
+            shiftsNeeded = []
+            if rows is not None:
+                for row in rows:
+                    shiftid = row[0]
+                    QUERY_STRING = 'SELECT * FROM shift_assign WHERE shift_id=%s AND netid=%s'
+                    cur.execute(QUERY_STRING, (shiftid, netid))
+                    row2 = cur.fetchone()
+                    if row2 is None:
+                        shiftsNeeded.append(shiftid)
+            cur.close()
+
+            shiftObjects = []
+            for shift in shiftsNeeded:
+                shiftObject = self.shiftFromID(shift)
+                shiftObjects.append(shiftObject)
+            return shiftObjects
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            return []
+
+    #-----------------------------------------------------------------------
+
     def allSubsForDate(self, date):
         subsList = self.allSubNeeded()
 
@@ -272,6 +304,37 @@ class Database:
 
     def allSubsForWeek(self, date):
         subsList = self.allSubNeeded()
+
+        if datetime.date.fromisoformat(date).weekday() != 0:
+            print("Given date is not a Monday.")
+            return -1
+
+        monday = datetime.date.fromisoformat(date)
+        tuesday = monday + datetime.timedelta(days=1)
+        wednesday = tuesday + datetime.timedelta(days=1)
+        thursday = wednesday + datetime.timedelta(days=1)
+        friday = thursday + datetime.timedelta(days=1)
+        saturday = friday + datetime.timedelta(days=1)
+        sunday = saturday + datetime.timedelta(days=1)
+        week = [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
+
+        weekFormatted = []
+        for day in week:
+            dayFormatted = day.isoformat()
+            weekFormatted.append(dayFormatted)
+
+        retSubs = []
+        for sub in subsList:
+            if (sub.getDate() in weekFormatted):
+                retSub = str(datetime.date.fromisoformat(sub.getDate()).weekday()) + '-' + sub.getTaskID()
+                retSubs.append(retSub)
+
+        return retSubs
+
+    #-----------------------------------------------------------------------
+
+    def allSubsForEmployee(self, date, netid):
+        subsList = self.allSubNeededForEmployee(netid)
 
         if datetime.date.fromisoformat(date).weekday() != 0:
             print("Given date is not a Monday.")
@@ -1867,7 +1930,7 @@ if __name__ == '__main__':
     for shift in subNeededShifts:
         print(shift)
 
-    # Test allSubsForData ***** WORKS
+    # Test allSubsForDate ***** WORKS
     subNeededShiftsForDate = database.allSubsForDate(date)
     print()
     print('All Sub Needed Shifts for 2020-03-23: ')
