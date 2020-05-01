@@ -578,9 +578,11 @@ def insertEmployee():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
+    print(employeenetid + " " + firstname + " " + lastname + " " + manager)
     successful = database.insertEmployee(employeenetid, firstname, lastname, manager)
     database.disconnect()
 
+    print(successful)
     if successful:
         html = employeenetid + ' was successfully added!'
     else:
