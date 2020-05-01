@@ -543,6 +543,33 @@ def needSubShifts():
     return jsonify(subs)
 
 #-----------------------------------------------------------------------
+@app.route('/needSubShiftsEmployee', methods=['GET'])
+def needSubShiftsEmployee():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    mon = request.args.get('mon')
+    if mon is None:
+        mon = ''
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid) and not database.isEmployee(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
+    print(mon);
+    subs = database.allSubsForEmployee(mon, netid)
+    database.disconnect()
+
+    return jsonify(subs)
+
+#-----------------------------------------------------------------------
 
 @app.route('/insertEmployee', methods=['GET'])
 def insertEmployee():

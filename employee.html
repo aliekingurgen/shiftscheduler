@@ -511,7 +511,7 @@ function getDates() {
 function getColors(mon) {
 
 
-	url = '/needSubShifts?mon=' + mon
+	url = '/needSubShiftsEmployee?mon=' + mon
 	// console.log(url);
 	$('#needsSubShifts').load(url, function(responseTxt, statusTxt, xhr){
 		var found = false;
