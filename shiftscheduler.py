@@ -561,8 +561,9 @@ def insertEmployee():
         firstname = ''
     else:
         firstNameSplit = firstname.split("-")
-        firstname = ""
+
         if len(firstNameSplit) > 1:
+            firstname = ""
             for name in firstNameSplit:
                 firstname += name + " "
 
@@ -573,8 +574,8 @@ def insertEmployee():
         lastname = ''
     else:
         lastNameSplit = lastname.split("-")
-        lastname = ""
         if len(lastNameSplit) > 1:
+            lastname = ""
             for name in lastNameSplit:
                 print(name)
                 lastname += name + " "

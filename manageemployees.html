@@ -225,7 +225,7 @@ function insertEmployee() {
 			return;
 		}
 		var firstNameLink = firstname.split(" ").join("-");
-
+		console.log(firstNameLink);
 		var lastname = $('#lastName').val();
 		if (lastname == '') {
 			$('#add-text').text('Please enter a last name.');
