@@ -579,7 +579,7 @@ class Database:
 
             # assign all the shifts in shiftsToAdd to netid in shift_assign table
             for shiftid in shiftsToAdd:
-                QUERY_STRING = 'SELECT * FROM shift_assign WHERE shiftid=%s AND netid=%s'
+                QUERY_STRING = 'SELECT * FROM shift_assign WHERE shift_id=%s AND netid=%s'
                 cur.execute(QUERY_STRING, (shiftid, netid))
                 row = cur.fetchone()
                 if row is None:
@@ -1934,11 +1934,6 @@ if __name__ == '__main__':
     # Test getAllEmails ***** WORKS
     print(database.getAllEmails())
 
-    # Test populateForPeriod ***** WORKS
-    start = "2020-05-04"
-    end = "2020-05-10"
-    print(database.populateForPeriod(start, end))
-
     # Test exportEmployeeData ***** WORKS
     database.exportEmployeeData()
 
@@ -1986,8 +1981,13 @@ if __name__ == '__main__':
     # Test _checkTaskConflicts ***** WORKS
     print(database._checkTaskConflicts(1, [2, 3]))
     print(database._checkTaskConflicts(2, [3]))
-    '''
+    
     # Test assignShift after conflict checking ***** WORKS
     print(database.assignShift('agurgen', 568))
+    '''
+    # Test populateForPeriod ***** WORKS
+    start = "2020-04-27"
+    end = "2020-05-24"
+    print(database.populateForPeriod(start, end))
 
     database.disconnect()
