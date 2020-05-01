@@ -510,23 +510,7 @@ function getDates() {
 
 function getColors(mon) {
 	url = '/myShifts?mon=' + mon
-	$('#myShifts').load(url, function(responseTxt, statusTxt, xhr){
-		var found = false;
-		for (var i = 0; i < responseTxt.length; i++) {
-			curr = responseTxt[i];
-			if (curr == "\"") {
-				if (!found) {
-					found = true;
-					var id = "#" + responseTxt.substring(i + 1, i + 4);
-					$(id).attr("class", "list-group-item list-group-item-action list-group-item-info");
-					$(id).attr("data-target", "#yourShift");
-				}
-				else {
-					found = false;
-				}
-			}
-		}
-	});
+
 	url = '/needSubShifts?mon=' + mon
 	// console.log(url);
 	$('#needsSubShifts').load(url, function(responseTxt, statusTxt, xhr){
@@ -539,6 +523,23 @@ function getColors(mon) {
 					var id = "#" + responseTxt.substring(i + 1, i + 4);
 					$(id).attr("class", "list-group-item list-group-item-action list-group-item-danger");
 					$(id).attr("data-target", "#needsSubShift");
+				}
+				else {
+					found = false;
+				}
+			}
+		}
+	});
+	$('#myShifts').load(url, function(responseTxt, statusTxt, xhr){
+		var found = false;
+		for (var i = 0; i < responseTxt.length; i++) {
+			curr = responseTxt[i];
+			if (curr == "\"") {
+				if (!found) {
+					found = true;
+					var id = "#" + responseTxt.substring(i + 1, i + 4);
+					$(id).attr("class", "list-group-item list-group-item-action list-group-item-info");
+					$(id).attr("data-target", "#yourShift");
 				}
 				else {
 					found = false;
