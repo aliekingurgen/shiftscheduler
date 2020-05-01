@@ -224,14 +224,23 @@ function insertEmployee() {
 			$('#add-text').text('Please enter a first name.');
 			return;
 		}
+		var firstNameLink = firstname.split(" ").join("-");
+
 		var lastname = $('#lastName').val();
 		if (lastname == '') {
 			$('#add-text').text('Please enter a last name.');
 			return;
 		}
+		var lastNameLink = lastname.split(" ").join("-");
+
 		var netid = $('#add-employee').val();
 		if (netid == '') {
 			$('#add-text').text('Please enter a net ID.');
+			return;
+		}
+		var netidWord = netid.split(" ");
+		if(netidWord.length != 1){
+			$('#add-text').text('Please enter a valid net ID.');
 			return;
 		}
 
@@ -245,10 +254,10 @@ function insertEmployee() {
 			$('#add-text').text('Please indicate Yes/No for Manager.');
 			return;
 		}
-		var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstname
-		url +=  "&lastname=" + lastname + "&manager=" + manager;
+		var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstNameLink;
+		url +=  "&lastname=" + lastNameLink + "&manager=" + manager;
 		$('#add-text').load(url);
-		setTimeout(function(){
+			 setTimeout(function(){
 			window.location.reload()
 		},1000);
 

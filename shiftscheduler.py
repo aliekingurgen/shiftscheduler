@@ -559,10 +559,25 @@ def insertEmployee():
     firstname = request.args.get('firstname')
     if firstname is None:
         firstname = ''
+    else:
+        firstNameSplit = firstname.split("-")
+        firstname = ""
+        if len(firstNameSplit) > 1:
+            for name in firstNameSplit:
+                firstname += name + " "
+
 
     lastname = request.args.get('lastname')
+    print(lastname)
     if lastname is None:
         lastname = ''
+    else:
+        lastNameSplit = lastname.split("-")
+        lastname = ""
+        if len(lastNameSplit) > 1:
+            for name in lastNameSplit:
+                print(name)
+                lastname += name + " "
 
     manager = request.args.get('manager')
     if manager is None:
