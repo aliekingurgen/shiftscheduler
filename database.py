@@ -446,19 +446,21 @@ class Database:
             # get netid's shifts from shift_assign
             QUERY_STRING = 'SELECT shift_id FROM shift_assign WHERE netid=%s' + \
                             'INTERSECT SELECT shift_id FROM shift_info WHERE shift_info.date >= %s AND shift_info.date < %s'
-            cur.execute(QUERY_STRING, (netid, dateIn, (displayDate + datetime.timedelta(weeks=1)).isoFormat()))
+            cur.execute(QUERY_STRING, (netid, dateIn, (displayDate + datetime.timedelta(weeks=1)).isoformat()))
 
-            row = cur.fetchone()
+            
             myShifts = []
+            row = cur.fetchone()
             while row is not None:
                 myShiftObj = self.shiftFromID(row[0])
-                myShiftStr = str(displayDate.weekday()) + '-' + str(myShiftObj.getTaskID())
+                print(datetime.date.fromisoformat(myShiftObj.getDate()).weekday())
+                myShiftStr = str(datetime.date.fromisoformat(myShiftObj.getDate()).weekday()) + '-' + str(myShiftObj.getTaskID())
                 if myShiftStr not in myShifts:
                     myShifts.append(myShiftStr)
-                    # print("A: " + str(regShift))
                 row = cur.fetchone()
 
             cur.close()
+            print(myShifts)
             return myShifts
 
         except (Exception, psycopg2.DatabaseError) as error:

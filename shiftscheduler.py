@@ -486,7 +486,7 @@ def myShifts():
 
     shifts = database.myShifts(netid, mon)
     #for shift in shifts:
-     #   print(shift)
+    #    print("HEYO" + shift)
     database.disconnect()
     return jsonify(shifts)
 
