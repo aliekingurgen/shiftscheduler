@@ -872,8 +872,8 @@ class Database:
                 cur.close()
                 return False
             email = netid + '@princeton.edu'
-            QUERY_STRING = 'INSERT INTO employees (netid, first_name, last_name, hours, total_hours, email, manager) ' + \
-                           'VALUES (%s, %s, %s, 0, 0, %s, %s)'
+            QUERY_STRING = 'INSERT INTO employees (netid, first_name, last_name, hours, total_hours, email, manager, subins, subouts, walkons, noshows) ' + \
+                           'VALUES (%s, %s, %s, 0, 0, %s, %s, 0, 0, 0, 0)'
             cur.execute(QUERY_STRING, (netid, first_name, last_name, email, manager))
             self._conn.commit()
             print('Added employee: ' + netid + ' ' + first_name + ' ' + last_name + ' ' + manager)
