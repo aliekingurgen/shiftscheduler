@@ -483,9 +483,8 @@ def myShifts():
     if not database.isCoordinator(netid) and not database.isEmployee(netid):
         database.disconnect()
         return redirect(url_for('noPermissions'))
-
     shifts = database.myShifts(netid, mon)
-    #for shift in shifts:
+    # for shift in shifts:
     #    print("HEYO" + shift)
     database.disconnect()
     return jsonify(shifts)

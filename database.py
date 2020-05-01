@@ -1018,6 +1018,7 @@ class Database:
     #-----------------------------------------------------------------------
 
     def unassignShift(self, netid, shiftid):
+        print("is it here?")
         try:
             if (not netid) or (shiftid is None):
                 print('Please enter all required information.')

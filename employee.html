@@ -509,7 +509,7 @@ function getDates() {
 }
 
 function getColors(mon) {
-	url = '/myShifts?mon=' + mon
+
 
 	url = '/needSubShifts?mon=' + mon
 	// console.log(url);
@@ -530,6 +530,7 @@ function getColors(mon) {
 			}
 		}
 	});
+	url = '/myShifts?mon=' + mon
 	$('#myShifts').load(url, function(responseTxt, statusTxt, xhr){
 		var found = false;
 		for (var i = 0; i < responseTxt.length; i++) {
