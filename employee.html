@@ -585,12 +585,17 @@ function getModalData(mon) {
 		var dataURL = "/shiftdetails";
 		var taskId = $(this).attr('taskid');
 		var dotw = $(this).parents('td').attr("day");
+		console.log(dotw);
 		var date = new Date();
+		console.log(date);
 		date.setFullYear(mon.getFullYear(), mon.getMonth(), mon.getDate());
+		console.log(date);
 		date.setDate(date.getDate() + parseInt(dotw));
-		iso = date.toISOString().substring(0, 10);
+		console.log(date);
+		iso = format(date);
+		// iso = date.toISOString().substring(0, 10);
+		console.log(iso);
 
-		// console.log(iso);
 		dataURL += "?date=" + iso;
 		dataURL += "&taskid=" + taskId;
 		var modalId = $(this).attr('data-target');

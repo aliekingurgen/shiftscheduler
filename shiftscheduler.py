@@ -710,9 +710,9 @@ def shiftDetailsCoordinator():
     # if errorMsg is None:
     #     errorMsg = ''
 
-    date = request.args.get('date')
-    if date is None:
-        date = ''
+    dateArg = request.args.get('date')
+    if dateArg is None:
+        dateArg = ''
 
     task_id = request.args.get('taskid')
     if task_id is None:
@@ -728,7 +728,7 @@ def shiftDetailsCoordinator():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-    shift = database.shiftDetails(date, task_id)
+    shift = database.shiftDetails(dateArg, task_id)
 
 
     if shift is None:
@@ -741,7 +741,9 @@ def shiftDetailsCoordinator():
             print(employee.getNetID())
 
         numEmployees = database.numberOfEmployeesInShift(shift_id)
-        html = '<strong>Date: </strong>' + str(shift.getDate()) + '<br>'
+        dateObject = date.fromisoformat(shift.getDate())
+        dateFormatted = dateObject.strftime("%m/%d")
+        html = '<strong>Date: </strong>' + dateFormatted + '<br>'
         # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'

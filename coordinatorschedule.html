@@ -450,8 +450,8 @@ function getDates() {
   // else {
   //   monISO.setDate(today.getDate() - dotw + 1);
   // }
-
-  monISO = monISO.toISOString().substring(0, 10)
+  monISO = format(monISO);
+  // monISO = monISO.toISOString().substring(0, 10)
   console.log("monISO: " + monISO);
   console.log("mon:" + mon);
   if (mon == 'today' || mon == monISO) {
@@ -535,7 +535,8 @@ function getModalData(mon) {
     var date = new Date();
     date.setFullYear(mon.getFullYear(), mon.getMonth(), mon.getDate());
     date.setDate(date.getDate() + parseInt(dotw));
-    var iso = date.toISOString().substring(0, 10);
+    var iso = format(date);
+    // var iso = date.toISOString().substring(0, 10);
     console.log('modal toggled, iso= ' + iso);
 
     // var walkOnUrl = "/walkOn?"
