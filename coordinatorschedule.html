@@ -596,8 +596,13 @@ function getModalData(mon) {
         // });
 
         $("#walkOnSubmit").on("click", function() {
-          $(this).attr('disabled', true);
+          $("#walkOnSubmit").attr('disabled', true);
           var walkOnNetId = $("#walkOnInput").val();
+          if (walkOnNetId == '') {
+            $("#walkOnText").html("<br><br>Please enter a net ID.");
+            $("#walkOnSubmit").attr('disabled', false);
+            return;
+          }
           var walkOnUrl = "/walkOn?"
           $("#walkOnText").text('');
           walkOnUrl += "date=" + iso;
@@ -649,11 +654,20 @@ function getModalData(mon) {
         $("#walkOnInput").on("keydown", function (e) {
           // console.log('input');
           if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+            $('#walkOnInput').attr('disabled', true);
             var walkOnNetId = $("#walkOnInput").val();
+            if (walkOnNetId == '') {
+              $("#walkOnText").html("<br><br>Please enter a net ID.");
+              $('#walkOnInput').attr('disabled', false);
+              return;
+            }
             var walkOnUrl = "/walkOn?"
             $("#walkOnText").text('');
             walkOnUrl += "date=" + iso;
+            console.log(iso);
             walkOnUrl += "&taskid=" + taskId;
+            console.log(taskId);
+            console.log(walkOnUrl);
             walkOnUrl += "&netid=" + walkOnNetId;
             // var currText = $("#walkOnText").text();
             // console.log(currText);
@@ -661,10 +675,11 @@ function getModalData(mon) {
             // $('#otherShiftText').html() += 'hello';
             $.ajax({
               url: walkOnUrl,
-              type: 'GET',
+              type: 'POST',
               success: function(data){
+                $('#walkOnInput').attr('disabled', false);
                 if (data == "failed") {
-                  $("#walkOnText").html("<br><br>walkOn Request Failed. Please reload and try again.");
+                  $("#walkOnText").html("<br><br>walkOn Request Failed. Please try again.");
                   $("#walkOnInput").val('');
                 }
                 else {
@@ -674,6 +689,13 @@ function getModalData(mon) {
                   $('#otherShiftText').html(curr);
                   $("#walkOn").val('');
                 }
+                $(".noShow").on("click", function(){
+                  $(this).attr('disabled', true);
+                  var url = $(this).attr("href");
+                  var noShowNetID = $(this).attr("netid").trim();
+                  var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+                  $(this).parent("span").load(url);
+                });
               }
             });
             // $("#walkOnText").load(walkOnUrl);

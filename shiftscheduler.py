@@ -821,11 +821,14 @@ def noShow():
     database.disconnect()
     html = ""
     if successful:
-        html += "<button  class=\"btn btn-danger btn-sm noShow\"> no show </button> "
+        html += "<button class=\"btn btn-danger btn-sm noShow\"> no show </button> "
     else:
-        html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
-        html += "\" id = \"" + netid + "button\">mark no show</button> "
-        html += "<p> try again </p>"
+        # because most likely if not successful it just means it's already
+        # been marked as no show
+        html += "<button class=\"btn btn-danger btn-sm noShow\"> no show </button> "
+        # html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+        # html += "\" id = \"" + netid + "button\">mark no show</button> "
+        # html += "<p> try again </p>"
         print(html)
 
     response = make_response(html)
