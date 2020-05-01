@@ -552,6 +552,7 @@ function getColors(mon) {
 
 function subOut() {
 	$('#subOutButton').on('click',function() {
+		$(this).attr('disabled', true);
 		var url = "/subOut?date=";
 		var taskId = $(this).attr('taskid');
 		var date = $(this).attr('date');
@@ -568,6 +569,7 @@ function subOut() {
 
 function subIn() {
 	$('#subInButton').on('click',function() {
+		$(this).attr('disabled', true);
 		var url = "/subIn?date=";
 		var taskId = $(this).attr('taskid');
 		var date = $(this).attr('date');
