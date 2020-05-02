@@ -564,6 +564,14 @@ function getModalData(mon) {
           $(this).parent("span").load(url);
         });
 
+        $(".undoNoShow").on("click", function(){
+          $(this).attr('disabled', true);
+          var url = $(this).attr("href");
+          var noShowNetID = $(this).attr("netid").trim();
+          var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+          $(this).parent("span").load(url);
+        });
+
         // $(".noShow").on("click", function(){
         //   var netid = $(this).attr("netid").trim();
         //   console.log($(this).parent("span").attr('html'));
@@ -633,6 +641,13 @@ function getModalData(mon) {
                 $("#walkOn").val('');
               }
               $(".noShow").on("click", function(){
+                $(this).attr('disabled', true);
+                var url = $(this).attr("href");
+                var noShowNetID = $(this).attr("netid").trim();
+                var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+                $(this).parent("span").load(url);
+              });
+              $(".undoNoShow").on("click", function(){
                 $(this).attr('disabled', true);
                 var url = $(this).attr("href");
                 var noShowNetID = $(this).attr("netid").trim();

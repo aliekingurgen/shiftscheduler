@@ -798,28 +798,31 @@ def shiftDetailsCoordinator():
         print(numEmployees)
         # if numEmployees != 0 and numEmployees == len(employees):
         if len(employees) != 0:
-            print("here")
             html += '<br><strong>Working: </strong><br>'
             for i in range(len(employees)):
+                print('working:' + employees[i].getNetID())
                 html += "<br>"
                 html += employees[i].getFirstName() + " " + employees[i].getLastName()
                 html += "&nbsp&nbsp&nbsp"
                 html += "<span id = \"noshow"  + employees[i].getNetID() + "\" >"
-                html += "<button  class=\"btn btn-secondary btn-sm noShow\" netid = \"" + employees[i].getNetID() + "\" "
+                html += "<button class=\"btn btn-secondary btn-sm noShow\" netid = \"" + employees[i].getNetID() + "\" "
                 html += "href = \"/noShow?netid=" + employees[i].getNetID() + "&shiftid=" + shift_id
                 html += "\" id = \"" + employees[i].getNetID() + "button\">mark no show</button> "
                 html += " </span><br>"
         noShows = database.noShowsInShift(shift_id)
         for noShow in noShows:
+            print('no show: ' + noShow.getNetID())
             if len(employees) == 0:
                 html += '<br><strong>Working: </strong><br>'
             html += "<br>"
             html += noShow.getFirstName() + " " + noShow.getLastName()
             html += "&nbsp&nbsp&nbsp"
             html += "<span id = \"noshow" + noShow.getNetID() + "\" >"
-            html += "<button  class=\"btn btn-danger btn-sm\" netid = \"" + noShow.getNetID() + "\" "
-            html += " > no show </button> "
+            html += "<button class=\"btn btn-danger btn-sm undoNoShow\" netid = \"" + noShow.getNetID() + "\" "
+            html += " href=\"/undoNoShow?netid=" + noShow.getNetID() + "&shiftid=" + shift_id
+            html += "\" id = \"" + noShow.getNetID() + "button\">no show</button> "
             html += " </span><br>"
+            print(html)
 
         walkOns = database.walkOnsInShift(shift_id)
 
@@ -868,12 +871,76 @@ def noShow():
     successful = database.addNoShow(shift_id, netid)
     database.disconnect()
     html = ""
+    print(successful)
+    html += "<span id = \"noshow" + netid + "\" >"
+    html += "<button class=\"btn btn-danger btn-sm undoNoShow\" netid = \"" + netid + "\" "
+    html += " href=\"/undoNoShow?netid=" + netid + "&shiftid=" + shift_id
+    html += "\" id = \"" + netid + "button\">no show</button> "
+    html += " </span><br>"
+
+    # if successful:
+    #     html += "<span id = \"noshow" + noShow.getNetID() + "\" >"
+    #     html += "<button class=\"btn btn-danger btn-sm\" netid = \"" + noShow.getNetID() + "\" "
+    #     html += " href=\"/undoNoShow?netid=" + noShow.getNetID() + "&shiftid=" + shift_id
+    #     html += "\" id = \"" + noShow.getNetID() + "button\">no show</button> "
+    #     html += " </span><br>"
+    # else:
+    #     # because most likely if not successful it just means it's already
+    #     # been marked as no show
+    #     html += "<button class=\"btn btn-danger btn-sm noShow\"> no show </button> "
+    #     # html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+    #     # html += "\" id = \"" + netid + "button\">mark no show</button> "
+    #     # html += "<p> try again </p>"
+    #     print(html)
+
+    response = make_response(html)
+    response.set_cookie('netid', my_netid)
+    return response
+
+# -----------------------------------------------------------------------
+@app.route('/undoNoShow', methods=['GET'])
+def undoNoShow():
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
+
+    netid = request.args.get('netid')
+    if netid is None:
+        netid = ''
+
+    shift_id = request.args.get('shiftid')
+    if shift_id is None:
+        shift_id = ''
+
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(my_netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
+    print("shiftid: " + shift_id)
+    print("netid" + netid)
+    successful = database.undoNoShow(shift_id, netid)
+    database.disconnect()
+    html = ""
     if successful:
-        html += "<button class=\"btn btn-danger btn-sm noShow\"> no show </button> "
+        html += "<span id = \"noshow" + netid + "\" >"
+        html += "<button class=\"btn btn-secondary btn-sm noShow\" netid = \"" + netid + "\" "
+        html += "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" id = \"" + netid + "button\">mark no show</button> "
+        html += " </span>"
     else:
-        # because most likely if not successful it just means it's already
-        # been marked as no show
-        html += "<button class=\"btn btn-danger btn-sm noShow\"> no show </button> "
+        # keep the red button
+        html += "<span id = \"noshow" + netid + "\" >"
+        html += "<button class=\"btn btn-danger btn-sm undoNoShow\" netid = \"" + netid + "\" "
+        html += " href=\"/undoNoShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" id = \"" + netid + "button\">no show</button> "
+        html += " </span>"
+        # html += "<button class=\"btn btn-danger btn-sm noShow\"> no show </button> "
         # html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
         # html += "\" id = \"" + netid + "button\">mark no show</button> "
         # html += "<p> try again </p>"

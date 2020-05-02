@@ -511,7 +511,7 @@ class Database:
                             'INTERSECT SELECT shift_id FROM shift_info WHERE shift_info.date >= %s AND shift_info.date < %s'
             cur.execute(QUERY_STRING, (netid, dateIn, (displayDate + datetime.timedelta(weeks=1)).isoformat()))
 
-            
+
             myShifts = []
             row = cur.fetchone()
             while row is not None:
@@ -1560,7 +1560,7 @@ class Database:
             self._conn.commit()
             print('Added assignment pairing to shift_assign')
 
-            print('No-show is committed.')
+            print('Undo no-show is committed.')
             cur.close()
             return True
 
@@ -1570,7 +1570,7 @@ class Database:
             cur.close()
             print(error)
             return False
-        
+
 
     #-----------------------------------------------------------------------
 
@@ -2109,10 +2109,10 @@ if __name__ == '__main__':
     # Test _checkTaskConflicts ***** WORKS
     print(database._checkTaskConflicts(1, [2, 3]))
     print(database._checkTaskConflicts(2, [3]))
-    
+
     # Test assignShift after conflict checking ***** WORKS
     print(database.assignShift('agurgen', 568))
-    
+
     # Test populateForPeriod ***** WORKS
     start = "2020-04-27"
     end = "2020-05-24"
