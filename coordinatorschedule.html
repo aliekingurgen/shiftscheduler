@@ -87,6 +87,9 @@
       <li class="nav-item">
         <a class="nav-link" href="/managehours" style="font-size:18px">Hours</a>
       </li>
+      <li class="nav-item">
+				<a class="nav-link" href="/reset" style="font-size:18px">Reset</a>
+			</li>
     </ul>
   </div>
 </nav>
@@ -102,7 +105,7 @@
         <button type="button" id="nextWeekButton" class="btn btn-outline-dark btn-sm" aria-label="Next Week" style="position: absolute;right: 40px;display:inline-block;">
           <span class="fa fa-chevron-right" aria-hidden="true"></span>
         </button>
-        <h1 style="font-size: 20px; display:inline-block"><u>Weekly Calendar</u></h1>
+        <h1 style="font-size: 20px; display:inline-block"><u>Coordinator Calendar</u></h1>
         <br>
         <br>
       </div>
@@ -561,7 +564,17 @@ function getModalData(mon) {
           var url = $(this).attr("href");
           var noShowNetID = $(this).attr("netid").trim();
           var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-          $(this).parent("span").load(url);
+          // $(this).parent("span").load(url);
+
+          $(this).parent("span").load(url, function(responseTxt, statusTxt, xhr){
+            $(".undoNoShow").on("click", function(){
+              $(this).attr('disabled', true);
+              var url = $(this).attr("href");
+              var noShowNetID = $(this).attr("netid").trim();
+              var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+              $(this).parent("span").load(url);
+            });
+          });
         });
 
         $(".undoNoShow").on("click", function(){
@@ -569,7 +582,16 @@ function getModalData(mon) {
           var url = $(this).attr("href");
           var noShowNetID = $(this).attr("netid").trim();
           var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-          $(this).parent("span").load(url);
+          // $(this).parent("span").load(url);
+          $(this).parent("span").load(url, function(responseTxt, statusTxt, xhr){
+            $(".noShow").on("click", function(){
+              $(this).attr('disabled', true);
+              var url = $(this).attr("href");
+              var noShowNetID = $(this).attr("netid").trim();
+              var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+              $(this).parent("span").load(url);
+            });
+          });
         });
 
         // $(".noShow").on("click", function(){
@@ -641,6 +663,7 @@ function getModalData(mon) {
                 $("#walkOn").val('');
               }
               $(".noShow").on("click", function(){
+                console.log('after walk on no show');
                 $(this).attr('disabled', true);
                 var url = $(this).attr("href");
                 var noShowNetID = $(this).attr("netid").trim();
@@ -648,6 +671,7 @@ function getModalData(mon) {
                 $(this).parent("span").load(url);
               });
               $(".undoNoShow").on("click", function(){
+                console.log('after walk on undo');
                 $(this).attr('disabled', true);
                 var url = $(this).attr("href");
                 var noShowNetID = $(this).attr("netid").trim();
@@ -667,64 +691,64 @@ function getModalData(mon) {
           });
         });
 
-        $("#walkOnInput").on("keydown", function (e) {
-          // console.log('input');
-          if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
-            $('#walkOnInput').attr('disabled', true);
-            var walkOnNetId = $("#walkOnInput").val();
-            if (walkOnNetId == '') {
-              $("#walkOnText").html("<br><br>Please enter a net ID.");
-              $('#walkOnInput').attr('disabled', false);
-              return;
-            }
-            var walkOnUrl = "/walkOn?"
-            $("#walkOnText").text('');
-            walkOnUrl += "date=" + iso;
-            console.log(iso);
-            walkOnUrl += "&taskid=" + taskId;
-            console.log(taskId);
-            console.log(walkOnUrl);
-            walkOnUrl += "&netid=" + walkOnNetId;
-            // var currText = $("#walkOnText").text();
-            // console.log(currText);
-            console.log($('#otherShiftText').html());
-            // $('#otherShiftText').html() += 'hello';
-            $.ajax({
-              url: walkOnUrl,
-              type: 'POST',
-              success: function(data){
-                $('#walkOnInput').attr('disabled', false);
-                if (data == "failed") {
-                  $("#walkOnText").html("<br><br>walkOn Request Failed. Please try again.");
-                  $("#walkOnInput").val('');
-                }
-                else {
-                  console.log(data)
-                  curr = $('#otherShiftText').html() + data;
-                  // console.log(curr);
-                  $('#otherShiftText').html(curr);
-                  $("#walkOn").val('');
-                }
-                $(".noShow").on("click", function(){
-                  $(this).attr('disabled', true);
-                  var url = $(this).attr("href");
-                  var noShowNetID = $(this).attr("netid").trim();
-                  var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-                  $(this).parent("span").load(url);
-                });
-              }
-            });
-            // $("#walkOnText").load(walkOnUrl);
-            // console.log(currText);
-            // $("#walkOnText").text(currText + '<br>' + 'netid');
-            // console.log($("#walkOn").text());
-            $("#walkOnInput").val('');
-            $('#otherShift').on('hide.bs.modal',function() {
-              console.log('closed');
-              window.location.reload();
-            });
-          }
-        });
+        // $("#walkOnInput").on("keydown", function (e) {
+        //   // console.log('input');
+        //   if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
+        //     $('#walkOnInput').attr('disabled', true);
+        //     var walkOnNetId = $("#walkOnInput").val();
+        //     if (walkOnNetId == '') {
+        //       $("#walkOnText").html("<br><br>Please enter a net ID.");
+        //       $('#walkOnInput').attr('disabled', false);
+        //       return;
+        //     }
+        //     var walkOnUrl = "/walkOn?"
+        //     $("#walkOnText").text('');
+        //     walkOnUrl += "date=" + iso;
+        //     console.log(iso);
+        //     walkOnUrl += "&taskid=" + taskId;
+        //     console.log(taskId);
+        //     console.log(walkOnUrl);
+        //     walkOnUrl += "&netid=" + walkOnNetId;
+        //     // var currText = $("#walkOnText").text();
+        //     // console.log(currText);
+        //     console.log($('#otherShiftText').html());
+        //     // $('#otherShiftText').html() += 'hello';
+        //     $.ajax({
+        //       url: walkOnUrl,
+        //       type: 'POST',
+        //       success: function(data){
+        //         $('#walkOnInput').attr('disabled', false);
+        //         if (data == "failed") {
+        //           $("#walkOnText").html("<br><br>walkOn Request Failed. Please try again.");
+        //           $("#walkOnInput").val('');
+        //         }
+        //         else {
+        //           console.log(data)
+        //           curr = $('#otherShiftText').html() + data;
+        //           // console.log(curr);
+        //           $('#otherShiftText').html(curr);
+        //           $("#walkOn").val('');
+        //         }
+        //         $(".noShow").on("click", function(){
+        //           $(this).attr('disabled', true);
+        //           var url = $(this).attr("href");
+        //           var noShowNetID = $(this).attr("netid").trim();
+        //           var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+        //           $(this).parent("span").load(url);
+        //         });
+        //       }
+        //     });
+        //     // $("#walkOnText").load(walkOnUrl);
+        //     // console.log(currText);
+        //     // $("#walkOnText").text(currText + '<br>' + 'netid');
+        //     // console.log($("#walkOn").text());
+        //     $("#walkOnInput").val('');
+        //     $('#otherShift').on('hide.bs.modal',function() {
+        //       console.log('closed');
+        //       window.location.reload();
+        //     });
+        //   }
+        // });
       });
     }
   });

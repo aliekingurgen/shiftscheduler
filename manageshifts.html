@@ -87,6 +87,9 @@
       <li class="nav-item">
         <a class="nav-link" href="/managehours" style="font-size:18px">Hours</a>
       </li>
+			<li class="nav-item">
+				<a class="nav-link" href="/reset" style="font-size:18px">Reset</a>
+			</li>
     </ul>
   </div>
 </nav>
@@ -118,6 +121,7 @@
 				<h3>Unassign Regular Shifts:</h3><br>
 				<p id="employeeDetails" employee="{{employee}}">Click an employee on the
 					left to unassign/assign regular shifts.</p>
+					<div id="unassign-text" class="text-danger"></div>
 				</div>
 
 				<div id = "assignShift" class="container col-md-4 order-md-1">
@@ -150,7 +154,6 @@
 								<option>Brunch Dish Manager</option>
 								<option>Brunch First Dish</option>
 								<option>Brunch Second Dish</option>
-								<option>CJL Swipe</option>
 							</select>
 						</div>
 						<div class="form-group">
@@ -205,7 +208,6 @@ function convertTaskId(str){
 	else if(str ==  'BrunchDishManager') taskid = 10;
 	else if(str ==  'BrunchFirstDish') taskid = 11;
 	else if(str == 'BrunchSecondDish') taskid = 12;
-	else if( str ==  'CJLSwipe') taskid = 13;
 	return taskid;
 }
 
@@ -225,6 +227,7 @@ function addRegularShifts() {
 
 	$('#insertShift').on('click', function() {
 		$(this).attr('disabled', true);
+		$('#assign-text').attr('class', 'text-danger');
 		var day = $('#daySelect').val();
 		var task = $('#taskSelect').val();
 		console.log(task.split(' ').join(''));
@@ -266,6 +269,7 @@ function addRegularShifts() {
 				url: url,
 				success: function (result) {
 					if (result == 'Shift was successfully added!') {
+						$('#assign-text').attr('class', 'text-info');
 						$('#assign-text').html('Shift was successfully added!');
 						setTimeout(function(){
 							window.location = reloadUrl;
@@ -299,9 +303,17 @@ function employeeDetails() {
 	});
 }
 
+// function unassign() {
+// 	$('.unassign').on('click'), function() {
+// 		$('#unassign-text').attr('class', 'text-info');
+// 		$('#unassign-text').text('Shift was sucessfully unassigned!');
+// 	}
+// }
+
 function setup() {
 	employeeDetails();
 	addRegularShifts();
+	// unassign();
 }
 
 $('document').ready(setup);

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ShiftScheduler - Coordinator</title>
+	<!-- JQuery -->
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+	integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+	crossorigin="anonymous"></script>
+	<!-- AJax -->
+	<script src=
+	"https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+	<!-- PopperJS -->
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+	integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+	crossorigin="anonymous"></script>
+	<!-- Bootstrap -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+	integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+	crossorigin="anonymous"></script>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+	crossorigin="anonymous">
+	<!-- FontAwesome -->
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	<!-- Date Picker -->
+	<!-- <link href="./bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet"> -->
+
+</head>
+
+<style>
+.footer {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	/* Set the fixed height of the footer here */
+	height: 60px;
+	line-height: 60px; /* Vertically center the text there */
+	background-color: #f5f5f5;
+}
+</style>
+
+<!-- Navbar -->
+<body id="body" class="text-center">
+	<nav class="navbar navbar-expand navbar-light bg-light">
+		<div class="container">
+			<a class="navbar-brand" href="/index" style="font-size:25px">ShiftScheduler
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon">
+			</span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav">
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false" style="font-size:18px"> {{netid}} </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="/profile">Profile</a>
+						<a class="dropdown-item" href="/logout">Log Out</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
+	<!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon" ></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarText">
+		<ul class="navbar-nav mr-auto">
+			<!--      <li class="nav-item active">-->
+			<!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
+			<!--      </li>-->
+			<li class="nav-item">
+				<a class="nav-link" href="/coordinatorschedule" style="font-size:18px">Calendar</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/manageemployees" style="font-size:18px">Employees</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/manageshifts" style="font-size:18px">Regular Shifts</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/managehours" style="font-size:18px">Hours</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link active" href="/reset" style="font-size:18px">Reset</a>
+			</li>
+		</ul>
+	</div>
+</nav>
+
+<main role="main">
+
+	<br>
+
+	<div class="container">
+		<div class="row align-items-center">
+			<div class = "col-12">
+				<h3>Reset Stats:</h3>
+			</div>
+		</div>
+		<div class="row align-items-center">
+			<div class = "col-3">
+			</div>
+			<div class = "col-6">
+				<p class="text-secondary">Clicking the button below will reset the count of
+					sub-ins, sub-outs, walk-ons, and no-shows for ALL employees. It will not affect
+					the shifts themselves, only the counts. We recommend that this only be
+					used at the beginning or end of a semester. </p>
+					<button type="button" id="reset-button" class="btn btn-danger btn-lg">Reset Stats</button>
+					<br>
+					<br>
+					<div id="loading-text" class="text-danger"></div>
+				</div>
+				<div class="col-3">
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<br>
+	<br>
+
+	<!-- Are You Sure? Modal -->
+	<div id ="areYouSureModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="areYouSureModal" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div id="modal-text">
+						Are you sure that you want to reset all stats for all employees? This action cannot be undone.
+						If you are sure, type: <br><strong>Yes, I am sure that I want to reset.</strong><br>
+						into the input field below.
+					</div>
+						<input type="text" class="form-control" id="confirmation">
+						<small id="confirmation-text" class="form-text text-danger"></small>
+					<button id="submit-button" class="btn btn-secondary">Submit</button>
+				</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</main>
+
+<footer class="footer">
+	<div class="container">
+		<span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
+	</div>
+</footer>
+
+
+<script>
+
+function setup() {
+	$('#confirmation-text').val('');
+	$('#reset-button').on('click', function() {
+		$('#areYouSureModal').modal('show');
+		$('#submit-button').on('click', function () {
+			console.log($('#confirmation').val());
+			if ($('#confirmation').val() == 'Yes, I am sure that I want to reset.'){
+				$("#loading-text").attr('class', '')
+				$("#loading-text").text("Working...");
+				$('#areYouSureModal').modal('hide');
+				url = '/resetStatsLink';
+				request = $.ajax(
+					{
+						type: "GET",
+						url: url,
+						success: function(data) {
+							if (data == 'success') {
+								$("#loading-text").attr('class', 'text-info')
+								$("#loading-text").text('Stats reset. Navigate to the \'Employees\' or \'Report\' tab to see the results.');
+							}
+							else {
+								$("#loading-text").text('Request failed. Please reload and try again.');
+							}
+						}
+					}
+				);
+			}
+			else {
+				$('#confirmation').val('');
+				$('#confirmation-text').text('Input was not correct. Please try again.');
+				return;
+			}
+		});
+	});
+
+}
+
+$('document').ready(setup);
+</script>
+
+</body>
+</html>

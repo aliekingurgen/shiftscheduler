@@ -326,6 +326,21 @@ def team():
 
 #-----------------------------------------------------------------------
 
+@app.route('/reset', methods=['GET'])
+def reset():
+
+    netid = request.cookies.get('netid')
+    if netid is None:
+        netid = ''
+
+    html = render_template('reset.html',
+                           netid=netid)
+    response = make_response(html)
+    response.set_cookie('netid', netid)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/subIn', methods=['GET'])
 def subIn():
 
@@ -381,7 +396,7 @@ def taskidToStr(taskid):
     elif (taskid == 10): str +=  'Brunch Dish Manager'
     elif (taskid == 11): str +=  'Brunch First Dish'
     elif (taskid == 12): str += 'Brunch Second Dish'
-    elif (taskid == 13): str +=  'CJL Swipe'
+    # elif (taskid == 13): str +=  'CJL Swipe'
     return str
 
 #-----------------------------------------------------------------------
@@ -648,7 +663,9 @@ def timeConvert(time):
         if hour > 12:
             hour -= 12
         # print(hour)
-        return str(hour) + ':' + separated[1]
+            return str(hour) + ':' + separated[1] + ' PM'
+        else:
+            return str(hour) + ':' + separated[1] + ' AM'
     except:
         print('error converting to 12-hour time')
         pass
@@ -709,8 +726,7 @@ def shiftDetails():
         dateFormatted = dateObject.strftime("%m/%d")
         html = '<strong>Date: </strong>' + dateConvert(dateFormatted) + '<br>'
         # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
-        html = '<strong>Date: </strong>' + dateFormatted + '<br>'
-        html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
+        html += '<strong>Shift ID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + timeConvert(shift.getStart()[0:5]) + '<br>'
@@ -875,7 +891,7 @@ def noShow():
     html += "<button class=\"btn btn-danger btn-sm undoNoShow\" netid = \"" + netid + "\" "
     html += " href=\"/undoNoShow?netid=" + netid + "&shiftid=" + shift_id
     html += "\" id = \"" + netid + "button\">no show</button> "
-    html += " </span><br>"
+    html += " </span>"
 
     # if successful:
     #     html += "<span id = \"noshow" + noShow.getNetID() + "\" >"
@@ -1040,7 +1056,7 @@ def idToStr(shiftStr):
     elif (taskid == 10): str +=  'Brunch Dish Manager'
     elif (taskid == 11): str +=  'Brunch First Dish'
     elif (taskid == 12): str += 'Brunch Second Dish'
-    elif (taskid == 13): str +=  'CJL Swipe'
+    # elif (taskid == 13): str +=  'CJL Swipe'
     return str
 
 #-----------------------------------------------------------------------
@@ -1095,7 +1111,7 @@ def employeeShiftDetails():
             day = idToDay(str(shift))
             taskid = shift[2]
             html += "<li class=\"list-group-item\">" + idToStr(str(shift)) + "&nbsp&nbsp&nbsp&nbsp"
-            html += "<a class = \"btn  btn-info btn-sm \" href = \"/unassign?day=" + day
+            html += "<a class = \"btn  btn-info btn-sm unassign\" href = \"/unassign?day=" + day
             html += "&taskid="+taskid+"&netid=" + employee.getNetID()+  "\""
             html += "style=\"font-size:13px\"> unassign </a> </li>"
             # print(html)
@@ -1248,10 +1264,10 @@ def allHours():
     html += "<th> First Name </th>"
     html += "<th> Last Name </th>"
     html += "<th> Hours </th>"
-    html += "<th> SubIn </th>"
-    html += "<th> SubOut </th>"
-    html += "<th> WalkOns </th>"
-    html += "<th> NoShows </th>"
+    html += "<th> Total Sub-Ins </th>"
+    html += "<th> Total Sub-Outs </th>"
+    html += "<th> Total Walk-Ons </th>"
+    html += "<th> Total No-Shows </th>"
     html  += "</tr>"
     for employee in  employees:
         html += "<tr>"
@@ -1267,6 +1283,30 @@ def allHours():
 
     # response = make_response('')
     # return location.reload()
+
+#-----------------------------------------------------------------------
+@app.route('/resetStatsLink', methods=['GET'])
+def resetStats():
+
+    my_netid = request.cookies.get('netid')
+    if my_netid is None:
+        my_netid = ''
+
+    try:
+        database = Database()
+        database.connect()
+        if not database.isCoordinator(my_netid):
+            database.disconnect()
+            return redirect(url_for('noPermissions'))
+        database.resetStats()
+        database.disconnect()
+    except Exception as e:
+        errorMsg = e
+        html = 'failed'
+
+    html = 'success'
+    response = make_response(html)
+    return response
 
 #-----------------------------------------------------------------------
 

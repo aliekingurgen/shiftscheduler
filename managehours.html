@@ -89,6 +89,9 @@
       <li class="nav-item">
         <a class="nav-link active" href="/managehours" style="font-size:18px">Hours</a>
       </li>
+			<li class="nav-item">
+				<a class="nav-link" href="/reset" style="font-size:18px">Reset</a>
+			</li>
     </ul>
   </div>
 </nav>
@@ -109,7 +112,8 @@
 			<div class = "col-6">
 				<p class="text-secondary">Selecting a period below will generate a report below of all
 				employees and their hours in the given period, inclusive of the start date
-				but exclusive of the end date.</p>
+				but exclusive of the end date. It will also show the total numbers of sub-ins,
+				sub-outs, walk-ons, and no-shows over the entire semester.</p>
 				<div class="form-group">
 					<label><strong>Start Date</strong></label>
 					<input type="date" id="startDate" max="3000-12-31" min="1000-01-01" class="form-control">
@@ -148,8 +152,6 @@
 		<span class="text-muted">&copy; <a class = "text-dark" href="/team">The ShiftScheduler Team</a> 2020</span>
 	</div>
 </footer>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
 <script>
 

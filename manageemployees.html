@@ -86,6 +86,9 @@
       <li class="nav-item">
         <a class="nav-link" href="/managehours" style="font-size:18px">Hours</a>
       </li>
+			<li class="nav-item">
+				<a class="nav-link" href="/reset" style="font-size:18px">Reset</a>
+			</li>
     </ul>
   </div>
 </nav>
@@ -219,6 +222,7 @@
 <script>
 function insertEmployee() {
 	$('#add-button').on('click',function() {
+		$('#add-text').attr('class','text-danger');
 		$(this).attr('disabled', true);
 		var firstname = $('#firstName').val();
 		if (firstname == '') {
@@ -262,10 +266,15 @@ function insertEmployee() {
 		}
 		var url = "/insertEmployee?employeenetid=" + netid + "&firstname=" + firstNameLink;
 		url +=  "&lastname=" + lastNameLink + "&manager=" + manager;
-		$('#add-text').load(url);
-			 setTimeout(function(){
-			window.location.reload()
-		},1000);
+		$('#add-text').load(url, function(responseTxt, statusTxt, xhr){
+			if(responseTxt == (netid + ' was successfully added!')) {
+				$('#add-text').attr('class','text-info');
+				console.log('success');
+				setTimeout(function(){
+					window.location.reload()
+				},1000);
+			}
+		});
 
 		// $('#add-employee').val('');
 		// $('#firstName').val('');
@@ -275,6 +284,7 @@ function insertEmployee() {
 }
 
 function removeEmployee() {
+	$('#remove-text').attr('class','text-danger');
 	$('#no-button').on('click',function() {
 		$('#modal').modal('hide');
 	});
@@ -303,6 +313,7 @@ function removeEmployee() {
 		// console.log(url);
 		$('#remove-text').load(url, function(responseTxt, statusTxt, xhr){
 			if(responseTxt == (netid + ' was successfully removed!')) {
+				$('#remove-text').attr('class','text-info');
 				console.log('success');
 				setTimeout(function(){
 					window.location.reload()
