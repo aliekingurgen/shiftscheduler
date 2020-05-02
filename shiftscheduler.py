@@ -714,16 +714,15 @@ def shiftDetails():
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + timeConvert(shift.getStart()[0:5]) + '<br>'
-        html += '<strong>End: </strong>' + timeConvert(shift.getEnd()[0:5])
+        html += '<strong>End: </strong>' + timeConvert(shift.getEnd()[0:5]) + '<br>'
         # can get rid of the second condition once numEmployees fixed?
         print(employees)
         print(numEmployees)
         if len(employees) != 0:
-            html += '<br><strong>Working: </strong><br>'
+            html += '<strong>Working: </strong><br>'
             for i in range(len(employees)):
                 html += employees[i]
-                if i != len(employees) - 1:
-                    html += "<br>"
+                html += "<br>"
             # html += '<br><strong>Current Number Working: </strong>' + str(numEmployees) + '<br>'
         walkOns = database.walkOnsInShift(shift_id)
 
@@ -811,7 +810,7 @@ def shiftDetailsCoordinator():
                 html += " </span><br>"
         noShows = database.noShowsInShift(shift_id)
         if (len(employees) == 0) and (len(noShows) != 0):
-                html += '<br><strong>Working: </strong><br>'
+                html += '<strong>Working: </strong><br>'
         for noShow in noShows:
             print('no show: ' + noShow.getNetID())
             html += "<br>"
