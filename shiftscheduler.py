@@ -728,7 +728,7 @@ def shiftDetails():
         walkOns = database.walkOnsInShift(shift_id)
 
         workingNo = len(employees) + len(walkOns)
-        html += '<br><strong>Current Number Working: </strong>' + str(workingNo) + '<br>'
+        # html += '<br><strong>Current Number Working: </strong>' + str(workingNo) + '<br>'
 
         if len(walkOns) != 0:
             html += "<strong> Walk-Ons: </strong>"
@@ -827,7 +827,7 @@ def shiftDetailsCoordinator():
         walkOns = database.walkOnsInShift(shift_id)
 
         workingNo = len(employees) + len(walkOns)
-        html += '<br><strong>Current Number Working: </strong>' + str(workingNo) + '<br>'
+        # html += '<br><strong>Current Number Working: </strong>' + str(workingNo) + '<br>'
 
         if len(walkOns) != 0:
             html += "<strong> Walk-Ons: </strong>"
