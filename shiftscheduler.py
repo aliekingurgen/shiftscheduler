@@ -710,7 +710,7 @@ def shiftDetails():
         dateObject = date.fromisoformat(shiftDate)
         dateFormatted = dateObject.strftime("%m/%d")
         html = '<strong>Date: </strong>' + dateFormatted + '<br>'
-        # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
+        html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'

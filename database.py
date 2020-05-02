@@ -1507,6 +1507,71 @@ class Database:
             print(error)
             return False
 
+
+    def undoNoShow(self, shiftid, netid):
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+
+            # Check if netid exists
+            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
+            cur.execute(QUERY_STRING, (netid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Employee does not exist.')
+                cur.close()
+                return False
+
+            # Check if shiftid exists
+            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+
+            row = cur.fetchone()
+            if row is None:
+                print('Shift does not exist.')
+                cur.close()
+                return False
+
+            # Check if netid is already on noshow table for this shift
+            QUERY_STRING = 'SELECT * FROM noshows where shift_id=%s AND netid=%s'
+            cur.execute(QUERY_STRING, (shiftid, netid))
+            row = cur.fetchone()
+            if row is None:
+                print('Noshow pairing does not exist')
+                cur.close()
+                return False
+
+            # Remove noshow from noshows table
+            QUERY_STRING = 'DELETE FROM noshows WHERE netid = %s AND shift_id = %s'
+            cur.execute(QUERY_STRING, (netid, shiftid))
+            self._conn.commit()
+            print('Removed no-show: ' + netid + ' ' + str(shiftid))
+
+            # Decrement netid's noshows by 1
+            QUERY_STRING = 'UPDATE employees SET noshows = noshows - 1 WHERE netid=%s'
+            cur.execute(QUERY_STRING, (netid,))
+            self._conn.commit()
+            print('Updated noshows number')
+
+            #  shift pairing from shift_assign
+            QUERY_STRING = 'INSERT INTO noshows(netid, shift_id) VALUES (%s, %s)'
+            cur.execute(QUERY_STRING, (netid, shiftid))
+            self._conn.commit()
+            print('Added assignment pairing to shift_assign')
+
+            print('No-show is committed.')
+            cur.close()
+            return True
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print('No-show removal rolled back.')
+            cur.close()
+            print(error)
+            return False
+        
+
     #-----------------------------------------------------------------------
 
     def noShowsInShift(self, shiftid):
@@ -2006,9 +2071,6 @@ if __name__ == '__main__':
     # Test addWalkOn ***** WORKS
     database.addWalkOn(440, 'agurgen')
 
-    # Test addNoShow ***** WORKS
-    #database.addNoShow(440, 'agurgen')
-
     # Test employeeObjectsInShift
     employees = database.employeeObjectsInShift(400)
     for employee in employees:
@@ -2050,10 +2112,15 @@ if __name__ == '__main__':
     
     # Test assignShift after conflict checking ***** WORKS
     print(database.assignShift('agurgen', 568))
-    '''
+    
     # Test populateForPeriod ***** WORKS
     start = "2020-04-27"
     end = "2020-05-24"
     print(database.populateForPeriod(start, end))
+    '''
+
+    # Test addNoShow and undoNoShow ***** WORKS
+    database.addNoShow(440, 'agurgen')
+    database.undoNoShow(440, 'agurgen')
 
     database.disconnect()
