@@ -64,8 +64,8 @@ class Database:
             cur.close()
             return shift
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
+            return False
 
     #-----------------------------------------------------------------------
 
@@ -87,8 +87,8 @@ class Database:
             cur.close()
             return shift
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
+            return False
 
     #-----------------------------------------------------------------------
 
@@ -126,7 +126,7 @@ class Database:
                 self._conn.commit()
 
                 # decrement # of subins of the employee
-                QUERY_STRING = 'UPDATE employees SET subins = subins - 1 WHERE netid=%s'
+                QUERY_STRING = 'UPDATE employees SET subins = subins - 1 WHERE netid=%s AND subins > 0'
                 cur.execute(QUERY_STRING, (netid,))
                 self._conn.commit()
 
@@ -152,7 +152,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Sub request rolled back.')
-            cur.close()
             print(error)
             return False
 
@@ -197,7 +196,7 @@ class Database:
                 self._conn.commit()
 
                 # decrement # of subouts of the employee
-                QUERY_STRING = 'UPDATE employees SET subouts = subouts - 1 WHERE netid=%s'
+                QUERY_STRING = 'UPDATE employees SET subouts = subouts - 1 WHERE netid=%s AND subouts > 0'
                 cur.execute(QUERY_STRING, (netid,))
                 self._conn.commit()
 
@@ -659,7 +658,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not add the regular shift.')
-            cur.close()
             print(error)
             return False
 
@@ -724,7 +722,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not remove the regular shift.')
-            cur.close()
             print(error)
             return False
 
@@ -833,7 +830,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not populate shift_info table.')
-            cur.close()
             print(error)
             return False
 
@@ -887,8 +883,8 @@ class Database:
             return employee
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
+            return False
 
     #-----------------------------------------------------------------------
 
@@ -910,7 +906,6 @@ class Database:
             employeeListSorted = sorted(employeeList, key=lambda x: x._first_name.lower())
             return employeeListSorted
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -947,7 +942,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not add the employee.')
-            cur.close()
             print(error)
             return False
 
@@ -981,7 +975,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not remove the employee.')
-            cur.close()
             print(error)
             return False
 
@@ -1062,7 +1055,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not assign the shift to employee.')
-            cur.close()
             print(error)
             return False
 
@@ -1137,7 +1129,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Could not unassign the shift to employee.')
-            cur.close()
             print(error)
             return False
 
@@ -1198,7 +1189,6 @@ class Database:
             return employeeFullNames
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1259,7 +1249,6 @@ class Database:
             return employeeLObjectsSorted
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1285,7 +1274,6 @@ class Database:
                 return row[0]
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1309,7 +1297,6 @@ class Database:
                 return True
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1333,7 +1320,6 @@ class Database:
                 return True
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1355,7 +1341,6 @@ class Database:
             return emailList
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1438,7 +1423,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Walk-on rolled back.')
-            cur.close()
             print(error)
             return False
 
@@ -1503,7 +1487,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('No-show rolled back.')
-            cur.close()
             print(error)
             return False
 
@@ -1551,7 +1534,7 @@ class Database:
             print('Removed no-show: ' + netid + ' ' + str(shiftid))
 
             # Decrement netid's noshows by 1
-            QUERY_STRING = 'UPDATE employees SET noshows = noshows - 1 WHERE netid=%s'
+            QUERY_STRING = 'UPDATE employees SET noshows = noshows - 1 WHERE netid=%s AND noshows > 0'
             cur.execute(QUERY_STRING, (netid,))
             self._conn.commit()
             print('Updated noshows number')
@@ -1569,7 +1552,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('No-show removal rolled back.')
-            cur.close()
             print(error)
             return False
 
@@ -1619,7 +1601,6 @@ class Database:
             return employeeLObjectsSorted
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1669,7 +1650,6 @@ class Database:
             return employeeLObjectsSorted
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1699,7 +1679,6 @@ class Database:
             return employeeObj
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1735,7 +1714,6 @@ class Database:
             return numOfHours
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1760,7 +1738,6 @@ class Database:
             return self.getTaskHours(taskid)
 
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
             print(error)
             return False
 
@@ -1844,7 +1821,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Hour update rolled back.')
-            cur.close()
             print(error)
             return False
 
@@ -1929,7 +1905,6 @@ class Database:
         except (Exception, psycopg2.DatabaseError) as error:
             self._conn.rollback()
             print('Hour update rolled back.')
-            cur.close()
             print(error)
             return False
 
@@ -1962,6 +1937,24 @@ class Database:
             print(error)
             return False
 
+    #-----------------------------------------------------------------------
+
+    def resetStatsForEmployees(self):
+        try:
+            #create a cursor
+            cur = self._conn.cursor()
+
+            QUERY_STRING = 'UPDATE employees SET subins=0, subouts=0, walkons=0, noshows=0'
+            cur.execute(QUERY_STRING)
+            self._conn.commit()
+            print("Reset subins/subouts/walkons/noshows for all employees")
+            cur.close()
+            return True
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            self._conn.rollback()
+            print(error)
+            return False
 
 # -----------------------------------------------------------------------
 
@@ -2118,10 +2111,13 @@ if __name__ == '__main__':
     start = "2020-04-27"
     end = "2020-05-24"
     print(database.populateForPeriod(start, end))
-    '''
-
+    
     # Test addNoShow and undoNoShow ***** WORKS
     database.addNoShow(440, 'agurgen')
     database.undoNoShow(440, 'agurgen')
+    '''
+
+    # Test resetStatsForEmployees ***** WORKS
+    database.resetStatsForEmployees()
 
     database.disconnect()
