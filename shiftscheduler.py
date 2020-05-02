@@ -333,6 +333,18 @@ def reset():
     if netid is None:
         netid = ''
 
+    try:
+        database = Database()
+        database.connect()
+    except Exception as e:
+        errorMsg = e
+
+    if not database.isCoordinator(netid):
+        database.disconnect()
+        return redirect(url_for('noPermissions'))
+
+    database.disconnect()
+
     html = render_template('reset.html',
                            netid=netid)
     response = make_response(html)
