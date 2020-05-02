@@ -792,13 +792,13 @@ def shiftDetailsCoordinator():
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + timeConvert(shift.getStart()[0:5]) + '<br>'
-        html += '<strong>End: </strong>' + timeConvert(shift.getEnd()[0:5])
+        html += '<strong>End: </strong>' + timeConvert(shift.getEnd()[0:5]) + '<br>'
         # can get rid of the second condition once numEmployees fixed?
         print(employees)
         print(numEmployees)
         # if numEmployees != 0 and numEmployees == len(employees):
         if len(employees) != 0:
-            html += '<br><strong>Working: </strong><br>'
+            html += '<strong>Working: </strong><br>'
             for i in range(len(employees)):
                 print('working:' + employees[i].getNetID())
                 html += "<br>"
@@ -810,10 +810,10 @@ def shiftDetailsCoordinator():
                 html += "\" id = \"" + employees[i].getNetID() + "button\">mark no show</button> "
                 html += " </span><br>"
         noShows = database.noShowsInShift(shift_id)
+        if (len(employees) == 0) and (len(noShows) != 0):
+                html += '<br><strong>Working: </strong><br>'
         for noShow in noShows:
             print('no show: ' + noShow.getNetID())
-            if len(employees) == 0:
-                html += '<br><strong>Working: </strong><br>'
             html += "<br>"
             html += noShow.getFirstName() + " " + noShow.getLastName()
             html += "&nbsp&nbsp&nbsp"
