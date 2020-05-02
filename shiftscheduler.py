@@ -707,13 +707,10 @@ def shiftDetails():
         numEmployees = database.numberOfEmployeesInShift(shift_id)
         dateObject = date.fromisoformat(shiftDate)
         dateFormatted = dateObject.strftime("%m/%d")
-<<<<<<< HEAD
         html = '<strong>Date: </strong>' + dateConvert(dateFormatted) + '<br>'
         # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
-=======
         html = '<strong>Date: </strong>' + dateFormatted + '<br>'
         html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
->>>>>>> f8d7352f30658f9e63cc567e0972ad5e8112cccc
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + timeConvert(shift.getStart()[0:5]) + '<br>'
