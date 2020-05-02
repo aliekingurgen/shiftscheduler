@@ -37,7 +37,7 @@ def mail_it(date, shiftStr):
     # print("hello email")
     msg = Message("[ShiftScheduler] " + date + " Sub Request",
                   sender=("Shift Scheduler", "shiftscheduler@princeton.edu"),
-                  recipients=["ortaoglu@princeton.edu","agurgen@princeton.edu", "cz10@princeton.edu", "trt2@princeton.edu"])
+                  recipients=["ortaoglu@princeton.edu","agurgen@princeton.edu", "cz10@princeton.edu", "trt2@princeton.edu","mnagdee@princeton.edu"])
     # msg.body = "A sub was requested for" + shiftStr
     msg.html = "<h3> Sub Request: " + shiftStr + "</h3>"
     msg.html += "<div>Please visit your <a href=shiftscheduler.herokuapp.com/employee>calendar</a>"
