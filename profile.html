@@ -38,11 +38,11 @@
 }
 </style>
 
-<!-- Navbar -->
 <body id="body" class="text-center">
+  <!-- Navbar -->
   <nav class="navbar navbar-expand navbar-light bg-light">
     <div class="container">
-      <a class="navbar-brand" href="/index">ShiftScheduler
+      <a class="navbar-brand" href="/index" style="font-size:25px">ShiftScheduler
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,7 @@
       <ul class="navbar-nav">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false"> {{netid}} </a>
+          aria-haspopup="true" aria-expanded="false" style="font-size:18px"> {{netid}} </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="/profile">Profile</a>
             <a class="dropdown-item" href="/logout">Log Out</a>
@@ -65,29 +65,29 @@
 </nav>
 
 <main role="main">
-  <div class="container col-4" style = "font-size:20px">
+  <div class="container col-4" style="font-size:20px">
     <br>
-    <div class="card bg-light">
+    <br>
+    <br>
+    <br>
+    <div class="card bg-light text-center">
       <div class="card-body">
-    <strong>NetID:</strong> {{netid}}
-    <br>
-    <strong>Name:</strong> {{name}}
-    <br>
-    <strong>Position:</strong> {{position}}
-    <br>
-    <strong>Hours this Pay Period:</strong> {{hours}}
-    <br>
-    <strong>Regular Shifts:</strong>
-    <ul id="regularShifts" style="text-align:left; list-style:inside"></ul> <input type="hidden" id="myStrShifts"></input>
-    <p style="text-align:center">
-    Return to
-    <a class="text-info" href="/employee">your calendar</a>.
-  </p>
-</div>
-</div>
+        <strong>NetID:</strong> {{netid}}
+        <br>
+        <strong>Name:</strong> {{name}}
+        <br>
+        <strong>Position:</strong> {{position}}
+        <br>
+        <strong>Hours this Pay Period:</strong> {{hours}}
+        <br>
+        <strong>Regular Shifts:</strong>
+        <ul id="regularShifts" style="text-align:left; list-style:inside"></ul> <input type="hidden" id="myStrShifts"></input>
+        <hr>
+        <a href="/employee" role="button" type="button" class="btn btn-outline-info">Back to Employee Calendar</a>
+      </div>
+    </div>
   </div>
 </main>
-
 
 <footer class="footer">
   <div class="container">
@@ -97,7 +97,7 @@
 
 <script>
 function getShifts() {
-  console.log('hello');
+  // console.log('hello');
   var shiftString = '';
   url = '/regularShifts'
   $('#myStrShifts').load(url, function(responseTxt, statusTxt, xhr){

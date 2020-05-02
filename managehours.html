@@ -94,55 +94,53 @@
 </nav>
 
 <main role="main">
+
 	<br>
+
 	<div class="container">
 		<div class="row align-items-center">
 			<div class = "col-12">
-				<h1>Employee Hours:</h1>
+				<h3>Employee Hours Report:</h3>
 			</div>
 		</div>
 		<div class="row align-items-center">
+			<div class = "col-3">
+			</div>
 			<div class = "col-6">
+				<p class="text-secondary">Selecting a period below will generate a report below of all
+				employees and their hours in the given period, inclusive of the start date
+				but exclusive of the end date.</p>
 				<div class="form-group">
-					<label>Start Date</label>
+					<label><strong>Start Date</strong></label>
 					<input type="date" id="startDate" max="3000-12-31" min="1000-01-01" class="form-control">
 				</div>
 				<div class="form-group">
-					<label>End Date</label>
+					<label><strong>End Date</strong></label>
 					<input type="date" id="endDate" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
 				</div>
-				<button type="button" id="submit" class="btn btn-secondary">Update All Employee Hours for Selected Period</button>
+				<button type="button" id="submit" class="btn btn-secondary">Generate Report for Selected Period</button>
 				<br>
-				<div id = "loading"></div>
+				<br>
+				<div id="loading-text" class="text-danger"></div>
 			</div>
-			<div class="col-6">
-				<div id="hours" style="text-align:left">
-					Selecting a period on the left will generate a report below of all
-					employees and their hours in the given period. Start date is included
-					in the report, but the end date is excluded from the report.
-				</div>
+			<div class="col-3">
+			</div>
+
 			</div>
 		</div>
 	</div>
+
 	<br>
 	<br>
-	<div id = "report" class = "container" >
-		<span id = "reportArea"> </span>
+
+	<div id="report" class="container">
+		<span id="reportArea"> </span>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
 	</div>
-	<!-- <div class="container">
-	<div class="row">
-	<div class='col-sm-6'>
-	<div class="form-group">
-	<div class='input-group date' id='datetimepicker1'>
-	<input type='text' class="form-control" />
-	<span class="input-group-addon">
-	<span class="glyphicon glyphicon-calendar"></span>
-</span>
-</div>
-</div>
-</div>
-</div>
-</div> -->
 </main>
 
 <footer class="footer">
@@ -157,26 +155,45 @@
 
 function getDates() {
 	$('#submit').on('click', function() {
-		$("#loading").text("Loading...");
+		$("#loading-text").attr('class', '')
+		$("#loading-text").text("Loading...");
 		$("#reportArea").html('');
 		startDate = $('#startDate').val();
 		endDate = $('#endDate').val();
 		console.log(startDate);
 		console.log(endDate);
 		if (startDate == '') {
-			$("#loading").text("Please enter a start date.");
+			$("#loading-text").attr('class', 'text-danger')
+			$("#loading-text").text("Please enter a start date.");
 		}
 		else if (endDate == '') {
-			$("#loading").text("Please enter an end date.");
+			$("#loading-text").attr('class', 'text-danger')
+			$("#loading-text").text("Please enter an end date.");
+		}
+		else if (start < end) {
+			var start = new Date(startDate);
+			var end = new Date(endDate);
+			console.log(start);
+			console.log(end);
 		}
 		else {
+			var start = new Date(startDate);
+			var end = new Date(endDate);
+			console.log(start);
+			console.log(end);
+			if (start > end) {
+				$("#loading-text").attr('class', 'text-danger')
+				$("#loading-text").text("Start date must be before end date.");
+				return;
+			}
 			url = '/allhours?startDate=' + startDate + '&endDate=' + endDate
 			request = $.ajax(
 				{
 					type: "GET",
 					url: url,
 					success: function(data) {
-						$("#loading").text("Report Generated");
+						$("#loading-text").attr('class', '')
+						$("#loading-text").text("Report Generated");
 						$("#reportArea").html(data);
 					}
 				}

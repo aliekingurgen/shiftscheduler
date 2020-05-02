@@ -36,7 +36,7 @@ def landing():
 def login():
 
     netid = CASClient().authenticate().strip()
-    print("netid: " + netid)
+    print("net id: " + netid)
     try:
         database = Database()
         database.connect()
@@ -138,34 +138,6 @@ def employee():
     response = make_response(html)
     response.set_cookie('netid', netid)
     return response
-
-# #-----------------------------------------------------------------------
-#
-# @app.route('/calendar', methods=['GET'])
-# def calendar():
-#
-#     netid = request.cookies.get('netid')
-#     if netid is None:
-#         netid = ''
-#
-#     errorMsg = request.args.get('errorMsg')
-#     if errorMsg is None:
-#         errorMsg = ''
-#
-#     monday = request.args.get('monday')
-#     if monday is None:
-#         monday = 'today'
-#
-#     # print('monday: ' + monday)
-#
-#     html = render_template('calendar.html',
-#         netid=netid,
-#         errorMsg=errorMsg,
-#         monday=monday)
-#
-#     response = make_response(html)
-#     response.set_cookie('netid', netid)
-#     return response
 
 #-----------------------------------------------------------------------
 
@@ -449,7 +421,7 @@ def subOut():
         # print(taskidToStr(int(task_id)))
         dateObject = date.fromisoformat(shiftDate)
         print(shiftDate)
-        dateFormatted = dateObject.strftime("%m/%d")
+        dateFormatted = dateConvert(dateObject.strftime("%m/%d"))
         print(dateFormatted)
         shiftStr = dateFormatted + ' ' + taskidToStr(int(task_id))
         # print(shiftStr)
@@ -669,6 +641,32 @@ def removeEmployee():
 
 # -----------------------------------------------------------------------
 
+def timeConvert(time):
+    separated = time.split(':')
+    try:
+        hour = int(separated[0])
+        if hour > 12:
+            hour -= 12
+        # print(hour)
+        return str(hour) + ':' + separated[1]
+    except:
+        print('error converting to 12-hour time')
+        pass
+
+# -----------------------------------------------------------------------
+
+def dateConvert(date):
+    separated = date.split('/')
+    try:
+        month = int(separated[0])
+        day = int(separated[1])
+        return str(month) + '/' + str(day)
+    except:
+        print('error getting rid of 0s from date')
+        pass
+
+# -----------------------------------------------------------------------
+
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
     # date = "2020-03-23"
@@ -709,12 +707,12 @@ def shiftDetails():
         numEmployees = database.numberOfEmployeesInShift(shift_id)
         dateObject = date.fromisoformat(shiftDate)
         dateFormatted = dateObject.strftime("%m/%d")
-        html = '<strong>Date: </strong>' + dateFormatted + '<br>'
+        html = '<strong>Date: </strong>' + dateConvert(dateFormatted) + '<br>'
         # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
-        html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
-        html += '<strong>End: </strong>' + str(shift.getEnd()[0:5])
+        html += '<strong>Start: </strong>' + timeConvert(shift.getStart()[0:5]) + '<br>'
+        html += '<strong>End: </strong>' + timeConvert(shift.getEnd()[0:5])
         # can get rid of the second condition once numEmployees fixed?
         print(employees)
         print(numEmployees)
@@ -787,12 +785,12 @@ def shiftDetailsCoordinator():
         numEmployees = database.numberOfEmployeesInShift(shift_id)
         dateObject = date.fromisoformat(shift.getDate())
         dateFormatted = dateObject.strftime("%m/%d")
-        html = '<strong>Date: </strong>' + dateFormatted + '<br>'
+        html = '<strong>Date: </strong>' + dateConvert(dateFormatted) + '<br>'
         # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
-        html += '<strong>Start: </strong>' + str(shift.getStart()[0:5]) + '<br>'
-        html += '<strong>End: </strong>' + str(shift.getEnd()[0:5])
+        html += '<strong>Start: </strong>' + timeConvert(shift.getStart()[0:5]) + '<br>'
+        html += '<strong>End: </strong>' + timeConvert(shift.getEnd()[0:5])
         # can get rid of the second condition once numEmployees fixed?
         print(employees)
         print(numEmployees)
@@ -811,6 +809,8 @@ def shiftDetailsCoordinator():
                 html += " </span><br>"
         noShows = database.noShowsInShift(shift_id)
         for noShow in noShows:
+            if len(employees) == 0:
+                html += '<br><strong>Working: </strong><br>'
             html += "<br>"
             html += noShow.getFirstName() + " " + noShow.getLastName()
             html += "&nbsp&nbsp&nbsp"
@@ -1012,7 +1012,7 @@ def employeeShiftDetails():
     elif employee == 'Employee does not exist.':
         html = '<strong> Error: Employee does not exist</strong>'
     else:
-        html = '<strong>NetID:</strong> ' + employee.getNetID() + ' <br> ' + \
+        html = '<strong>Net ID:</strong> ' + employee.getNetID() + ' <br> ' + \
                 '<strong>Name:</strong> ' + employee.getFirstName() + ' ' + employee.getLastName() + ' <br> ' + \
                 '<strong>Email:</strong> ' + employee.getEmail()+ ' <br> ' + \
                 '<strong>Position:</strong> ' + employee.getPosition() + ' <br> ' + \
@@ -1068,7 +1068,7 @@ def employeeDetails():
     if employee is None:
         employee = '<strong> Error: No data to display</strong>'
     else:
-        html = '<strong>NetID:</strong> ' + employee.getNetID() + ' <br> ' + \
+        html = '<strong>Net ID:</strong> ' + employee.getNetID() + ' <br> ' + \
                 '<strong>Name:</strong> ' + employee.getFirstName() + ' ' + employee.getLastName() + ' <br> ' + \
                 '<strong>Email:</strong> ' + employee.getEmail()+ ' <br> ' + \
                 '<strong>Position:</strong> ' + employee.getPosition() + ' <br> ' + \
