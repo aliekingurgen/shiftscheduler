@@ -1513,6 +1513,7 @@ class Database:
             #create a cursor
             cur = self._conn.cursor()
 
+            '''
             # Check if netid exists
             QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
             cur.execute(QUERY_STRING, (netid,))
@@ -1532,8 +1533,9 @@ class Database:
                 print('Shift does not exist.')
                 cur.close()
                 return False
+            '''
 
-            # Check if netid is already on noshow table for this shift
+            # Check if netid is on the noshow table for this shift
             QUERY_STRING = 'SELECT * FROM noshows where shift_id=%s AND netid=%s'
             cur.execute(QUERY_STRING, (shiftid, netid))
             row = cur.fetchone()
@@ -1554,9 +1556,9 @@ class Database:
             self._conn.commit()
             print('Updated noshows number')
 
-            #  shift pairing from shift_assign
-            QUERY_STRING = 'INSERT INTO noshows(netid, shift_id) VALUES (%s, %s)'
-            cur.execute(QUERY_STRING, (netid, shiftid))
+            # Insert shift pairing into shift_assign
+            QUERY_STRING = 'INSERT INTO shift_assign(shift_id, netid) VALUES (%s, %s)'
+            cur.execute(QUERY_STRING, (shiftid, netid))
             self._conn.commit()
             print('Added assignment pairing to shift_assign')
 
@@ -1570,7 +1572,6 @@ class Database:
             cur.close()
             print(error)
             return False
-
 
     #-----------------------------------------------------------------------
 
