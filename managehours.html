@@ -193,7 +193,8 @@ function getDates() {
 					url: url,
 					success: function(data) {
 						$("#loading-text").attr('class', '')
-						$("#loading-text").text("Report Generated");
+						$("#loading-text").text('');
+						// $("#loading-text").text("Report Generated");
 						$("#reportArea").html(data);
 					}
 				}
