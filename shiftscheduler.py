@@ -439,6 +439,8 @@ def subOut():
         return redirect(url_for('noPermissions'))
 
     successful = database.subOut(netid, shiftDate, task_id)
+    # emailList = database.getAllEmails()
+    emailList = ["ortaoglu@princeton.edu","agurgen@princeton.edu", "cz10@princeton.edu", "trt2@princeton.edu"]
     database.disconnect()
 
     if successful:
@@ -452,7 +454,7 @@ def subOut():
         print(dateFormatted)
         shiftStr = dateFormatted + ' ' + taskidToStr(int(task_id))
         # print(shiftStr)
-        mail_it(dateFormatted, shiftStr)
+        print(mail_it(dateFormatted, shiftStr, emailList))
     else:
         html = "Sub-Out not successful. Please try again."
 
@@ -483,8 +485,10 @@ def myShifts():
         database.disconnect()
         return redirect(url_for('noPermissions'))
     shifts = database.myShifts(netid, mon)
+
     # for shift in shifts:
-    #    print("HEYO" + shift)
+    #    print("shift: " + shift)
+    
     database.disconnect()
     return jsonify(shifts)
 
@@ -1007,15 +1011,18 @@ def walkOn():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-
     shift = database.shiftDetails(date, task_id)
     shift_id = shift.getShiftID()
 
     successful = database.addWalkOn(shift_id, netid)
 
+    html = ''
     if successful:
+        walkOns = database.walkOnsInShift(shift_id)
+        if len(walkOns) == 1:
+            html += "<strong> Walk-Ons: </strong>"
         employeeObj = database.getEmployeeObject(netid)
-        html = "<br>" + employeeObj.getFirstName() + " " + employeeObj.getLastName()
+        html += "<br>" + employeeObj.getFirstName() + " " + employeeObj.getLastName()
     else:
         html = "failed"
     database.disconnect()
