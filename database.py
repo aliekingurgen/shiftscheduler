@@ -1370,6 +1370,18 @@ class Database:
             #create a cursor
             cur = self._conn.cursor()
 
+            # Make sure that walk on is from a past date
+            QUERY_STRING = 'SELECT date FROM shift_info WHERE shift_id = %s'
+            cur.execute(QUERY_STRING, (shiftid,))
+            row = cur.fetchone()
+
+            dateObj = datetime.date.fromisoformat(str(row[0]))
+
+            if dateObj >= datetime.date.today():
+                print('This is a future date')
+                cur.close()
+                return "future"
+
             # Check if netid exists
             QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
             cur.execute(QUERY_STRING, (netid,))
@@ -2115,9 +2127,13 @@ if __name__ == '__main__':
     # Test addNoShow and undoNoShow ***** WORKS
     database.addNoShow(440, 'agurgen')
     database.undoNoShow(440, 'agurgen')
-    '''
-
+    
     # Test resetStatsForEmployees ***** WORKS
     database.resetStatsForEmployees()
+
+    '''
+
+    # Test new addWalkOn ***** WORKS
+    database.addWalkOn(724, 'agurgen')
 
     database.disconnect()
