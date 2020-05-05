@@ -106,7 +106,7 @@ def index():
 @app.route('/employee', methods=['GET'])
 def employee():
 
-    netid = request.cookies.get('netid')
+    netid = CASClient().authenticate().strip()
     if netid is None:
         netid = ''
 
@@ -488,7 +488,7 @@ def myShifts():
 
     # for shift in shifts:
     #    print("shift: " + shift)
-    
+
     database.disconnect()
     return jsonify(shifts)
 
@@ -741,8 +741,7 @@ def shiftDetails():
         dateObject = date.fromisoformat(shiftDate)
         dateFormatted = dateObject.strftime("%m/%d")
         html = '<strong>Date: </strong>' + dateConvert(dateFormatted) + '<br>'
-        # html += '<strong>ShiftID: </strong>' + str(shift.getShiftID()) + '<br>'
-        html += '<strong>Shift ID: </strong>' + str(shift.getShiftID()) + '<br>'
+        # html += '<strong>Shift ID: </strong>' + str(shift.getShiftID()) + '<br>'
         html += '<strong>Meal: </strong>' + str(shift.getMeal()) + '<br>'
         html += '<strong>Task: </strong>' + str(shift.getTask()) + '<br>'
         html += '<strong>Start: </strong>' + timeConvert(shift.getStart()[0:5]) + '<br>'
@@ -902,12 +901,16 @@ def noShow():
     successful = database.addNoShow(shift_id, netid)
     database.disconnect()
     html = ""
-    print(successful)
-    html += "<span id = \"noshow" + netid + "\" >"
-    html += "<button class=\"btn btn-danger btn-sm undoNoShow\" netid = \"" + netid + "\" "
-    html += " href=\"/undoNoShow?netid=" + netid + "&shiftid=" + shift_id
-    html += "\" id = \"" + netid + "button\">no show</button> "
-    html += " </span>"
+    if successful == 'future':
+        print(successful)
+        html += '<span class="text-danger">You cannot mark a no-show for a future shift.</span>'
+    else:
+        print(successful)
+        html += "<span id = \"noshow" + netid + "\" >"
+        html += "<button class=\"btn btn-danger btn-sm undoNoShow\" netid = \"" + netid + "\" "
+        html += " href=\"/undoNoShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" id = \"" + netid + "button\">no show</button> "
+        html += " </span>"
 
     # if successful:
     #     html += "<span id = \"noshow" + noShow.getNetID() + "\" >"
@@ -958,7 +961,10 @@ def undoNoShow():
     successful = database.undoNoShow(shift_id, netid)
     database.disconnect()
     html = ""
-    if successful:
+    if successful == 'future':
+        print(successful)
+        html += '<span class="text-danger">You cannot undo a no-show to a future shift.</span>'
+    elif successful:
         html += "<span id = \"noshow" + netid + "\" >"
         html += "<button class=\"btn btn-secondary btn-sm noShow\" netid = \"" + netid + "\" "
         html += "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
@@ -1017,7 +1023,11 @@ def walkOn():
     successful = database.addWalkOn(shift_id, netid)
 
     html = ''
-    if successful:
+    if successful == 'future':
+        print(successful)
+        # html += '<br><br><span class="text-danger">You cannot walk-on to a future shift.</span>'
+        html += 'future'
+    elif successful:
         walkOns = database.walkOnsInShift(shift_id)
         if len(walkOns) == 1:
             html += "<strong> Walk-Ons: </strong>"
