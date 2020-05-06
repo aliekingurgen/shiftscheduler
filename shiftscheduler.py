@@ -837,7 +837,12 @@ def shiftDetailsCoordinator():
                 html += "<span id = \"noshow"  + employees[i].getNetID() + "\" >"
                 html += "<button class=\"btn btn-secondary btn-sm noShow\" netid = \"" + employees[i].getNetID() + "\" "
                 html += "href = \"/noShow?netid=" + employees[i].getNetID() + "&shiftid=" + shift_id
-                html += "\" id = \"" + employees[i].getNetID() + "button\">mark no show</button> "
+                print(date.today())
+                print(dateObject)
+                if date.today() < dateObject:
+                    html += "\" id = \"" + employees[i].getNetID() + "button\" disabled>mark no show</button> "
+                else:
+                    html += "\" id = \"" + employees[i].getNetID() + "button\">mark no show</button> "
                 html += " </span><br>"
         noShows = database.noShowsInShift(shift_id)
         if (len(employees) == 0) and (len(noShows) != 0):
@@ -903,7 +908,12 @@ def noShow():
     html = ""
     if successful == 'future':
         print(successful)
-        html += '<span class="text-danger">You cannot mark a no-show for a future shift.</span>'
+        html += "<span id = \"noshow" + netid + "\" >"
+        html += "<button class=\"btn btn-secondary btn-sm noShow\" netid = \"" + netid + "\" "
+        html += "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
+        html += "\" id = \"" + netid + "button\">not possible for a future shift</button> "
+        html += " </span>"
+        # html += '<span class="text-danger">You cannot mark a no-show to a future shift.</span>'
     else:
         print(successful)
         html += "<span id = \"noshow" + netid + "\" >"

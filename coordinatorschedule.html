@@ -558,6 +558,15 @@ function getModalData(mon) {
     var modalId = $(this).attr('data-target');
 
     if (modalId == '#otherShift') {
+      $("#walkOnText").html('');
+      $('#walkOnSubmit').attr('disabled', false);
+
+      console.log(date.getTime());
+      console.log(new Date().getTime());
+      today = new Date()
+      if (date.getDay() >= today.getDay() && date.getMonth() >= today.getMonth()) {
+        $('#walkOnSubmit').attr('disabled', true);
+      }
       $('#otherShiftText').load(dataURL,function() {
         console.log('here');
         $('#otherShift').modal('show');
@@ -631,6 +640,7 @@ function getModalData(mon) {
 
         $("#walkOnSubmit").on("click", function() {
           $("#walkOnSubmit").attr('disabled', true);
+          $("#walkOnText").html('');
           var walkOnNetId = $("#walkOnInput").val();
           if (walkOnNetId == '') {
             $("#walkOnText").html("<br><br>Please enter a net ID.");
@@ -656,6 +666,10 @@ function getModalData(mon) {
               $("#walkOnSubmit").attr('disabled', false);
               if (data == "failed") {
                 $("#walkOnText").html("<br><br>walkOn Request Failed. Please try again.");
+                $("#walkOnInput").val('');
+              }
+              else if (data == 'future') {
+                $('#walkOnText').html("<br><span class=\"text-danger\">You cannot add a walk-on to a future shift.</span>");
                 $("#walkOnInput").val('');
               }
               else {
@@ -689,6 +703,7 @@ function getModalData(mon) {
           // console.log($("#walkOn").text());
           $("#walkOnInput").val('');
           $('#otherShift').on('hide.bs.modal',function() {
+            $("#walkOnText").html('');
             console.log('closed');
             window.location.reload();
           });
