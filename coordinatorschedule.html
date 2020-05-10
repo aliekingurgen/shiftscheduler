@@ -564,7 +564,7 @@ function getModalData(mon) {
       console.log(date.getTime());
       console.log(new Date().getTime());
       today = new Date()
-      if (date.getDay() >= today.getDay() && date.getMonth() >= today.getMonth()) {
+      if (date.getDate() >= today.getDate() && date.getMonth() >= today.getMonth()) {
         $('#walkOnSubmit').attr('disabled', true);
       }
       $('#otherShiftText').load(dataURL,function() {
