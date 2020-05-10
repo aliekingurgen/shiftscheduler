@@ -439,8 +439,8 @@ def subOut():
         return redirect(url_for('noPermissions'))
 
     successful = database.subOut(netid, shiftDate, task_id)
-    # emailList = database.getAllEmails()
-    emailList = ["ortaoglu@princeton.edu","agurgen@princeton.edu", "cz10@princeton.edu", "trt2@princeton.edu"]
+    emailList = database.getAllEmails()
+    # emailList = ["ortaoglu@princeton.edu","agurgen@princeton.edu", "cz10@princeton.edu", "trt2@princeton.edu"]
     database.disconnect()
 
     if successful:

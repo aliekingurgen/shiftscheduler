@@ -685,7 +685,16 @@ function getModalData(mon) {
                 var url = $(this).attr("href");
                 var noShowNetID = $(this).attr("netid").trim();
                 var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-                $(this).parent("span").load(url);
+                // $(this).parent("span").load(url);
+                $(this).parent("span").load(url, function(responseTxt, statusTxt, xhr){
+                  $(".undoNoShow").on("click", function(){
+                    $(this).attr('disabled', true);
+                    var url = $(this).attr("href");
+                    var noShowNetID = $(this).attr("netid").trim();
+                    var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+                    $(this).parent("span").load(url);
+                  });
+                });
               });
               $(".undoNoShow").on("click", function(){
                 console.log('after walk on undo');
@@ -693,7 +702,16 @@ function getModalData(mon) {
                 var url = $(this).attr("href");
                 var noShowNetID = $(this).attr("netid").trim();
                 var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-                $(this).parent("span").load(url);
+                // $(this).parent("span").load(url);
+                $(this).parent("span").load(url, function(responseTxt, statusTxt, xhr){
+                  $(".noShow").on("click", function(){
+                    $(this).attr('disabled', true);
+                    var url = $(this).attr("href");
+                    var noShowNetID = $(this).attr("netid").trim();
+                    var noShowArea = '\"#noshow'  + noShowNetID + '\"';
+                    $(this).parent("span").load(url);
+                  });
+                });
               });
             }
           });
