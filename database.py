@@ -7,16 +7,13 @@
 
 from sqlite3 import connect
 from sys import stderr
-# from os import path, environ
 import os
 from shift import Shift
 from employee import Employee
 
 import psycopg2
 import datetime
-# from config import config
 from configparser import ConfigParser
-#import pandas as pd
 
 
 # -----------------------------------------------------------------------
@@ -360,70 +357,6 @@ class Database:
                 retSubs.append(retSub)
 
         return retSubs
-
-    #-----------------------------------------------------------------------
-
-    def myShiftsOldOld(self, netid):
-        try:
-            def convertDay(dayString):
-                if (dayString == 'monday'): return '0'
-                if (dayString == 'tuesday'): return '1'
-                if (dayString == 'wednesday'): return '2'
-                if (dayString == 'thursday'): return '3'
-                if (dayString == 'friday'): return '4'
-                if (dayString == 'saturday'): return '5'
-                if (dayString == 'sunday'): return '6'
-
-            cur = self._conn.cursor()
-
-            # get netid's all regular shifts
-            QUERY_STRING = 'SELECT regular_shifts.task_id, regular_shifts.dotw ' + \
-                           'FROM regular_shifts ' + \
-                           'WHERE regular_shifts.netid = %s'
-            cur.execute(QUERY_STRING, (netid,))
-
-            row = cur.fetchone()
-            regShifts = []
-            while row is not None:
-                regShift = convertDay(row[1]) + '-' + str(row[0])
-                if regShift not in regShifts:
-                    regShifts.append(regShift)
-                row = cur.fetchone()
-
-            # get netid's one time shifts
-
-            # get netid's all subbed in shifts
-            QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
-                           'FROM sub_requests WHERE sub_in_netid = %s'
-            cur.execute(QUERY_STRING, (netid,))
-            row = cur.fetchone()
-            while row is not None:
-                subbedInShift = self.shiftFromID(row[0])
-                regShift = str(datetime.date.fromisoformat(subbedInShift.getDate()).weekday()) + '-' + str(
-                    subbedInShift.getTaskID())
-                if regShift not in regShifts:
-                    regShifts.append(regShift)
-                row = cur.fetchone()
-
-            # remove netid's subbed out shifts
-            QUERY_STRING = 'SELECT sub_requests.shift_id ' + \
-                           'FROM sub_requests WHERE sub_out_netid = %s'
-            cur.execute(QUERY_STRING, (netid,))
-            rows = cur.fetchall()
-            if rows is not None:
-                for row in rows:
-                    subbedOutShift = self.shiftFromID(row[0])
-                    outShift = str(datetime.date.fromisoformat(subbedOutShift.getDate()).weekday()) + '-' + str(
-                        subbedOutShift.getTaskID())
-                    if outShift in regShifts:
-                        regShifts.remove(outShift)
-            cur.close()
-            return regShifts
-
-        except (Exception, psycopg2.DatabaseError) as error:
-            print("there is an error")
-            print(error)
-            return False
 
     #-----------------------------------------------------------------------
 
@@ -1060,7 +993,7 @@ class Database:
 
     #-----------------------------------------------------------------------
 
-    #should eventually move most of this to the database side, CJL not included, returns true if there are conflicts and false if no conflicts
+    # returns true if there are conflicts and false if no conflicts
     def _checkTaskConflicts(self, task, tasks):
         print(task)
         print(tasks)
@@ -1532,27 +1465,6 @@ class Database:
                 cur.close()
                 return "future"
 
-            '''
-            # Check if netid exists
-            QUERY_STRING = 'SELECT netid FROM employees WHERE netid = %s'
-            cur.execute(QUERY_STRING, (netid,))
-
-            row = cur.fetchone()
-            if row is None:
-                print('Employee does not exist.')
-                cur.close()
-                return False
-
-            # Check if shiftid exists
-            QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
-            cur.execute(QUERY_STRING, (shiftid,))
-
-            row = cur.fetchone()
-            if row is None:
-                print('Shift does not exist.')
-                cur.close()
-                return False
-            '''
 
             # Check if netid is on the noshow table for this shift
             QUERY_STRING = 'SELECT * FROM noshows where shift_id=%s AND netid=%s'
@@ -2155,9 +2067,14 @@ if __name__ == '__main__':
     # Test resetStatsForEmployees ***** WORKS
     database.resetStatsForEmployees()
 
-    '''
-
     # Test new addWalkOn ***** WORKS
     database.addWalkOn(724, 'agurgen')
+    
+    # Test populateForPeriod ***** WORKS
+    start = "2020-04-27"
+    end = "2020-05-24"
+    print(database.populateForPeriod(start, end))
+    '''
+
 
     database.disconnect()
