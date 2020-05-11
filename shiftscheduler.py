@@ -1337,7 +1337,10 @@ def resetStats():
         if not database.isCoordinator(my_netid):
             database.disconnect()
             return redirect(url_for('noPermissions'))
-        database.resetStats()
+        if database.resetStatsForEmployees():
+            html = 'success'
+        else:
+            html = 'failed'
         database.disconnect()
     except Exception as e:
         errorMsg = e
