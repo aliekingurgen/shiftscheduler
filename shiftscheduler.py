@@ -8,7 +8,7 @@
 from sys import argv
 from database import Database
 from sendemail import mail_it
-from time import localtime, asctime, strftime
+from time import strftime
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template, jsonify
 import json
@@ -158,10 +158,6 @@ def manageEmployees():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-    # allSubsNeeded = database.allSubNeeded()
-    # for shift in allSubsNeeded:
-    #     print(shift)
-
     employees = database.getAllEmployees()
 
     database.disconnect()
@@ -228,10 +224,6 @@ def manageShifts():
     if not database.isCoordinator(netid):
         database.disconnect()
         return redirect(url_for('noPermissions'))
-
-    # allSubsNeeded = database.allSubNeeded()
-    # for shift in allSubsNeeded:
-    #     print(shift)
 
     employees = database.getAllEmployees()
 
@@ -408,7 +400,6 @@ def taskidToStr(taskid):
     elif (taskid == 10): str +=  'Brunch Dish Manager'
     elif (taskid == 11): str +=  'Brunch First Dish'
     elif (taskid == 12): str += 'Brunch Second Dish'
-    # elif (taskid == 13): str +=  'CJL Swipe'
     return str
 
 #-----------------------------------------------------------------------
@@ -446,7 +437,6 @@ def subOut():
     if successful:
         html = "Sub-Out successful!"
         print("email being sent")
-        # print(task_id)
         # print(taskidToStr(int(task_id)))
         dateObject = date.fromisoformat(shiftDate)
         print(shiftDate)
@@ -539,7 +529,7 @@ def needSubShifts():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-    print(mon);
+    # print(mon)
     subs = database.allSubsForWeek(mon)
     database.disconnect()
 
@@ -566,7 +556,7 @@ def needSubShiftsEmployee():
         database.disconnect()
         return redirect(url_for('noPermissions'))
 
-    print(mon);
+    # print(mon)
     subs = database.allSubsForEmployee(mon, netid)
     database.disconnect()
 
@@ -702,15 +692,10 @@ def dateConvert(date):
 
 @app.route('/shiftdetails', methods=['GET'])
 def shiftDetails():
-    # date = "2020-03-23"
     netid = request.cookies.get('netid')
     if netid is None:
         netid = ''
 
-    # errorMsg = request.args.get('errorMsg')
-    # if errorMsg is None:
-    #     errorMsg = ''
-    #
     shiftDate = request.args.get('date')
     if shiftDate is None:
         shiftDate = ''
@@ -775,14 +760,9 @@ def shiftDetails():
 
 @app.route('/shiftdetailsco', methods=['GET'])
 def shiftDetailsCoordinator():
-    # date = "2020-03-23"
     my_netid = request.cookies.get('netid')
     if my_netid is None:
         my_netid = ''
-
-    # errorMsg = request.args.get('errorMsg')
-    # if errorMsg is None:
-    #     errorMsg = ''
 
     dateArg = request.args.get('date')
     if dateArg is None:
@@ -922,21 +902,6 @@ def noShow():
         html += "\" id = \"" + netid + "button\">no show</button> "
         html += " </span>"
 
-    # if successful:
-    #     html += "<span id = \"noshow" + noShow.getNetID() + "\" >"
-    #     html += "<button class=\"btn btn-danger btn-sm\" netid = \"" + noShow.getNetID() + "\" "
-    #     html += " href=\"/undoNoShow?netid=" + noShow.getNetID() + "&shiftid=" + shift_id
-    #     html += "\" id = \"" + noShow.getNetID() + "button\">no show</button> "
-    #     html += " </span><br>"
-    # else:
-    #     # because most likely if not successful it just means it's already
-    #     # been marked as no show
-    #     html += "<button class=\"btn btn-danger btn-sm noShow\"> no show </button> "
-    #     # html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
-    #     # html += "\" id = \"" + netid + "button\">mark no show</button> "
-    #     # html += "<p> try again </p>"
-    #     print(html)
-
     response = make_response(html)
     response.set_cookie('netid', my_netid)
     return response
@@ -987,10 +952,6 @@ def undoNoShow():
         html += " href=\"/undoNoShow?netid=" + netid + "&shiftid=" + shift_id
         html += "\" id = \"" + netid + "button\">no show</button> "
         html += " </span>"
-        # html += "<button class=\"btn btn-danger btn-sm noShow\"> no show </button> "
-        # html += "<button  class=\"btn btn-secondary btn-sm\" netid = " + netid + "href = \"/noShow?netid=" + netid + "&shiftid=" + shift_id
-        # html += "\" id = \"" + netid + "button\">mark no show</button> "
-        # html += "<p> try again </p>"
         print(html)
 
     response = make_response(html)
@@ -1000,7 +961,6 @@ def undoNoShow():
 #-----------------------------------------------------------------------
 @app.route('/walkOn', methods=['POST'])
 def walkOn():
-    print(" WALK ON HERE")
     my_netid = request.cookies.get('netid')
     if my_netid is None:
         my_netid = ''
@@ -1035,7 +995,6 @@ def walkOn():
     html = ''
     if successful == 'future':
         print(successful)
-        # html += '<br><br><span class="text-danger">You cannot walk-on to a future shift.</span>'
         html += 'future'
     elif successful:
         walkOns = database.walkOnsInShift(shift_id)
@@ -1095,21 +1054,15 @@ def idToStr(shiftStr):
     elif (taskid == 10): str +=  'Brunch Dish Manager'
     elif (taskid == 11): str +=  'Brunch First Dish'
     elif (taskid == 12): str += 'Brunch Second Dish'
-    # elif (taskid == 13): str +=  'CJL Swipe'
     return str
 
 #-----------------------------------------------------------------------
 @app.route('/employeeShiftDetails', methods=['GET'])
 def employeeShiftDetails():
-    # date = "2020-03-23"
     my_netid = request.cookies.get('netid')
     if my_netid is None:
         my_netid = ''
 
-    # errorMsg = request.args.get('errorMsg')
-    # if errorMsg is None:
-    #     errorMsg = ''
-    #
     netid = request.args.get('netid')
     if netid is None or netid == '':
         response = make_response('')
@@ -1143,7 +1096,6 @@ def employeeShiftDetails():
                 '<strong>Sub-Outs:</strong> ' + employee.getSubOuts() + ' <br> ' + \
                 '<strong>Walk-Ons:</strong> ' + employee.getWalkOns() + ' <br> ' + \
                 '<strong>No-Shows:</strong> ' + employee.getNoShows() + ' <br> '
-        # html = str(employee) + "<br>"
 
         html += "<ul class = \" list-group list-group-flush \" style=\"overflow-y:scroll;height:200px;font-size:13px;\" >"
         for shift in regularShifts:
@@ -1163,15 +1115,10 @@ def employeeShiftDetails():
 #-----------------------------------------------------------------------
 @app.route('/employeeDetails', methods=['GET'])
 def employeeDetails():
-    # date = "2020-03-23"
     my_netid = request.cookies.get('netid')
     if my_netid is None:
         my_netid = ''
 
-    # errorMsg = request.args.get('errorMsg')
-    # if errorMsg is None:
-    #     errorMsg = ''
-    #
     netid = request.args.get('netid')
     if netid is None:
         netid = ''
@@ -1199,7 +1146,6 @@ def employeeDetails():
                 '<strong>Sub-Outs:</strong> ' + employee.getSubOuts() + ' <br> ' + \
                 '<strong>Walk-Ons:</strong> ' + employee.getWalkOns() + ' <br> ' + \
                 '<strong>No-Shows:</strong> ' + employee.getNoShows() + ' <br> '
-        # html = str(employee) + "<br>"
 
     response = make_response(html)
     response.set_cookie('netid', my_netid)
@@ -1243,7 +1189,6 @@ def assignShift():
 
     netid = request.args.get('netid')
     shift = request.args.get("shift")
-    # shifts = data.split('_')
     result = False
     try:
         database = Database()
@@ -1255,18 +1200,9 @@ def assignShift():
         day = info[0]
         taskid = info[1]
         result = database.addRegularShift(netid, int(taskid), day)
-        # for shift in shifts:
-        #     if shift != '':
-        #         info = shift.split("-")
-        #         day = info[0]
-        #         taskid = info[1]
-        #         print(day)
-        #         print(taskid)
-        #         result = database.addRegularShift(netid, int(taskid), day)
         database.disconnect()
     except Exception as e:
         errorMsg = e
-
 
     response = make_response('')
     if result == 'already_assigned':
@@ -1315,13 +1251,9 @@ def allHours():
         html += "<td>" + employee.getSubIns() + "</td>" + "<td>" + employee.getSubOuts() + "</td>"
         html += "<td>" + employee.getWalkOns() + "</td>" + "<td>" + employee.getNoShows() + "</td>"
         html += "</tr>"
-        #
         # print(html)
     html += "</table>"
     return html
-
-    # response = make_response('')
-    # return location.reload()
 
 #-----------------------------------------------------------------------
 @app.route('/resetStatsLink', methods=['GET'])

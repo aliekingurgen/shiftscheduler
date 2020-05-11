@@ -545,14 +545,6 @@ function getModalData(mon) {
     // var iso = date.toISOString().substring(0, 10);
     console.log('modal toggled, iso= ' + iso);
 
-    // var walkOnUrl = "/walkOn?"
-    // $("#walkOnText").text('');
-    // walkOnUrl += "date=" + iso;
-    // console.log(iso);
-    // walkOnUrl += "&taskid=" + taskId;
-    // console.log(taskId);
-
-    // console.log(iso);
     dataURL += "?date=" + iso;
     dataURL += "&taskid=" + taskId;
     var modalId = $(this).attr('data-target');
@@ -605,38 +597,6 @@ function getModalData(mon) {
             });
           });
         });
-
-        // $(".noShow").on("click", function(){
-        //   var netid = $(this).attr("netid").trim();
-        //   console.log($(this).parent("span").attr('html'));
-        //   var id = $(this).attr("id");
-        //   console.log(netid);
-        //   console.log(id);
-        //   console.log('clicked');
-        //   $('#otherShift').modal('hide');
-        //   $('#areYouSureModalNoShow').modal('show');
-        //   $('#noshow-modal-text').html('Are you sure that you want to mark <strong>' + netid + '</strong> as a no-show? This action cannot be undone.');
-        //   $("#yes-button-noshow").attr('netid', netid);
-        //   $("#yes-button-noshow").attr('id', '#' + id);
-        // });
-
-        // $("#yes-button-noshow").on("click", function(){
-        //   $('#areYouSureModalNoShow').modal('hide');
-        //   $('#otherShift').modal('show');
-        //   var id = $(this).attr("id");
-        //   console.log(id);
-        //   var url = $(id).attr("href");
-        //   console.log(url);
-        //   var noShowNetID = $(id).attr("netid").trim();
-        //   console.log(noShowNetID);
-        //   var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-        //   $(id).parent("span").load(url);
-        // });
-        //
-        // $('#no-button-noshow').on('click',function() {
-        //   $('#areYouSureModalNoShow').modal('hide');
-        //   $('#otherShift').modal('show');
-        // });
 
         $("#walkOnSubmit").on("click", function() {
           $("#walkOnSubmit").attr('disabled', true);
@@ -729,62 +689,7 @@ function getModalData(mon) {
 
         // $("#walkOnInput").on("keydown", function (e) {
         //   // console.log('input');
-        //   if (e.keyCode === 13) {  //checks whether the pressed key is "Enter"
-        //     $('#walkOnInput').attr('disabled', true);
-        //     var walkOnNetId = $("#walkOnInput").val();
-        //     if (walkOnNetId == '') {
-        //       $("#walkOnText").html("<br><br>Please enter a net ID.");
-        //       $('#walkOnInput').attr('disabled', false);
-        //       return;
-        //     }
-        //     var walkOnUrl = "/walkOn?"
-        //     $("#walkOnText").text('');
-        //     walkOnUrl += "date=" + iso;
-        //     console.log(iso);
-        //     walkOnUrl += "&taskid=" + taskId;
-        //     console.log(taskId);
-        //     console.log(walkOnUrl);
-        //     walkOnUrl += "&netid=" + walkOnNetId;
-        //     // var currText = $("#walkOnText").text();
-        //     // console.log(currText);
-        //     console.log($('#otherShiftText').html());
-        //     // $('#otherShiftText').html() += 'hello';
-        //     $.ajax({
-        //       url: walkOnUrl,
-        //       type: 'POST',
-        //       success: function(data){
-        //         $('#walkOnInput').attr('disabled', false);
-        //         if (data == "failed") {
-        //           $("#walkOnText").html("<br><br>walkOn Request Failed. Please try again.");
-        //           $("#walkOnInput").val('');
-        //         }
-        //         else {
-        //           console.log(data)
-        //           curr = $('#otherShiftText').html() + data;
-        //           // console.log(curr);
-        //           $('#otherShiftText').html(curr);
-        //           $("#walkOn").val('');
-        //         }
-        //         $(".noShow").on("click", function(){
-        //           $(this).attr('disabled', true);
-        //           var url = $(this).attr("href");
-        //           var noShowNetID = $(this).attr("netid").trim();
-        //           var noShowArea = '\"#noshow'  + noShowNetID + '\"';
-        //           $(this).parent("span").load(url);
-        //         });
-        //       }
-        //     });
-        //     // $("#walkOnText").load(walkOnUrl);
-        //     // console.log(currText);
-        //     // $("#walkOnText").text(currText + '<br>' + 'netid');
-        //     // console.log($("#walkOn").text());
-        //     $("#walkOnInput").val('');
-        //     $('#otherShift').on('hide.bs.modal',function() {
-        //       console.log('closed');
-        //       window.location.reload();
-        //     });
-        //   }
-        // });
+        //   if (e.keyCode === 13) {
       });
     }
   });
@@ -793,9 +698,6 @@ function getModalData(mon) {
     $('#walkOnSubmit').off('click');
     // window.location.reload();
   });
-  // $('#otherShift').on('shown.bs.modal', function (e) {
-  //   console.log('hello');
-  // });
 }
 
 function format(mon) {

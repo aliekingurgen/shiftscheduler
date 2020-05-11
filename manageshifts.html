@@ -26,7 +26,7 @@
 	<!-- FontAwesome -->
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 	<!-- Icon -->
-  <link rel="shortcut icon" type="image/jpg" href="static/images/ssicon.png"/>
+	<link rel="shortcut icon" type="image/jpg" href="static/images/ssicon.png"/>
 </head>
 
 <style>
@@ -43,58 +43,58 @@
 
 <!-- Navbar -->
 <body id="body" class="text-center">
-  <nav class="navbar navbar-expand navbar-light bg-light">
-    <div class="container">
-      <a class="navbar-brand" href="/index" style="font-size:25px"><span class="text-info">Shift</span><span class="text-secondary">Scheduler</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon">
-      </span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false" style="font-size:18px"> {{netid}} </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+	<nav class="navbar navbar-expand navbar-light bg-light">
+		<div class="container">
+			<a class="navbar-brand" href="/index" style="font-size:25px"><span class="text-info">Shift</span><span class="text-secondary">Scheduler</span>
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon">
+			</span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav">
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false" style="font-size:18px"> {{netid}} </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="/index">Home</a>
-            <a class="dropdown-item" href="/profile">Profile</a>
-            <a class="dropdown-item" href="/logout">Log Out</a>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
+						<a class="dropdown-item" href="/profile">Profile</a>
+						<a class="dropdown-item" href="/logout">Log Out</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
 </nav>
 
 <nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
-  <!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon" ></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarText">
-    <ul class="navbar-nav mr-auto">
-      <!--      <li class="nav-item active">-->
-      <!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
-      <!--      </li>-->
-      <li class="nav-item">
-        <a class="nav-link" href="/coordinatorschedule" style="font-size:18px">Calendar</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/manageemployees" style="font-size:18px">Employees</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="/manageshifts" style="font-size:18px">Regular Shifts</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/managehours" style="font-size:18px">Calculate Hours</a>
-      </li>
+	<!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon" ></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarText">
+		<ul class="navbar-nav mr-auto">
+			<!--      <li class="nav-item active">-->
+			<!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
+			<!--      </li>-->
+			<li class="nav-item">
+				<a class="nav-link" href="/coordinatorschedule" style="font-size:18px">Calendar</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/manageemployees" style="font-size:18px">Employees</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link active" href="/manageshifts" style="font-size:18px">Regular Shifts</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/managehours" style="font-size:18px">Calculate Hours</a>
+			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="/reset" style="font-size:18px">Reset</a>
 			</li>
-    </ul>
-  </div>
+		</ul>
+	</div>
 </nav>
 
 <main role="main">
@@ -306,17 +306,9 @@ function employeeDetails() {
 	});
 }
 
-// function unassign() {
-// 	$('.unassign').on('click'), function() {
-// 		$('#unassign-text').attr('class', 'text-info');
-// 		$('#unassign-text').text('Shift was sucessfully unassigned!');
-// 	}
-// }
-
 function setup() {
 	employeeDetails();
 	addRegularShifts();
-	// unassign();
 }
 
 $('document').ready(setup);

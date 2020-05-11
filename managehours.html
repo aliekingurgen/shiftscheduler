@@ -25,7 +25,7 @@
 	<!-- FontAwesome -->
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 	<!-- Icon -->
-  <link rel="shortcut icon" type="image/jpg" href="static/images/ssicon.png"/>
+	<link rel="shortcut icon" type="image/jpg" href="static/images/ssicon.png"/>
 </head>
 
 <style>
@@ -42,58 +42,55 @@
 
 <!-- Navbar -->
 <body id="body" class="text-center">
-	  <nav class="navbar navbar-expand navbar-light bg-light">
-    <div class="container">
-      <a class="navbar-brand" href="/index" style="font-size:25px"><span class="text-info">Shift</span><span class="text-secondary">Scheduler</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon">
-      </span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false" style="font-size:18px"> {{netid}} </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+	<nav class="navbar navbar-expand navbar-light bg-light">
+		<div class="container">
+			<a class="navbar-brand" href="/index" style="font-size:25px"><span class="text-info">Shift</span><span class="text-secondary">Scheduler</span>
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon">
+			</span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav">
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+					aria-haspopup="true" aria-expanded="false" style="font-size:18px"> {{netid}} </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="/index">Home</a>
-            <a class="dropdown-item" href="/profile">Profile</a>
-            <a class="dropdown-item" href="/logout">Log Out</a>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
+						<a class="dropdown-item" href="/profile">Profile</a>
+						<a class="dropdown-item" href="/logout">Log Out</a>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
 </nav>
 
 <nav class="container navbar navbar-expand-lg navbar-dark bg-dark">
-  <!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon" ></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarText">
-    <ul class="navbar-nav mr-auto">
-      <!--      <li class="nav-item active">-->
-      <!--        <a class="nav-link" href="#"> Coordinator Page <span class="sr-only">(current)</span></a>-->
-      <!--      </li>-->
-      <li class="nav-item">
-        <a class="nav-link" href="/coordinatorschedule" style="font-size:18px">Calendar</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/manageemployees" style="font-size:18px">Employees</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/manageshifts" style="font-size:18px">Regular Shifts</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="/managehours" style="font-size:18px">Calculate Hours</a>
-      </li>
+	<!--  <a class="navbar-brand" href="#">Navbar w/ text</a>-->
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon" ></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarText">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="nav-link" href="/coordinatorschedule" style="font-size:18px">Calendar</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/manageemployees" style="font-size:18px">Employees</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/manageshifts" style="font-size:18px">Regular Shifts</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link active" href="/managehours" style="font-size:18px">Calculate Hours</a>
+			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="/reset" style="font-size:18px">Reset</a>
 			</li>
-    </ul>
-  </div>
+		</ul>
+	</div>
 </nav>
 
 <main role="main">
@@ -111,24 +108,24 @@
 			</div>
 			<div class = "col-6">
 				<p class="text-secondary">Selecting a period below will generate a report below of all
-				employees and their hours in the given period, inclusive of the start date
-				but exclusive of the end date. It will also show the total numbers of sub-ins,
-				sub-outs, walk-ons, and no-shows over the entire semester.</p>
-				<div class="form-group">
-					<label><strong>Start Date</strong></label>
-					<input type="date" id="startDate" max="3000-12-31" min="1000-01-01" class="form-control">
+					employees and their hours in the given period, inclusive of the start date
+					but exclusive of the end date. It will also show the total numbers of sub-ins,
+					sub-outs, walk-ons, and no-shows over the entire semester.</p>
+					<div class="form-group">
+						<label><strong>Start Date</strong></label>
+						<input type="date" id="startDate" max="3000-12-31" min="1000-01-01" class="form-control">
+					</div>
+					<div class="form-group">
+						<label><strong>End Date</strong></label>
+						<input type="date" id="endDate" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
+					</div>
+					<button type="button" id="submit" class="btn btn-secondary">Generate Report for Selected Period</button>
+					<br>
+					<br>
+					<div id="loading-text" class="text-danger"></div>
 				</div>
-				<div class="form-group">
-					<label><strong>End Date</strong></label>
-					<input type="date" id="endDate" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
+				<div class="col-3">
 				</div>
-				<button type="button" id="submit" class="btn btn-secondary">Generate Report for Selected Period</button>
-				<br>
-				<br>
-				<div id="loading-text" class="text-danger"></div>
-			</div>
-			<div class="col-3">
-			</div>
 
 			</div>
 		</div>
@@ -196,7 +193,6 @@ function getDates() {
 					success: function(data) {
 						$("#loading-text").attr('class', '')
 						$("#loading-text").text('');
-						// $("#loading-text").text("Report Generated");
 						$("#reportArea").html(data);
 					}
 				}

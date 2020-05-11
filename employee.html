@@ -657,20 +657,6 @@ function lastWeek(mon) {
 		newMon.setDate(newMon.getDate() - 7);
 		console.log(newMon);
 		window.location = "?monday=" + format(newMon)
-		// var url = "/calendar?monday=" + format(newMon);
-		// console.log(url);
-		// $('#calendar').load(url);
-
-		// if (request != null) {
-		// 	request.abort();
-		// }
-		// request = $.ajax(
-		// 	{
-		// 		type: "GET",
-		// 		url: url,
-		// 		success: setup
-		// 	}
-		// );
 	});
 }
 
@@ -695,10 +681,6 @@ function setup() {
 	subIn();
 	lastWeek(mon);
 	nextWeek(mon);
-	// let url = "/";
-	// $("#monday").load(url+" #elementName>*","");
-	// $("#monday").load("#monday > *");
-	// $('#monday').load({{monday}});
 }
 
 $('document').ready(setup);
