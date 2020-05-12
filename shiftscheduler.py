@@ -376,6 +376,8 @@ def subIn():
         html = "Sub-In not successful. You already have a shift at this time."
     elif successful == "already_assigned":
         html += "Sub-In not successful. You are already assigned to this shift."
+    elif successful == "old":
+        html = "You cannot sub-in to a past shift."
     elif successful:
         html = "Sub-In successful!"
     else:
@@ -434,7 +436,9 @@ def subOut():
     # emailList = ["ortaoglu@princeton.edu","agurgen@princeton.edu", "cz10@princeton.edu", "trt2@princeton.edu"]
     database.disconnect()
 
-    if successful:
+    if successful == "old":
+        html = "You cannot sub-out of a past shift."
+    elif successful:
         html = "Sub-Out successful!"
         print("email being sent")
         # print(taskidToStr(int(task_id)))
@@ -652,7 +656,9 @@ def removeEmployee():
     successful = database.removeEmployee(employeenetid)
     database.disconnect()
 
-    if successful:
+    if successful == "not_employee":
+        html = employeenetid + ' is not an employee.'
+    elif successful:
         html = employeenetid + ' was successfully removed!'
     else:
         html = employeenetid + ' was not removed. Please try again.'
@@ -994,8 +1000,11 @@ def walkOn():
 
     html = ''
     if successful == 'future':
-        print(successful)
         html += 'future'
+    elif successful == 'already_assigned':
+        html += 'already_assigned'
+    elif successful == 'not_employee':
+        html += 'not_employee'
     elif successful:
         walkOns = database.walkOnsInShift(shift_id)
         if len(walkOns) == 1:

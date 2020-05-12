@@ -632,6 +632,14 @@ function getModalData(mon) {
                 $('#walkOnText').html("<br><span class=\"text-danger\">You cannot add a walk-on to a future shift.</span>");
                 $("#walkOnInput").val('');
               }
+              else if (data == 'already_assigned') {
+                $('#walkOnText').html("<br><span class=\"text-danger\">This employee is already assigned to this shift.</span>");
+                $("#walkOnInput").val('');
+              }
+              else if (data == 'not_employee') {
+                $('#walkOnText').html("<br><span class=\"text-danger\">The entered net ID does not belong to any employee.</span>");
+                $("#walkOnInput").val('');
+              }
               else {
                 console.log(data)
                 curr = $('#otherShiftText').html() + data;

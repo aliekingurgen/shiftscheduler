@@ -95,7 +95,7 @@ class Database:
             shiftDate = datetime.date.fromisoformat(dateIn)
             if shiftDate < datetime.datetime.now().date():
                 print('SubOut requested for an old shift.')
-                return False
+                return "old"
 
             shiftDate = datetime.date.fromisoformat(dateIn)
 
@@ -161,7 +161,7 @@ class Database:
             if shiftDate < datetime.datetime.now().date():
                 print('SubOut requested for an old shift.')
                 cur.close()
-                return False
+                return "old"
 
             shiftDate = datetime.date.fromisoformat(dateIn)
 
@@ -897,7 +897,8 @@ class Database:
             if row is None:
                 print('Employee does not exist.')
                 cur.close()
-                return False
+                return "not_employee"
+
             QUERY_STRING = 'DELETE FROM employees WHERE netid = %s'
             cur.execute(QUERY_STRING, (netid,))
             self._conn.commit()
@@ -1323,7 +1324,7 @@ class Database:
             if row is None:
                 print('Employee does not exist.')
                 cur.close()
-                return False
+                return "not_employee"
 
             # Check if shiftid exists
             QUERY_STRING = 'SELECT shift_id FROM shift_info WHERE shift_id = %s'
@@ -1342,7 +1343,7 @@ class Database:
             if row is not None:
                 print('Netid is already working at this shift')
                 cur.close()
-                return False
+                return "already_assigned"
 
             # Insert walkon into walkons table
             QUERY_STRING = 'INSERT INTO walkons(netid, shift_id) VALUES (%s, %s)'
@@ -2059,17 +2060,17 @@ if __name__ == '__main__':
     start = "2020-04-27"
     end = "2020-05-24"
     print(database.populateForPeriod(start, end))
-    
+
     # Test addNoShow and undoNoShow ***** WORKS
     database.addNoShow(440, 'agurgen')
     database.undoNoShow(440, 'agurgen')
-    
+
     # Test resetStatsForEmployees ***** WORKS
     database.resetStatsForEmployees()
 
     # Test new addWalkOn ***** WORKS
     database.addWalkOn(724, 'agurgen')
-    
+
     # Test populateForPeriod ***** WORKS
     start = "2020-04-27"
     end = "2020-05-24"
