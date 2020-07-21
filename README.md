@@ -1,8 +1,8 @@
 # shiftscheduler - https://shiftscheduler.herokuapp.com/
-COS 333 Advanced Programming Techniques final project
+A Scheduling App for the Princeton Butler-Wilson Dining Hall. 
 
-**Team member names and email addresses:**<br/>
+**Contributors:**<br/>
 Cheyenne Zhang (cz10@princeton.edu)<br/>
-Ekin Gurgen (agurgen@princeton.edu)<br/>
+Ali Ekin Gurgen (agurgen@princeton.edu)<br/>
 Begum Ortaoglu (ortaoglu@princeton.edu)<br/> 
 Theo Trevisan (trt2@princeton.edu)
